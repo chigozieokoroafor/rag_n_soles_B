@@ -1,0 +1,49 @@
+const multer = require("multer")
+// const { ALL_MIME_TYPES } = require("../consts")
+const { generalError } = require("../errorHandler/statusCodes")
+const { ALL_MIME_TYPES } = require("../util/consts")
+
+
+const storage = multer.memoryStorage()
+const fileFilter = (req, file, cb) =>{
+    const allowedFileTypes = [
+        ALL_MIME_TYPES.jpeg, ALL_MIME_TYPES.jpg, ALL_MIME_TYPES.png
+    ]
+    console.log("file mimetype", file.mimetype)
+    
+    if (allowedFileTypes.includes(file.mimetype)){
+        cb(null, true)
+    }else{
+        // console.log("tests:::4")
+        cb(new Error(`Invalid file type. Only PNG, JPEG and JPG files are allowed.`));
+    }
+}
+
+const upload = multer({storage:storage, fileFilter:fileFilter, limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+    files: 1                     // Maximum 5 files per upload
+  }})
+
+const uploadMiddleWare = (req, res, next) =>{
+    // console.log("tests:::1")
+    const uploadF = upload.single("file")
+    console.log("tests:::3", req.file)
+
+    uploadF(req, res, (err)=>{
+        if (err){
+            console.log(err)
+            return generalError(res, err.message)
+        }
+
+        if (!req.file) {
+            return generalError(res, 'Document required. Please upload an image.');
+          }
+
+        // console.log("file::::", req?.file)
+        next()
+    })
+}
+
+module.exports = {
+    uploadMiddleWare
+}
