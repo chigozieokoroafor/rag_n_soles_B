@@ -2,7 +2,7 @@ require("dotenv").config()
 
 const { checkUserExists, createUserAccount, verifyUser, getUserByEmail } = require("../db/querys/users");
 const { catchAsync } = require("../errorHandler/allCatch");
-const { generalError, success, newError, notFound } = require("../errorHandler/statusCodes");
+const { generalError, success, newError, notFound, redirect } = require("../errorHandler/statusCodes");
 const { sendAccountVerificationMail, hashPassword, generateToken, createUUID, verifytoken, checkPassword } = require("../util/base");
 const { PARAMS } = require("../util/consts");
 const { createAccountSchema, loginValidator } = require("../util/validators/accountValidator");
@@ -55,7 +55,7 @@ exports.verify = catchAsync(async (req, res) => {
         return newError(res, payload.err, payload.err_status)
     }
 
-    console.log("payload:::", payload)
+    // console.log("payload:::", payload)
 
     const uid = payload.d.id
 
@@ -65,7 +65,7 @@ exports.verify = catchAsync(async (req, res) => {
         return generalError(res, "Unable to verify mail")
     }
 
-    return success(res, {}, "Account Verified")
+    return redirect(res, process.env.WEB_BASE_URL_VERIFICATION )
 
 })
 
@@ -90,8 +90,10 @@ exports.login = catchAsync(async (req, res) => {
     
 
     if (!user[PARAMS.isAdminVerified]) {
-        return generalError(res, "Account required validation by admin.", {})
+        return generalError(res, "Account requires validation by admin.", {})
     }
+
+    // send mail to admin here
 
     const token = generateToken({ id: user.uid, userType: "user" }, 14 * 60 * 60000)
 

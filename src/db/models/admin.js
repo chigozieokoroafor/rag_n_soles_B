@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
-const { MODEL_NAMES } = require("../../util/consts");
+const { MODEL_NAMES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
+const { createUUID } = require("../../util/base");
 
 const admin = conn.define(MODEL_NAMES.admin, {
     id: {
@@ -11,7 +12,20 @@ const admin = conn.define(MODEL_NAMES.admin, {
     },
     uid: {
         type: DataTypes.STRING(40),
-        unique: true
+        unique: true,
+        defaultValue: () => createUUID()
+    },
+    [PARAMS.email]:{
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    username:{
+        type: DataTypes.STRING(255),
+        allowNull:false
+    },
+    password:{
+        type: DataTypes.TEXT("long"),
+        allowNull:false
     }
 }, {
     tableName: MODEL_NAMES.admin,

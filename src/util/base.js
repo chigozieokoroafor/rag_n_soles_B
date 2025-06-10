@@ -4,7 +4,8 @@ const nodemailer = require("nodemailer")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs");
 const randToken = require("rand-token")
-const axios  = require("axios")
+const axios  = require("axios");
+const { PARAMS } = require("./consts");
 
 
 exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachments should be an array; envelope is a json containing a 'to' and 'cc'
@@ -262,6 +263,138 @@ exports.initializePayment = async (ref, amount, email, meta) => {
         return { success: false, msg: `Error while initializing transaction: ${error.message}` }
     }
 
+}
+
+exports.sendAdminMailCredentials = async(email, password) =>{
+    const html = `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin credentials - Rag_n_Soles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #4a148c; /* Deep purple */
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .content {
+            padding: 30px;
+        }
+        .verification-box {
+            background-color: #f3e5f5; /* Light purple background */
+            border-radius: 5px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background-color: #7b1fa2; /* Medium purple */
+            color: #ffffff;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        .credentials {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .disclaimer {
+            background-color: #ede7f6; /* Very light purple */
+            padding: 15px;
+            border-left: 4px solid #9575cd; /* Light-medium purple */
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #757575;
+            font-size: 12px;
+        }
+        a {
+            color: #6a1b9a; /* Dark purple for links */
+            text-decoration: underline;
+        }
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">Rag_n_Soles</h1>
+        </div>
+        
+        <div class="content">
+            
+            
+            <p>Hello,</p>
+            
+            
+            <p>Your administrator account has been successfully created. Please find your credentials below:</p>
+
+            <div class="credentials">
+                <p><strong>Username / Email:</strong> ${email}</p>
+                <p><strong>Password:</strong> ${password} </p>
+            </div>
+
+            <p>For security reasons, we recommend changing your password upon first login.</p>
+
+            <p>If you did not request this account, please contact us immediately.</p>
+            
+        
+            <p>If you have any questions or need assistance, our customer support team is here to help. Simply reply to this email or contact us at support@rag_n_Soles.com.</p>
+            
+            
+            
+            <p>Best regards,<br>
+            The Rag_n_Soles Team</p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 Rag_n_Soles. All rights reserved.</p>
+            <!-- <p>123 Tech Avenue, Innovation City, TC 12345</p> -->
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Unsubscribe</a></p>
+        </div>
+    </div>
+</body>
+</html>
+    `
+
+    const subject = "Admin Credentials - Rag_n_Soles"
+
+    this.sendEmail(subject, email, html)
 }
 
 // exports.uploadToBunny = async(blob, )

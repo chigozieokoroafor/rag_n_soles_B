@@ -6,6 +6,8 @@ const { sync } = require("./src/db/sync")
 const { createDatabaseIfNotExists } = require("./src/db/base")
 const { baseRouter } = require("./src/routes/baseRouter")
 const { adminRouter } = require("./src/routes/adminRouter")
+const { createAdmin } = require("./src/db/querys/admin")
+
 // const compression = require("compression")
 
 
@@ -35,8 +37,13 @@ const port = process.env.PORT ?? 9500
 console.log("proposed port::",port)
 createDatabaseIfNotExists().then(() => {
     sync().then(() => {
-        app.listen(port, () => {
-            console.log("running:::", port)
+        createAdmin().then(() =>{
+            app.listen(port, () => {
+                console.log("running:::", port)
+            })}
+        ).catch((error) =>{
+            console.log("unable to create admin")
+            console.log(error)
         })
     }).catch((error) => {
         console.log("unable to sync")

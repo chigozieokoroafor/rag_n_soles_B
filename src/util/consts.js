@@ -43,7 +43,8 @@ exports.PARAMS = {
     cart_ids:"cart_ids",
     billing_address:"billing_address",
     shpping_address:"shpping_address",
-    isAdminVerified:"isAdminVerified"
+    isAdminVerified:"isAdminVerified",
+    username:"username",
     
 }
 
