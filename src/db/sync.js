@@ -16,13 +16,13 @@ exports.sync = async () => {
     conn.authenticate().then(async () => {
         await Promise.allSettled(
             [
-                user.sync({ alter: true }), // merge to main
-                admin.sync({ alter: true }),
+                // user.sync({ alter: true }), // merge to main
+                // admin.sync({ alter: true }),
                 // cart.sync({ alter: true }), 
-                // category.sync({ alter: true }),
+                category.sync({ alter: true }),
                 // images.sync({alter:true}),
                 // order.sync({alter:true}),
-                product.sync({alter:true}),
+                // product.sync({alter:true}),
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})
