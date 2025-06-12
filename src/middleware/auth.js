@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken")
 // const { fetchUserForMiddleware } = require("../db/query/user");
 const { unAuthorized, generalError, newError } = require("../errorHandler/statusCodes");
 const { fetchUserForMiddleware } = require("../db/querys/users");
+const { fetchAdmninforMiddleware } = require("../db/querys/admin");
 
 class Auth {
     secret = process.env.AUTH_SECRET
@@ -34,12 +35,27 @@ class Auth {
         try {
             const payload = jwt.verify(token, this.secret);
             // console.log("payload::",payload)
-            const user_data = await fetchUserForMiddleware(payload.id ?? payload.uid)
-            req.user = user_data?.toJSON();
-
-            if (payload?.userType) {
-                req.user.userType = payload?.userType
+            let user_data
+            if (!(payload.userType == "admin")){
+                user_data = await fetchUserForMiddleware(payload.id ?? payload.uid)
+            }else{
+                user_data = await fetchAdmninforMiddleware(payload.id ?? payload.uid)
             }
+
+            // console.log("user_data:::",user_data)
+
+            if (!user_data) {
+                req.err = {
+                    err: "User not found",
+                    status: 404
+                };
+                return next()
+            }
+            req.user = payload
+
+            // if (payload?.userType) {
+            //     req.user.userType = payload?.userType
+            // }
 
             // console.log("user:::",req.user)
 
@@ -69,7 +85,7 @@ const baseAuth = (req, res, next) => { // auth for students
         // console.log("user:::", req.user )
         if (req?.err?.err) {
             return newError(res, req.err.err, req.err.status);
-        } else if (!req?.user?.uid) {
+        } else if (!req?.user?.id) {
             return unAuthorized(res, "Unauthorized");
         }
         next();
@@ -81,35 +97,12 @@ const adminAuth = (req, res, next) => { // auth for students
 
         if (req?.err?.err) {
             return newError(res, req.err.err, req.err.status);
-        } else if (!req?.user?.uid) {
+        } else if (!req?.user?.id) {
             return unAuthorized(res, "Unauthorized");
         }
         next();
     });
 }
-
-// const switchAuth = async (req, res, next) =>{
-//     let i = 0
-
-//     while (i<=3) {
-//         i++
-//         try{
-//             // console.log("at::::",i)
-//             await new Promise((resolve, reject)=>{
-//                 new Auth(SECRETS[i]).auth(req, res, () => {
-//                     if(req.err) reject(req.err)
-//                     else resolve();
-//                 });
-//             })
-
-//             return next()
-//         }catch(error){
-//             // console.log("error::::Switchh auth::::",error)
-//         }
-//     }
-
-//     next()
-// }
 
 module.exports = {
     baseAuth,

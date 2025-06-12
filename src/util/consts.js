@@ -45,8 +45,19 @@ exports.PARAMS = {
     shpping_address:"shpping_address",
     isAdminVerified:"isAdminVerified",
     username:"username",
+    spec:"spec",
+    discountExpiry:"discountExpiry",
+    images:"images"
     
 }
+
+exports.BUNNY = {
+    BUNNY_ACCESS_KEY : process.env.BUNNY_ACCESS_KEY,
+    BUNNY_STORAGE_ZONE_NAME : process.env.BUNNY_STORAGE_ZONE_NAME,
+    BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME : process.env.BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME,
+    BUNNY_BASE_HOSTNAME : 'https://storage.bunnycdn.com', 
+}
+
 
 exports.FETCH_LIMIT = 20
 

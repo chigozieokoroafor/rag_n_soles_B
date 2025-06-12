@@ -10,7 +10,7 @@ exports.getProductsByCategory = async (categoryId, limit, offset) => {
         {
             where: {
                 categoryId,
-                [PARAMS.isDeleted]:false
+                [PARAMS.isDeleted]: false
             },
             attributes: [
                 PARAMS.uid,
@@ -31,9 +31,9 @@ exports.getspecificProduct = async (productId) => {
         {
             where: {
                 [PARAMS.uid]: productId,
-                [PARAMS.isDeleted]:false
+                [PARAMS.isDeleted]: false
             },
-            attributes:[PARAMS.categoryId, PARAMS.colors, PARAMS.description, PARAMS.discount, PARAMS.img_url, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.units, PARAMS.specifications],
+            attributes: [PARAMS.categoryId, PARAMS.colors, PARAMS.description, PARAMS.discount, PARAMS.img_url, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.units, PARAMS.specifications],
 
         }
     )
@@ -46,7 +46,7 @@ exports.searchProduct = async (query, offset, limit) => {
     return await product.findAll(
         {
             where: query,
-            attributes: [PARAMS.categoryId, PARAMS.colors, PARAMS.description, PARAMS.discount, PARAMS.img_url, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.units, PARAMS.specifications],
+            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.spec],
             offset,
             limit
         }
@@ -54,6 +54,14 @@ exports.searchProduct = async (query, offset, limit) => {
     )
 }
 
-exports.deleteProductQuery = async(productId) =>{
-    return await product.update({[PARAMS.isDeleted]:true}, {where:{[PARAMS.uid]:productId}})
+exports.deleteProductQuery = async (productId) => {
+    return await product.update({ [PARAMS.isDeleted]: true }, { where: { [PARAMS.uid]: productId } })
+}
+
+exports.uploadProductImage = async (productId, images) => {
+    return await product.update({
+        images:images
+    }, {
+        where: { uid: productId }
+    })
 }

@@ -1,9 +1,9 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
-const { createUUID, sendEmail } = require("../util/base");
+const { createUUID, sendEmail, processFile } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema } = require("../util/validators/productsValidator");
@@ -13,8 +13,11 @@ const { productUploadSchema } = require("../util/validators/productsValidator");
 exports.addProducts = catchAsync(async (req, res) => {
     const valid_ = productUploadSchema.validate(req.body)
     if (valid_.error) {
+        console.log("error_details::::", valid_.error.details)
         return generalError(res, valid_.error.message)
     }
+
+    // console.log("files:::", req.files )
 
     // let data = req.body
 
@@ -22,27 +25,47 @@ exports.addProducts = catchAsync(async (req, res) => {
 
     const data = new Object()
 
-    data["name"] = req.body?.name
-    data["categoryId"] = req.body?.categoryId
-    data["discount"] = req.body?.discount ?? 0.0
-    data["price"] = req.body?.price
-    data["img_blob"] = req.body?.file
-    data["colors"] = req.body?.colors
-    data["description"] = req.body?.description
-    data["units"] = req.body?.units
-    data["specifications"] = req.body?.specifications
+    data[PARAMS.name] = req.body[PARAMS.name]
+    data[PARAMS.categoryId] = req.body[PARAMS.categoryId]
+    data[PARAMS.price] = req.body[PARAMS.price]
+    data[PARAMS.spec] = JSON.parse(req.body[PARAMS.spec])
 
+    let product 
 
-    // console.log("data:::;", data)
     try {
-        await uploadProduct(data)
+        product = await uploadProduct(data)
     } catch (error) {
         // console.log("product::: error::::",error)
         sendEmail("Error on product upload", "okoroaforc14@gmail.com", error)
         return generalError(res, "Unable to add product at current time.", {})
     }
+    success(res, {}, "Product uploaded successfully")
 
-    return success(res, {}, "Product uploaded successfully")
+    const productId = product.uid
+    const img_list = []
+    const promises = []
+    req.files.forEach((item) => {
+        const splitted = item.originalname.split(".")
+        const ext = splitted[splitted.length - 1]
+        const file_name = `${createUUID()}.${ext}`
+        promises.push(processFile(item.buffer, file_name))
+        
+    })
+
+    const fulfiled = await Promise.allSettled(promises)
+    fulfiled.forEach(promise =>{
+        if (promise.status=="fulfilled"){
+            // console.log("fulfiled:::::",promise.value)
+            img_list.push(promise.value)
+        }else{
+            console.log("rejected:::::",promise.reason)
+        }
+    })
+
+    await uploadProductImage(productId, img_list)
+
+    // console.log(img_list)
+
 })
 
 exports.createCategory = catchAsync(async (req, res) => {
@@ -51,10 +74,7 @@ exports.createCategory = catchAsync(async (req, res) => {
         return generalError(res, valid_.error.message)
     }
 
-    const data = new Object()
-
-    data["name"] = req.body?.name
-    data["img_blob"] = req.body?.file
+    const data = new Object(req.body)
 
     const cat_exists = await checkCategoryExists(req.body?.name)
     if (cat_exists) {
@@ -154,12 +174,4 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
 })
 
-
-// merge these 2 items into 1 for the home page.
-exports.getPopularProducts = catchAsync(async (req, res) => {
-
-})
-
-exports.getNewArrivals = catchAsync(async (req, res) => {
-
-})
+// exports.getAllProducts = ca

@@ -14,14 +14,15 @@ const category = conn.define(MODEL_NAMES.user, {
         type:DataTypes.STRING(255),
         allowNull:false,
         unique:true,
-        defaultValue: createUUID
+        defaultValue: (() => createUUID())
     },
     name: {
         type: DataTypes.STRING(255),
         allowNull: true
     },
-    img_blob:{
-        type:DataTypes.BLOB("long")
+    spec:{
+        type: DataTypes.JSON,
+        allowNull:false
     },
     img_url: {
         type: DataTypes.TEXT("medium"),
@@ -30,13 +31,13 @@ const category = conn.define(MODEL_NAMES.user, {
 }, {
     tableName: MODEL_NAMES.category,
     modelName: MODEL_NAMES.category,
-    hooks: {
-        beforeCreate: (category, options) => {
-            if (!category.img_url && category.uid) {
-                category.img_url = `https://yourdomain.com/images/${category.uid}`;
-            }
-        }
-    }
+    // hooks: {
+    //     beforeCreate: (category, options) => {
+    //         if (!category.img_url && category.uid) {
+    //             category.img_url = `https://yourdomain.com/images/${category.uid}`;
+    //         }
+    //     }
+    // }
 }
 )
 

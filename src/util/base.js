@@ -5,7 +5,9 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs");
 const randToken = require("rand-token")
 const axios  = require("axios");
-const { PARAMS } = require("./consts");
+const { PARAMS, BUNNY} = require("./consts");
+const {Readable} = require("stream")
+
 
 
 exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachments should be an array; envelope is a json containing a 'to' and 'cc'
@@ -398,3 +400,45 @@ exports.sendAdminMailCredentials = async(email, password) =>{
 }
 
 // exports.uploadToBunny = async(blob, )
+
+exports.processFile = async (buffer, fileName) => {
+    const stream = Readable.from(buffer)
+    const url = await uploadToBunny(stream, fileName)
+
+    if (!url) {
+        return null
+    }
+
+    return url
+
+}
+
+const uploadToBunny = async (stream, fileName) => {
+
+    // const REGION = 'YOUR_REGION'; // If German region, set this to an empty string: ''
+    // const HOSTNAME = REGION ? `${REGION}.${BASE_HOSTNAME}` : BASE_HOSTNAME;
+
+    // console.log("credentials::::",BUNNY)
+
+    const url = `${BUNNY.BUNNY_BASE_HOSTNAME}/${BUNNY.BUNNY_STORAGE_ZONE_NAME}/${fileName}`
+
+    const response = await fetch(url, {
+        method: "PUT",
+        body: stream,
+        duplex: "half",
+        headers: {
+            AccessKey: BUNNY.BUNNY_ACCESS_KEY,
+            'Content-Type': 'application/octet-stream',
+        }
+    })
+
+    if (!response.ok) {
+        const txt = await response.text()
+        console.log("error on file upload:::", txt)
+        // return {success: false, url:null, msg: txt }
+        null
+    }
+
+
+    return `${BUNNY.BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME}/${fileName}`
+}

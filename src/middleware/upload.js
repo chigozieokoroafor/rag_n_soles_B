@@ -21,13 +21,13 @@ const fileFilter = (req, file, cb) =>{
 
 const upload = multer({storage:storage, fileFilter:fileFilter, limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
-    files: 1                     // Maximum 5 files per upload
+    files: 5                     // Maximum 5 files per upload
   }})
 
 const uploadMiddleWare = (req, res, next) =>{
     // console.log("tests:::1")
-    const uploadF = upload.single("file")
-    console.log("tests:::3", req.file)
+    const uploadF = upload.array("images")
+    // console.log("tests:::3", req.files)
 
     uploadF(req, res, (err)=>{
         if (err){
@@ -35,8 +35,8 @@ const uploadMiddleWare = (req, res, next) =>{
             return generalError(res, err.message)
         }
 
-        if (!req.file) {
-            return generalError(res, 'Document required. Please upload an image.');
+        if (!req.files) {
+            return generalError(res, 'images required for product.');
           }
 
         // console.log("file::::", req?.file)

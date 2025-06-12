@@ -18,7 +18,7 @@ const product = conn.define(MODEL_NAMES.product, {
         type: DataTypes.STRING(255),
         allowNull: false,
         unique: true,
-        defaultValue: createUUID
+        defaultValue: (() => createUUID())
     },
     categoryId: {
         type: DataTypes.STRING(255),
@@ -28,39 +28,20 @@ const product = conn.define(MODEL_NAMES.product, {
         allowNull: true
     },
 
-    discount: {
-        type: DataTypes.DOUBLE,
-        defaultValue: 0.0
-    },
-    discountExpiry:{
-        type:DataTypes.DATE,
-        allowNull:true
-    },
     price: {
         type: DataTypes.DOUBLE
     },
-    img_url: {
-        type: DataTypes.TEXT("medium"),
-        allowNull: true
-    },
-
-    colors: {
-        type: DataTypes.JSON,
-    },
-
-    description: {
-        type: DataTypes.TEXT("long"),
-        allowNull: true
-    },
-
-    units: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
-    },
-
-    specifications: {
+    images: {
         type: DataTypes.JSON,
         allowNull: true
+    },
+    spec: { //{ name: "name of specification", "unit": number of products available for said size/specification}
+        type: DataTypes.JSON,
+        allowNull: true
+    },
+    isAvailable:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:true
     },
     isDeleted:{
         type:DataTypes.BOOLEAN,
@@ -77,14 +58,7 @@ const product = conn.define(MODEL_NAMES.product, {
             name: "product_text_idx",
             fields: [PARAMS.name]
         },
-    ],
-    hooks: {
-        beforeCreate: (product, options) => {
-            if (!product.img_url && product.uid) {
-                product.img_url = `${process.env.API_BASE_URL}/api/images/${product.uid}`;
-            }
-        }
-    }
+    ]
 })
 
 product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})

@@ -12,10 +12,23 @@ exports.fetchAdmninforLogin = async(username) =>{
         {
             where:{
                 [PARAMS.email]: username
-            }
+            },
+            
         }
     )
 }
+
+exports.fetchAdmninforMiddleware = async(uid) =>{
+    return await admin.findOne(
+        {
+            where:{
+                [PARAMS.uid]: uid
+            },
+            
+        }
+    )
+}
+
 
 exports.checkAdminExists = async () => {
     return await admin.findOne()
