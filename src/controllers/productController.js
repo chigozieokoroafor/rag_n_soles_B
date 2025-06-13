@@ -1,9 +1,9 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
-const { createUUID, sendEmail, processFile } = require("../util/base");
+const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema } = require("../util/validators/productsValidator");
@@ -17,12 +17,6 @@ exports.addProducts = catchAsync(async (req, res) => {
         return generalError(res, valid_.error.message)
     }
 
-    // console.log("files:::", req.files )
-
-    // let data = req.body
-
-    // new flow -> insert data into db, create a background worker to upload files to bunny, once done, create an emmitter to add files appropriately🤔🤔🤔
-
     const data = new Object()
 
     data[PARAMS.name] = req.body[PARAMS.name]
@@ -30,7 +24,7 @@ exports.addProducts = catchAsync(async (req, res) => {
     data[PARAMS.price] = req.body[PARAMS.price]
     data[PARAMS.spec] = JSON.parse(req.body[PARAMS.spec])
 
-    let product 
+    let product
 
     try {
         product = await uploadProduct(data)
@@ -42,27 +36,30 @@ exports.addProducts = catchAsync(async (req, res) => {
     success(res, {}, "Product uploaded successfully")
 
     const productId = product.uid
-    const img_list = []
-    const promises = []
-    req.files.forEach((item) => {
-        const splitted = item.originalname.split(".")
-        const ext = splitted[splitted.length - 1]
-        const file_name = `${createUUID()}.${ext}`
-        promises.push(processFile(item.buffer, file_name))
-        
-    })
+    // const img_list = []
+    // const promises = []
+    // req.files.forEach((item) => {
+    //     const splitted = item.originalname.split(".")
+    //     const ext = splitted[splitted.length - 1]
+    //     const file_name = `${createUUID()}.${ext}`
+    //     promises.push(processFile(item.buffer, file_name))
 
-    const fulfiled = await Promise.allSettled(promises)
-    fulfiled.forEach(promise =>{
-        if (promise.status=="fulfilled"){
-            // console.log("fulfiled:::::",promise.value)
-            img_list.push(promise.value)
-        }else{
-            console.log("rejected:::::",promise.reason)
-        }
-    })
+    // })
 
-    await uploadProductImage(productId, img_list)
+    // const fulfiled = await Promise.allSettled(promises)
+    // fulfiled.forEach(promise => {
+    //     if (promise.status == "fulfilled") {
+    //         // console.log("fulfiled:::::",promise.value)
+    //         img_list.push(promise.value)
+    //     } else {
+    //         console.log("rejected:::::", promise.reason)
+    //     }
+    // })
+
+    const images = await processAllImages(req.files)
+    
+
+    await uploadProductImage(productId, images)
 
     // console.log(img_list)
 
@@ -126,7 +123,7 @@ exports.getSpecificProduct = catchAsync(async (req, res) => {
 })
 
 exports.deleteProducts = catchAsync(async (req, res) => {
-    const product_id = req.query.product_id
+    const product_id = req.params.productId
 
     if (!product_id) {
         return generalError(res, "Kindly select product to delete")
@@ -134,10 +131,32 @@ exports.deleteProducts = catchAsync(async (req, res) => {
 
     const q = await deleteProductQuery(product_id)
 
-    console.log(q)
-
     return success(res, {}, "deleted")
-    
+
+})
+
+exports.updateProducts = catchAsync(async (req, res) => {
+    const productId = req.params.productId
+
+    const product = getspecificProduct(productId)
+
+    if(!product){
+        return notFound(res , "Product not found")
+    }
+
+    let update  = Object(req.body)
+
+    if (update[PARAMS.spec]){
+        update[PARAMS.spec] = JSON.parse(update[PARAMS.spec])
+
+    }
+
+    await updateProductDetails(productId, update)
+
+    if (req.files){
+        const images = await processAllImages(req.files)
+        await uploadProductImage(productId, images)
+    }
 })
 
 // for search
@@ -175,4 +194,4 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
 })
 
-// exports.getAllProducts = ca
+

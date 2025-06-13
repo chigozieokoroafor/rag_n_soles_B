@@ -65,3 +65,14 @@ exports.uploadProductImage = async (productId, images) => {
         where: { uid: productId }
     })
 }
+
+exports.updateProductDetails = async(productId, update) =>{
+    return await product.update(
+        update,
+        {
+            where:{
+                uid: productId
+            }
+        }
+    )
+}

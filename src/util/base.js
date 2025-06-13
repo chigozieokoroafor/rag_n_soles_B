@@ -439,6 +439,32 @@ const uploadToBunny = async (stream, fileName) => {
         null
     }
 
+    console.log("body::::here:::",await response.json())
+
 
     return `${BUNNY.BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME}/${fileName}`
+}
+
+exports.processAllImages = async (files) => {
+    const img_list = []
+    const promises = []
+    files.forEach((item) => {
+        const splitted = item.originalname.split(".")
+        const ext = splitted[splitted.length - 1]
+        const file_name = `${this.createUUID()}.${ext}`
+        promises.push(this.processFile(item.buffer, file_name))
+
+    })
+
+    const fulfiled = await Promise.allSettled(promises)
+    fulfiled.forEach(promise => {
+        if (promise.status == "fulfilled") {
+            // console.log("fulfiled:::::",promise.value)
+            img_list.push(promise.value)
+        } else {
+            console.log("rejected:::::", promise.reason)
+        }
+    })
+
+    return img_list
 }
