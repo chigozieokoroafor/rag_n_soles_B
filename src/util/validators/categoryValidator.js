@@ -30,3 +30,56 @@ exports.categoryCreationSchema = Joi.object(
         "any.required": "Kindly upload a category to continue."
     }
 )
+
+
+exports.couponValidator = Joi.object(
+    {
+        code: Joi.string().required().messages(
+            {
+                "any.required": "Coupon code required",
+                "string.empty":"Kindly provide  avalid coupon code.",
+                
+            }
+        ),
+        type:Joi.string().required().messages(
+            {
+                "any.required": "Discount type required",
+                "string.empty":"Kindly provide  a valid discount type.",
+                
+            }
+        ),
+
+        value: Joi.number().required().messages(
+            {
+                "any.required": "Discount value required",
+                "number.empty":"Kindly provide  a valid discount value.",
+                
+            }
+        ),
+        startDate:Joi.string().required().messages(
+            {
+                "any.required":"Kindly provide a start date.",
+                "string.empty":"Kindly provide a start date."
+            }
+        ),
+        
+        endDate:Joi.string().required().messages(
+            {
+                "any.required":"Kindly provide a end date.",
+                "string.empty":"Kindly provide a end date."
+            }
+        ),
+        limit:Joi.number().required().messages(
+            {
+                "any.required": "limit value required",
+                "number.empty":"Kindly provide  a valid limit value.",
+                
+            }
+        )
+
+    }
+).required().messages(
+    {
+        "any.required":"Coupon body required."
+    }
+)

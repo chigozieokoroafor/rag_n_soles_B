@@ -8,7 +8,8 @@ exports.MODEL_NAMES = {
     transaction:"Transactions",
     review:"Reviews",
     images:"Images",
-    order:"Orders"
+    order:"Orders",
+    coupon:"Coupon"
 }
 
 exports.STATUSES = {

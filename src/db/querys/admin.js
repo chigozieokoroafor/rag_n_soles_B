@@ -70,8 +70,6 @@ exports.getAllUsers = async (query, limit, offset) => {
     )
 }
 
-
-
 exports.updateUserStatus = async (uid, status) => {
    return await user.update(
         {
@@ -82,4 +80,12 @@ exports.updateUserStatus = async (uid, status) => {
             [PARAMS.uid]: uid
         }
     })
+}
+
+exports.countVendors = async (where) =>{
+    return await  user.count(
+        {
+            where:where
+        }
+    )
 }

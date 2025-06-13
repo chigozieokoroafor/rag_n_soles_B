@@ -36,26 +36,7 @@ exports.addProducts = catchAsync(async (req, res) => {
     success(res, {}, "Product uploaded successfully")
 
     const productId = product.uid
-    // const img_list = []
-    // const promises = []
-    // req.files.forEach((item) => {
-    //     const splitted = item.originalname.split(".")
-    //     const ext = splitted[splitted.length - 1]
-    //     const file_name = `${createUUID()}.${ext}`
-    //     promises.push(processFile(item.buffer, file_name))
-
-    // })
-
-    // const fulfiled = await Promise.allSettled(promises)
-    // fulfiled.forEach(promise => {
-    //     if (promise.status == "fulfilled") {
-    //         // console.log("fulfiled:::::",promise.value)
-    //         img_list.push(promise.value)
-    //     } else {
-    //         console.log("rejected:::::", promise.reason)
-    //     }
-    // })
-
+    
     const images = await processAllImages(req.files)
     
 
@@ -64,7 +45,6 @@ exports.addProducts = catchAsync(async (req, res) => {
     // console.log(img_list)
 
 })
-
 
 exports.createCategory = catchAsync(async (req, res) => {
     const valid_ = categoryCreationSchema.validate(req.body)
@@ -193,5 +173,3 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     return success(res, data, "testing")
 
 })
-
-

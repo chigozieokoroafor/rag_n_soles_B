@@ -76,3 +76,13 @@ exports.updateProductDetails = async(productId, update) =>{
         }
     )
 }
+
+exports.countAllproducts = async() =>{
+    return await product.count(
+        {
+            where:{
+                [PARAMS.isDeleted] : false
+            }
+        }
+    )
+}

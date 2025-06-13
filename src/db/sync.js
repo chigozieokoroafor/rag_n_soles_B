@@ -5,7 +5,7 @@ const { cart } = require("./models/cart")
 const { category } = require("./models/category")
 const { images } = require("./models/images")
 const { order } = require("./models/order")
-const { product } = require("./models/product")
+const { product, coupon } = require("./models/product")
 const { review } = require("./models/review")
 const { shipping } = require("./models/shhipping")
 const { transaction } = require("./models/transaction")
@@ -26,7 +26,7 @@ exports.sync = async () => {
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})
-
+                coupon.sync({alter:true})
             ]
         )
     })

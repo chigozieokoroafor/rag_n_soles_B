@@ -61,9 +61,51 @@ const product = conn.define(MODEL_NAMES.product, {
     ]
 })
 
+const coupon = conn.define(MODEL_NAMES.coupon, {
+    id: {
+        type: DataTypes.INTEGER,
+        unique: true,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    code:{
+        type:DataTypes.STRING(50),
+        allowNull:false
+    },
+    type:{
+        type:DataTypes.STRING(20),
+        allowNull:false
+    },
+    value:{
+        type: DataTypes.DOUBLE,
+        allowNull:false
+    },
+    startDate:{
+        type: DataTypes.DATE,
+        allowNull:true
+    },
+    endDate:{
+        type: DataTypes.DATE,
+        allowNull:true
+    },
+    limit:{
+        type: DataTypes.INTEGER,
+        allowNull:false
+    },
+    usage:{
+        type: DataTypes.INTEGER,
+        defaultValue:0
+    },
+    status:{
+        type:DataTypes.STRING(20),
+        defaultValue:"Active"
+    }
+})
+
 product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})
 cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
 
 module.exports = {
-    product
+    product,
+    coupon
 }
