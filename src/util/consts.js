@@ -13,7 +13,9 @@ exports.MODEL_NAMES = {
 
 exports.STATUSES = {
     pending: "PENDING",
-    to_be_delivered:""
+    to_be_delivered:"",
+    approved:"APPROVED",
+    blocked:"BLOCKED"
 }
 
 exports.PARAMS = {
@@ -47,7 +49,10 @@ exports.PARAMS = {
     username:"username",
     spec:"spec",
     discountExpiry:"discountExpiry",
-    images:"images"
+    images:"images",
+    phone_no:"phone_no",
+    createdAt:"createdAt",
+    status:"status"
     
 }
 

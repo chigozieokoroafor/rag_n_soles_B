@@ -18,8 +18,9 @@ admin.get("/category/:category_id", productController.fetchProductsUnderCategory
 admin.get("/product/:product_id", productController.getSpecificProduct)
 // admin.get("/product", prod)
 admin.post("/product", adminAuth, uploadMiddleWare, productController.addProducts)
+admin.get("/products", productController.getAllProductsWithFilter)
 admin.delete("/product", adminAuth, productController.deleteProducts)
-
+admin.get("/users", adminAuth, adminController.getUsers)
 
 
 module.exports = {

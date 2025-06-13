@@ -68,6 +68,7 @@ exports.addProducts = catchAsync(async (req, res) => {
 
 })
 
+
 exports.createCategory = catchAsync(async (req, res) => {
     const valid_ = categoryCreationSchema.validate(req.body)
     if (valid_.error) {

@@ -1,7 +1,8 @@
 const { createUUID, sendAdminMailCredentials } = require("../../util/base");
 const { PARAMS } = require("../../util/consts");
 const { admin } = require("../models/admin");
-const { hashSync } = require("bcryptjs")
+const { hashSync } = require("bcryptjs");
+const { user } = require("../models/user");
 
 exports.checkAdmin = async (uid) => {
     return await admin.findOne({ where: { uid } })
@@ -56,4 +57,16 @@ exports.createAdmin = async() =>{
 
         console.log("cred========", cred)
     }
+}
+
+exports.getAllUsers = async(limit, offset) =>{
+    return await user.findAll(
+
+        
+        {
+            attributes:[PARAMS.uid, PARAMS.username, PARAMS.email, PARAMS.name, PARAMS.phone_no, PARAMS.createdAt, PARAMS.status, PARAMS.billing_address, PARAMS.shpping_address],
+            limit,
+            offset
+        }
+    )
 }

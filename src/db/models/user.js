@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { MODEL_NAMES } = require("../../util/consts");
+const { MODEL_NAMES, STATUSES } = require("../../util/consts");
 const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
 
@@ -45,6 +45,12 @@ const user = conn.define(MODEL_NAMES.user, {
         type:DataTypes.BOOLEAN,
         defaultValue:false
     },
+
+    status:{
+        type:DataTypes.STRING(255),
+        defaultValue: STATUSES.pending
+    },
+
     billing_address:{
         type: DataTypes.TEXT("long"),
         allowNull:true
