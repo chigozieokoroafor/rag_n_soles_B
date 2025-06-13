@@ -21,6 +21,7 @@ admin.post("/product", adminAuth, uploadMiddleWare, productController.addProduct
 admin.get("/products", productController.getAllProductsWithFilter)
 admin.delete("/product", adminAuth, productController.deleteProducts)
 admin.get("/users", adminAuth, adminController.getUsers)
+admin.put("/users", adminAuth, adminController.updateUserStatus)
 
 
 module.exports = {
