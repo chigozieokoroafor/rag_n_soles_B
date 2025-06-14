@@ -26,7 +26,7 @@ exports.sync = async () => {
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})
-                coupon.sync({alter:true})
+                // coupon.sync({alter:true})
             ]
         )
     })

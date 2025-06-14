@@ -44,3 +44,12 @@ exports.getCoupons = async(query,limit, offset) =>{
         }
     )
 }
+
+exports.deleteCoupon = async(id) =>{
+    return await coupon.destroy({where: {id}})
+}
+
+
+exports.updateCoupon = async(update, id) =>{
+    return await coupon.update(update, {where: {id}})
+}

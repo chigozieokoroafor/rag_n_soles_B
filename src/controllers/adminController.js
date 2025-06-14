@@ -8,8 +8,8 @@ const { generateToken, checkPassword } = require("../util/base");
 const { FETCH_LIMIT, PARAMS, STATUSES } = require("../util/consts");
 const { loginValidator } = require("../util/validators/accountValidator");
 const { countAllproducts } = require("../db/querys/products");
-const { insertCoupon, getCoupons } = require("../db/querys/category");
-const { couponValidator } = require("../util/validators/categoryValidator");
+const { insertCoupon, getCoupons, deleteCoupon, updateCoupon } = require("../db/querys/category");
+const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 
 
 
@@ -157,4 +157,33 @@ exports.fetchCoupons = catchAsync(async (req, res) => {
     const data = await getCoupons(actual_query, FETCH_LIMIT, offset)
 
     return success(res, data, "Fetched.")
+})
+
+exports.deleteCoupon = catchAsync(async (req, res) => {
+    const couponId = req.params.couponId
+
+    await deleteCoupon(couponId)
+
+    return success(res, {}, "Coupon Deleted")
+    
+})
+
+
+exports.updateCouponDetails = catchAsync(async (req, res) => {
+    const couponId = req.params.couponId
+    const valid_ = couponUpdateValidator.validate(req.body)
+
+    if (valid_.error) {
+        return generalError(res, valid_.error.message, {})
+    }
+
+
+    try {
+        await updateCoupon(req.body, couponId)
+    } catch (error) {
+        console.log("error:::coupon::::", error)
+        return generalError(res, "unable to update coupon details")
+    }
+
+    return success(res, {}, "Coupon updated")
 })

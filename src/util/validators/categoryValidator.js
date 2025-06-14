@@ -83,3 +83,49 @@ exports.couponValidator = Joi.object(
         "any.required":"Coupon body required."
     }
 )
+
+exports.couponUpdateValidator = Joi.object(
+    {
+        
+        type:Joi.string().messages(
+            {
+                "any.required": "Discount type required",
+                "string.empty":"Kindly provide  a valid discount type.",
+                
+            }
+        ),
+
+        value: Joi.number().messages(
+            {
+                "any.required": "Discount value required",
+                "number.empty":"Kindly provide  a valid discount value.",
+                
+            }
+        ),
+        startDate:Joi.string().messages(
+            {
+                "any.required":"Kindly provide a start date.",
+                "string.empty":"Kindly provide a start date."
+            }
+        ),
+        
+        endDate:Joi.string().messages(
+            {
+                "any.required":"Kindly provide a end date.",
+                "string.empty":"Kindly provide a end date."
+            }
+        ),
+        limit:Joi.number().messages(
+            {
+                "any.required": "limit value required",
+                "number.empty":"Kindly provide  a valid limit value.",
+                
+            }
+        )
+
+    }
+).required().messages(
+    {
+        "any.required":"Coupon body required to mae update."
+    }
+)

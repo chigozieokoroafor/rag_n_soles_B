@@ -29,6 +29,8 @@ admin.get("/dashboard/metrics", adminAuth, adminController.dashboardMetrics)
 
 admin.post("/coupon", adminAuth, adminController.createCoupon)
 admin.get("/coupon", adminAuth, adminController.fetchCoupons)
+admin.delete("/coupon/:couponId", adminAuth, adminController.deleteCoupon)
+admin.put("/coupon/:couponId", adminAuth, adminController.updateCouponDetails)
 
 
 module.exports = {
