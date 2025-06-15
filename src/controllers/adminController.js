@@ -12,35 +12,6 @@ const { insertCoupon, getCoupons, deleteCoupon, updateCoupon } = require("../db/
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 
 
-
-exports.login = catchAsync(async (req, res) => {
-
-    const valid_ = loginValidator.validate(req.body)
-
-    if (valid_.error) {
-        return generalError(res, valid_.error.message)
-    }
-
-    const user = await fetchAdmninforLogin(req.body?.email)
-
-    if (!user) {
-        return notFound(res, "Admin Account not found.")
-    }
-
-    const uid = user.uid
-
-
-    const passwordMatch = checkPassword(req.body?.password, user.password)
-    if (!passwordMatch) {
-        return generalError(res, "Invalid Credentials")
-    }
-
-    const token = generateToken({ id: uid, userType: "admin" }, 14 * 60 * 60000, process.env.ADMIN_SECRET)
-
-    return success(res, { token }, "Login successful")
-
-})
-
 exports.getUsers = catchAsync(async (req, res) => {
 
     const { status, search, page } = req.query
@@ -92,7 +63,11 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
 
 exports.dashboardMetrics = catchAsync(async (req, res) => {
     const data = {
-        product: await countAllproducts(),
+        product: {
+            total: await countAllproducts({}),
+            active: await countAllproducts({ [PARAMS.status]: "Active" }),
+            inactive: await countAllproducts({ [PARAMS.status]: "Inactive" })
+        },
         vendors: {
             total: await countVendors({}),
             pending: await countVendors({ [PARAMS.status]: STATUSES.pending }),
@@ -162,7 +137,7 @@ exports.deleteCoupon = catchAsync(async (req, res) => {
     await deleteCoupon(couponId)
 
     return success(res, {}, "Coupon Deleted")
-    
+
 })
 
 

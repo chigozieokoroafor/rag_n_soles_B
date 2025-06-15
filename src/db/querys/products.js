@@ -48,11 +48,11 @@ exports.searchProduct = async (query, offset, limit) => {
         {
             where: query,
             attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.spec, PARAMS.status],
-            include:[
+            include: [
                 {
                     model: category,
-                    attributes:[PARAMS.uid, PARAMS.name],
-                    as:"Category"
+                    attributes: [PARAMS.uid, PARAMS.name],
+                    as: "Category"
                 }
             ],
             offset,
@@ -68,29 +68,31 @@ exports.deleteProductQuery = async (productId) => {
 
 exports.uploadProductImage = async (productId, images) => {
     return await product.update({
-        images:images
+        images: images
     }, {
         where: { uid: productId }
     })
 }
 
-exports.updateProductDetails = async(productId, update) =>{
+exports.updateProductDetails = async (productId, update) => {
     return await product.update(
         update,
         {
-            where:{
+            where: {
                 uid: productId
             }
         }
     )
 }
 
-exports.countAllproducts = async() =>{
+exports.countAllproducts = async (
+    query
+) => {
+    query[PARAMS.isDeleted] = false
+
     return await product.count(
         {
-            where:{
-                [PARAMS.isDeleted] : false
-            }
+            where: query
         }
     )
 }

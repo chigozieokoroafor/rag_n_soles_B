@@ -34,15 +34,16 @@ class Auth {
 
         try {
             const payload = jwt.verify(token, this.secret);
-            // console.log("payload::",payload)
+            
             let user_data
-            if (!(payload.userType == "admin")){
+            if (!(payload.userType == "Admin")){
                 user_data = await fetchUserForMiddleware(payload.id ?? payload.uid)
             }else{
+                console.log("entered here")
                 user_data = await fetchAdmninforMiddleware(payload.id ?? payload.uid)
             }
 
-            // console.log("user_data:::",user_data)
+            
 
             if (!user_data) {
                 req.err = {

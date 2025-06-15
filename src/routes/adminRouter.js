@@ -9,7 +9,7 @@ const multer =require("multer")
 const admin = Router()
 
 
-admin.post("/login", adminController.login)
+// admin.post("/login", adminController.login)
 
 admin.post("/category", adminAuth, productController.createCategory)
 admin.get("/category",productController.fetchCategories)
