@@ -35,10 +35,7 @@ exports.login = catchAsync(async (req, res) => {
         return generalError(res, "Invalid Credentials")
     }
 
-
     const token = generateToken({ id: uid, userType: "admin" }, 14 * 60 * 60000, process.env.ADMIN_SECRET)
-
-
 
     return success(res, { token }, "Login successful")
 

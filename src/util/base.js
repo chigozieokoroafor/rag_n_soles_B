@@ -196,8 +196,8 @@ exports.checkPassword = (pwd, hash) => {
     return bcrypt.compareSync(pwd, hash)
 }
 
-exports.generateToken = (payload, expiryTme = 1 * 10 * 60) => {
-    return jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn: expiryTme })
+exports.generateToken = (payload, expiryTme = 1 * 10 * 60, secret) => {
+    return jwt.sign(payload, secret, { expiresIn: expiryTme })
 }
 
 exports.verifytoken = (token, secret = process.env.AUTH_SECRET) =>{

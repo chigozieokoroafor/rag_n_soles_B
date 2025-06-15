@@ -1,5 +1,6 @@
 require("dotenv").config()
 
+const { fetchAdmninforLogin } = require("../db/querys/admin");
 const { checkUserExists, createUserAccount, verifyUser, getUserByEmail } = require("../db/querys/users");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, newError, notFound, redirect } = require("../errorHandler/statusCodes");
@@ -78,8 +79,23 @@ exports.login = catchAsync(async (req, res) => {
     }
 
     let user_type = "Vendor"
+    let user
 
-    const user = await getUserByEmail(req.body?.email)
+    const promises = await Promise.allSettled([getUserByEmail(req.body?.email), fetchAdmninforLogin(req.body?.email)])
+    
+    const vendor = promises[0].value
+    const admin = promises[1].value
+
+
+    if(vendor){
+        user = vendor
+    }   
+
+    if (admin){
+        user_type = "Admin"
+        user = admin
+    }
+
 
     if (!user) {
         return notFound(res, "Account with email provided not found")
@@ -90,24 +106,22 @@ exports.login = catchAsync(async (req, res) => {
         return generalError(res, "Invalid Credentials")
     }
 
-    // email, verification status, and user type
 
-
-    if (!user[PARAMS.isAdminVerified]) {
+    if ( user_type == "Vendor" && !user[PARAMS.isAdminVerified]) {
         return generalError(res, "Account requires validation by admin.", {})
-    }
+    } 
 
-    // send mail to admin here
+    const secret = user_type == "Vendor" ? process.env.AUTH_SECRET : process.env.ADMIN_SECRET
 
-    const token = generateToken({ id: user.uid, userType: "user" }, 14 * 60 * 60000)
+    const token = generateToken({ id: user.uid, userType: user_type }, 14 * 60 * 60000, secret)
 
     // do a set session here instead of returning authorization token.
 
     return success(res, {
         token,
-        email: req.body.email, 
-        [PARAMS.business_name]: user[PARAMS.business_name], 
-        status: user[PARAMS.status], 
+        email: req.body.email,
+        [PARAMS.business_name]: user?.[PARAMS.business_name],
+        status: user?.[PARAMS.status],
         user_type
     }, "Login successful")
 

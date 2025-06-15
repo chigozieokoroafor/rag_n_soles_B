@@ -93,7 +93,7 @@ const baseAuth = (req, res, next) => { // auth for students
 }
 
 const adminAuth = (req, res, next) => { // auth for students
-    new Auth(process.env.ADMIN_AUTH).auth(req, res, () => {
+    new Auth(process.env.ADMIN_SECRET).auth(req, res, () => {
 
         if (req?.err?.err) {
             return newError(res, req.err.err, req.err.status);
