@@ -65,7 +65,7 @@ exports.verify = catchAsync(async (req, res) => {
         return generalError(res, "Unable to verify mail")
     }
 
-    return redirect(res, process.env.WEB_BASE_URL_VERIFICATION )
+    return redirect(res, process.env.WEB_BASE_URL_VERIFICATION)
 
 })
 
@@ -77,6 +77,8 @@ exports.login = catchAsync(async (req, res) => {
         return generalError(res, valid_.error.message)
     }
 
+    let user_type = "Vendor"
+
     const user = await getUserByEmail(req.body?.email)
 
     if (!user) {
@@ -87,7 +89,9 @@ exports.login = catchAsync(async (req, res) => {
     if (!passwordMatch) {
         return generalError(res, "Invalid Credentials")
     }
-    
+
+    // email, verification status, and user type
+
 
     if (!user[PARAMS.isAdminVerified]) {
         return generalError(res, "Account requires validation by admin.", {})
@@ -99,7 +103,13 @@ exports.login = catchAsync(async (req, res) => {
 
     // do a set session here instead of returning authorization token.
 
-    return success(res, { token }, "Login successful")
+    return success(res, {
+        token,
+        email: req.body.email, 
+        [PARAMS.business_name]: user[PARAMS.business_name], 
+        status: user[PARAMS.status], 
+        user_type
+    }, "Login successful")
 
 })
 

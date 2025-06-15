@@ -53,7 +53,8 @@ exports.PARAMS = {
     images:"images",
     phone_no:"phone_no",
     createdAt:"createdAt",
-    status:"status"
+    status:"status",
+    business_name:"business_name",
     
 }
 

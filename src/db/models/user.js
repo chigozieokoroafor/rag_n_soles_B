@@ -50,6 +50,10 @@ const user = conn.define(MODEL_NAMES.user, {
         type:DataTypes.STRING(255),
         defaultValue: STATUSES.pending
     },
+    business_name:{
+        type:DataTypes.STRING(255),
+        allowNull:false
+    },
 
     billing_address:{
         type: DataTypes.TEXT("long"),

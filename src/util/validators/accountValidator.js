@@ -24,6 +24,10 @@ exports.createAccountSchema = Joi.object(
             "any.required":"Address required",
             "string.empty":"Address can not be empty"
         }),
+        business_name: Joi.string().required().messages({
+            "any.required":"Business name required.",
+            "string.empty":"Business name can not be empty"
+        }),
 
         // username:Joi.string().messages({
         //     "string.base":"kindly enter a prefered username",
