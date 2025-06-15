@@ -8,6 +8,13 @@ exports.categoryCreationSchema = Joi.object(
                 "string.empty": "Kindly provide a category name"
             }
         ),
+        
+        description: Joi.string().messages(
+            {
+                "any.required": "Kindly provide a category name",
+                "string.empty": "Kindly provide a category name"
+            }
+        ),
 
         spec: Joi.array().min(1).required().messages(
             {

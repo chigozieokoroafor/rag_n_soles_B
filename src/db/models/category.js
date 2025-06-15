@@ -25,10 +25,14 @@ const category = conn.define(MODEL_NAMES.user, {
         type: DataTypes.JSON,
         allowNull:false
     },
-    img_url: {
-        type: DataTypes.TEXT("medium"),
-        allowNull: true
+    description:{
+        type:DataTypes.TEXT("long"),
+        allowNull:true
     }
+    // img_url: {
+    //     type: DataTypes.TEXT("medium"),
+    //     allowNull: true
+    // }
 }, {
     tableName: MODEL_NAMES.category,
     modelName: MODEL_NAMES.category,

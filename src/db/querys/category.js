@@ -26,7 +26,7 @@ exports.checkCategoryExists = async(searchKeyword) =>{
 exports.fetchCategoryQuery = async() =>{
     return await category.findAll(
         {
-            attributes:[PARAMS.uid, PARAMS.spec, PARAMS.name]
+            attributes:[PARAMS.uid, PARAMS.spec, PARAMS.name, PARAMS.description]
         }
     )
 }
