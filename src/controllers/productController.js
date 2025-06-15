@@ -9,8 +9,6 @@ const { categoryCreationSchema } = require("../util/validators/categoryValidator
 const { productUploadSchema } = require("../util/validators/productsValidator");
 
 
-let product_paging = {}
-
 
 
 exports.addProducts = catchAsync(async (req, res) => {

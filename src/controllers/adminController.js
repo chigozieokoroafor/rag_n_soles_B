@@ -39,8 +39,13 @@ exports.getUsers = catchAsync(async (req, res) => {
     const offset = FETCH_LIMIT * (Number(page) - 1)
 
     const users = await getAllUsers(actual_query, FETCH_LIMIT, offset)
+    const count = await countVendors(actual_query)
 
-    return success(res, users, "Fetched")
+    const total_pages = Math.ceil(count / FETCH_LIMIT)
+
+
+
+    return success(res, { users, pages: total_pages }, "Fetched")
 })
 
 exports.updateUserStatus = catchAsync(async (req, res) => {

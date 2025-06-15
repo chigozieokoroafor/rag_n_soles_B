@@ -19,7 +19,7 @@ exports.sync = async () => {
                 // user.sync({ alter: true }), // merge to main
                 // admin.sync({ alter: true }),
                 // cart.sync({ alter: true }), 
-                category.sync({ alter: true }),
+                // category.sync({ alter: true }),
                 // images.sync({alter:true}),
                 // order.sync({alter:true}),
                 // product.sync({alter:true}),
