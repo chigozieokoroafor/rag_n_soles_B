@@ -1,7 +1,8 @@
 const { DataTypes } = require("sequelize");
-const { MODEL_NAMES } = require("../../util/consts");
+const { MODEL_NAMES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
+const { product } = require("./product");
 
 const category = conn.define(MODEL_NAMES.user, {
     id: {
@@ -40,6 +41,9 @@ const category = conn.define(MODEL_NAMES.user, {
     // }
 }
 )
+
+category.hasMany(product, {foreignKey:PARAMS.categoryId, sourceKey:PARAMS.uid, as:"Product"})
+product.belongsTo(category, {foreignKey:PARAMS.categoryId, targetKey:PARAMS.uid, as:"Category"})
 
 module.exports = {
     category

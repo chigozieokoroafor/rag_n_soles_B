@@ -39,9 +39,9 @@ const product = conn.define(MODEL_NAMES.product, {
         type: DataTypes.JSON,
         allowNull: true
     },
-    isAvailable:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:true
+    status:{
+        type:DataTypes.STRING(20),
+        defaultValue:"Active"
     },
     isDeleted:{
         type:DataTypes.BOOLEAN,
@@ -101,6 +101,7 @@ const coupon = conn.define(MODEL_NAMES.coupon, {
         defaultValue:"Active"
     }
 })
+
 
 product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})
 cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})

@@ -1,4 +1,5 @@
 const { PARAMS } = require("../../util/consts");
+const { category } = require("../models/category");
 const { product } = require("../models/product");
 
 exports.uploadProduct = async (data) => {
@@ -46,7 +47,14 @@ exports.searchProduct = async (query, offset, limit) => {
     return await product.findAll(
         {
             where: query,
-            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.spec],
+            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.spec, PARAMS.status],
+            include:[
+                {
+                    model: category,
+                    attributes:[PARAMS.uid, PARAMS.name],
+                    as:"Category"
+                }
+            ],
             offset,
             limit
         }
