@@ -62,6 +62,21 @@ exports.searchProduct = async (query, offset, limit) => {
     )
 }
 
+
+exports.countProducts = async (query) => {
+
+    query[PARAMS.isDeleted] = true
+
+    return await product.count(
+        {
+            where: query,
+        }
+
+    )
+}
+
+
+
 exports.deleteProductQuery = async (productId) => {
     return await product.update({ [PARAMS.isDeleted]: true }, { where: { [PARAMS.uid]: productId } })
 }

@@ -140,7 +140,6 @@ exports.deleteCoupon = catchAsync(async (req, res) => {
 
 })
 
-
 exports.updateCouponDetails = catchAsync(async (req, res) => {
     const couponId = req.params.couponId
     const valid_ = couponUpdateValidator.validate(req.body)

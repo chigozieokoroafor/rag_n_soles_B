@@ -1,12 +1,15 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema } = require("../util/validators/productsValidator");
+
+
+let product_paging = {}
 
 
 
@@ -36,9 +39,9 @@ exports.addProducts = catchAsync(async (req, res) => {
     success(res, {}, "Product uploaded successfully")
 
     const productId = product.uid
-    
+
     const images = await processAllImages(req.files)
-    
+
 
     await uploadProductImage(productId, images)
 
@@ -120,20 +123,20 @@ exports.updateProducts = catchAsync(async (req, res) => {
 
     const product = getspecificProduct(productId)
 
-    if(!product){
-        return notFound(res , "Product not found")
+    if (!product) {
+        return notFound(res, "Product not found")
     }
 
-    let update  = Object(req.body)
+    let update = Object(req.body)
 
-    if (update[PARAMS.spec]){
+    if (update[PARAMS.spec]) {
         update[PARAMS.spec] = JSON.parse(update[PARAMS.spec])
 
     }
 
     await updateProductDetails(productId, update)
 
-    if (req.files){
+    if (req.files) {
         const images = await processAllImages(req.files)
         await uploadProductImage(productId, images)
     }
@@ -168,8 +171,20 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
         }
     }
 
-    const data = await searchProduct(actual_query, offset, FETCH_LIMIT)
+    const promises = await Promise.allSettled([searchProduct(actual_query, offset, FETCH_LIMIT), countProducts(actual_query)])
 
-    return success(res, data, "testing")
+    const data = promises[0].value
+    const count = promises[1].value
+    const total_pages = Math.ceil(count / FETCH_LIMIT)
+
+
+
+
+
+
+    return success(res, {
+        products: data,
+        pages: total_pages
+    }, "testing")
 
 })
