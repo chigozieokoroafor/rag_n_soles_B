@@ -32,6 +32,9 @@ admin.get("/coupon", adminAuth, adminController.fetchCoupons)
 admin.delete("/coupon/:couponId", adminAuth, adminController.deleteCoupon)
 admin.put("/coupon/:couponId", adminAuth, adminController.updateCouponDetails)
 
+admin.post("/admin/", adminAuth, adminController.createAdmin)
+admin.get("/admin/", adminAuth, adminController.fetchAdmins)
+admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
 module.exports = {
     adminRouter: admin

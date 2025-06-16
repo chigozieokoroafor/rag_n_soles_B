@@ -55,6 +55,7 @@ exports.PARAMS = {
     createdAt:"createdAt",
     status:"status",
     business_name:"business_name",
+    role:"role"
     
 }
 

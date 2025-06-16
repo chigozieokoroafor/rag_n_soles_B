@@ -267,7 +267,7 @@ exports.initializePayment = async (ref, amount, email, meta) => {
 
 }
 
-exports.sendAdminMailCredentials = async(email, password) =>{
+exports.sendAdminMailCredentials = (email, password) =>{
     const html = `
     <!DOCTYPE html>
 <html lang="en">

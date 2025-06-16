@@ -40,7 +40,7 @@ exports.createFirstAdmin = async () => {
     const d = (await admin.create(
         {
             [PARAMS.email]: process.env.DEFAULT_RECIEPIENT,
-            [PARAMS.username]: "admin",
+            [PARAMS.name]: "admin",
             [PARAMS.password]: hashSync(pwd)
         }
     ))?.toJSON()
@@ -57,6 +57,10 @@ exports.createAdmin = async () => {
 
         console.log("cred========", cred)
     }
+}
+
+exports.insertExtraAdmin = async(data) =>{
+    return await admin.create(data)
 }
 
 exports.getAllUsers = async (query, limit, offset) => {
@@ -88,4 +92,16 @@ exports.countVendors = async (where) =>{
             where:where
         }
     )
+}
+
+exports.getadmins = async() =>{
+    return await admin.findAll(
+        {
+            attributes:[PARAMS.uid,PARAMS.name, PARAMS.email, PARAMS.status, PARAMS.phone_no, PARAMS.role, PARAMS.createdAt]
+        }
+    )
+}
+
+exports.updateAdminDetails = async(uid, update) =>{
+    return await admin.update(update, {where:{uid}})
 }

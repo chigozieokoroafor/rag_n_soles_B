@@ -19,13 +19,25 @@ const admin = conn.define(MODEL_NAMES.admin, {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    username:{
+    name:{
         type: DataTypes.STRING(255),
         allowNull:false
+    },
+    phone_no:{
+        type:DataTypes.STRING(255),
+        allowNull:true
     },
     password:{
         type: DataTypes.TEXT("long"),
         allowNull:false
+    },
+    status:{
+        type: DataTypes.STRING(50),
+        defaultValue:"Active"
+    },
+    [PARAMS.role]:{
+        type:DataTypes.STRING(20),
+        defaultValue:"Admin"
     }
 }, {
     tableName: MODEL_NAMES.admin,
