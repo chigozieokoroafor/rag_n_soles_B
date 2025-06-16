@@ -24,6 +24,7 @@ exports.addProducts = catchAsync(async (req, res) => {
     data[PARAMS.categoryId] = req.body[PARAMS.categoryId]
     data[PARAMS.price] = req.body[PARAMS.price]
     data[PARAMS.spec] = JSON.parse(req.body[PARAMS.spec])
+    data[PARAMS.status] = req.body[PARAMS.status]
 
     let product
 

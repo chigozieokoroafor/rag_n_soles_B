@@ -40,6 +40,13 @@ exports.productUploadSchema = Joi.object(
             "array.includesRequiredUnknowns": "Specifications items must contain name and unit.",
             "object.base":"kindly provide the details of the specifications name and unit."
         }),
+
+        status: Joi.string().required().messages(
+            {
+                "any.required": "Kindly provide status of product, Active or Inactive",
+                "string.base": "Kindly provide status of product, Active or Inactive"
+            }
+        )
         
     }
 ).required().messages(
