@@ -9,6 +9,7 @@ const { product, coupon } = require("./models/product")
 const { review } = require("./models/review")
 const { shipping } = require("./models/shhipping")
 const { transaction } = require("./models/transaction")
+const { deliv_locations } = require("./models/deliv_locations")
 
 
 exports.sync = async () => {
@@ -27,6 +28,7 @@ exports.sync = async () => {
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})
                 // coupon.sync({alter:true})
+                deliv_locations.sync({alter:true})
             ]
         )
     })

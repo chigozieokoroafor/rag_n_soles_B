@@ -9,7 +9,8 @@ exports.MODEL_NAMES = {
     review:"Reviews",
     images:"Images",
     order:"Orders",
-    coupon:"Coupon"
+    coupon:"Coupon",
+    deliv_locations:"Delivery_Locations"
 }
 
 exports.STATUSES = {

@@ -3,6 +3,8 @@ const baseController = require("../controllers/baseController")
 const productController = require("../controllers/productController")
 const cartController = require("../controllers/cartController")
 const paymentController = require("../controllers/paymentController")
+const  adminController = require("../controllers/adminController")
+
 const { baseAuth } = require("../middleware/auth")
 
 const base = Router()
@@ -17,6 +19,9 @@ base.get("/category", productController.fetchCategories)
 base.get("/category/:category_id", productController.fetchProductsUnderCategory)
 base.get("/product/:product_id", productController.getSpecificProduct)
 base.get("/products", productController.getAllProductsWithFilter)
+
+
+base.get("/location", adminController.fetchlocation)
 // base.get("/products/popular", productController.getPopularProducts)
 // base.get("/products/new", productController.getNewArrivals)
 base.post("/cart", baseAuth, cartController.addItemToCart)

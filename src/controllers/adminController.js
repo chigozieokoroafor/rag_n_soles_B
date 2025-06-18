@@ -1,7 +1,7 @@
 require("dotenv").config()
 
 const { Op } = require("sequelize");
-const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin } = require("../db/querys/admin");
+const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation } = require("../db/querys/admin");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = require("../util/base");
@@ -11,6 +11,7 @@ const { countAllproducts } = require("../db/querys/products");
 const { insertCoupon, getCoupons, deleteCoupon, updateCoupon } = require("../db/querys/category");
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 const { hashSync } = require("bcryptjs");
+const { locUpload, locUpdate } = require("../util/validators/locationValidator");
 
 
 exports.getUsers = catchAsync(async (req, res) => {
@@ -221,54 +222,53 @@ exports.updateAdmin = catchAsync(async(req, res) =>{
 
 
 // billing
-// exports.createlocation = catchAsync(async (req, res) => {
-//     const valid_ = createAdminSchema.validate(req.body)
+exports.createlocation = catchAsync(async (req, res) => {
+    const valid_ = locUpload.validate(req.body)
 
-//     if (valid_.error){
-//         console.log(valid_.error.details)
-//         return generalError(res, valid_.error.message)
-//     }
+    if (valid_.error){
+        console.log(valid_.error.details)
+        return generalError(res, valid_.error.message)
+    }
 
-//     const admin_exists = await fetchAdmninforLogin(req.body[PARAMS.email])
+    await createDeliveryLocations(req.body)
 
-//     if (admin_exists){
-//         return generalError(res, "An admin with email provided exists", {})
-//     }
-//     const pwd = createUUID()
-//     req.body[PARAMS.password] = hashSync(pwd)
-
-//     try{
-//         sendAdminMailCredentials(req.body[PARAMS.email], pwd)
-//     }catch(error){
-//         return generalError(res, "Unable  to send admin credentials")
-//     }
-
-//     await insertExtraAdmin(req.body)
-
-//     success(res, {}, "Account credentials created and sent.")
+    success(res, {}, "Delivery location created.")
 
     
-// })
+})
 
-// exports.fetchlocation = catchAsync(async(req, res)=>{
-//     const data = await getadmins()
+exports.fetchlocation = catchAsync(async(req, res)=>{
+    const data = await fetchLocations()
 
-//     return success(res, data, "Fetched")
-// })
+    return success(res, data, "Fetched")
+})
 
-// exports.updatelocation = catchAsync(async(req, res) =>{
-//     const uid  = req.params.uid
-//     const valid_ = adminSchema.validate(req.body)
-//     if(valid_.error){
-//         return generalError(res, valid_.error.message, {})
-//     }
-    
-//     const admin_exists = checkAdmin(uid)
-//     if(!admin_exists){
-//         return notFound(res, "Admin profile not found")
-//     }
+exports.updatelocation = catchAsync(async(req, res) =>{
+    const uid  = req.params.id
+    const valid_ = locUpdate.validate(req.body)
+    if(valid_.error){
+        return generalError(res, valid_.error.message, {})
+    }
 
-//     await updateAdminDetails(uid, req.body)
 
-//     return success(res, {}, "User details updated")
-// })
+    const loc = await fetchSpecLocation(uid)
+    if(!loc){
+        return notFound(res, "Delivery Location not found")
+    }
+    await updateSpecLocation(uid, req.body)
+
+    return success(res, {}, "User details updated")
+})
+
+exports.deleteLocation = catchAsync(async(req, res)=>{
+    const uid  = req.params.id
+
+    const loc = await fetchSpecLocation(uid)
+    if(!loc){
+        return notFound(res, "Delivery Location not found")
+    }
+
+    await deleteLocation(uid)
+
+    return success(res, {}, "Delivery location deleted.")
+}) 

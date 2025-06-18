@@ -3,6 +3,7 @@ const { PARAMS } = require("../../util/consts");
 const { admin } = require("../models/admin");
 const { hashSync } = require("bcryptjs");
 const { user } = require("../models/user");
+const { deliv_locations } = require("../models/deliv_locations");
 
 exports.checkAdmin = async (uid) => {
     return await admin.findOne({ where: { uid } })
@@ -104,4 +105,27 @@ exports.getadmins = async() =>{
 
 exports.updateAdminDetails = async(uid, update) =>{
     return await admin.update(update, {where:{uid}})
+}
+
+exports.createDeliveryLocations = async(data) =>{
+    return await deliv_locations.create(data)
+}
+
+exports.fetchLocations = async() =>{
+    return await deliv_locations.findAll({})
+}
+
+exports.fetchSpecLocation = async(id) =>{
+    return await deliv_locations.findOne({where:{id}})
+}
+
+
+exports.updateSpecLocation = async(id, update)=> {
+    return await deliv_locations.update(update, {
+        where:{id}
+    })
+}
+
+exports.deleteLocation = async(id) =>{
+    return await deliv_locations.destroy({where:{id}})
 }
