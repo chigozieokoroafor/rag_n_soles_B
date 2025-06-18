@@ -17,7 +17,12 @@ exports.STATUSES = {
     pending: "PENDING",
     to_be_delivered:"",
     approved:"APPROVED",
-    blocked:"BLOCKED"
+    blocked:"BLOCKED",
+    processed:"PROCESSING",
+    delivered:"DELIVERED",
+    transit:"IN TRANSIT",
+    
+
 }
 
 exports.PARAMS = {
