@@ -38,7 +38,7 @@ exports.createAccount = catchAsync(async (req, res) => {
 
 
 
-    const token = generateToken({ id: uid })
+    const token = generateToken({ id: uid }, 1*10*60, process.env.AUTH_SECRET)
     const baseUrl = process.env.API_BASE_URL + `?token=${token}`
 
     // console.log("ur:::, base:::", baseUrl)
