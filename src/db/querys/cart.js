@@ -1,23 +1,24 @@
 const { PARAMS } = require("../../util/consts");
 const { cart } = require("../models/cart");
+const { order } = require("../models/order");
 const { product } = require("../models/product");
 
-exports.addToCartQuery = async (data) =>{
+exports.addToCartQuery = async (data) => {
     return await cart.create(data)
 }
 
-exports.fetchCartItems = async(uid, offset, limit) =>{
+exports.fetchCartItems = async (uid, offset, limit) => {
     return await cart.findAll(
         {
-            where:{
+            where: {
                 uid,
-                [PARAMS.ordered]:false
+                [PARAMS.ordered]: false
 
             },
-            include:[
+            include: [
                 {
-                    model:product,
-                    attributes:[PARAMS.uid, PARAMS.img_url, PARAMS.specifications, PARAMS.name]
+                    model: product,
+                    attributes: [PARAMS.uid, PARAMS.img_url, PARAMS.specifications, PARAMS.name]
                 }
             ],
             offset,
@@ -26,15 +27,15 @@ exports.fetchCartItems = async(uid, offset, limit) =>{
     )
 }
 
-exports.fetchCartItemsToOrder = async(uid) =>{
+exports.fetchCartItemsToOrder = async (uid) => {
     return await cart.findAll(
         {
-            where:{
+            where: {
                 uid,
-                [PARAMS.ordered]:false
+                [PARAMS.ordered]: false
 
             },
-            attributes:[PARAMS.id, PARAMS.total_amount]
+            attributes: [PARAMS.id, PARAMS.total_amount]
             // include:[
             //     {
             //         model:product,
@@ -45,7 +46,11 @@ exports.fetchCartItemsToOrder = async(uid) =>{
     )
 }
 
+exports.updateCartItemsforOrder = async (update, where) => {
+    await cart.update(update, { where: where })
+}
 
-exports.updateCartItemsforOrder = async(update, where) =>{
-    await cart.update(update, {where:where})
+
+exports.createOrder = async (data) => {
+    return await order.create(data)
 }

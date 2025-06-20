@@ -226,6 +226,11 @@ exports.createUUID = () => {
     return randToken.uid(15)
 }
 
+exports.createLenUid = (size) => {
+    return randToken.uid(size)
+}
+
+
 exports.initializePayment = async (ref, amount, email, meta) => {
     console.log("metaL:::::",meta)
 

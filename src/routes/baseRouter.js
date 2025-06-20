@@ -28,6 +28,9 @@ base.post("/cart", baseAuth, cartController.addItemToCart)
 base.get("/cart", baseAuth, cartController.getCart)
 base.get("/checkout", baseAuth, cartController.checkout)
 
+
+base.post("/order", baseAuth, cartController.createOrder)
+
 base.post("/payment/webhook",paymentController.paymentWebhook )
 
 

@@ -1,6 +1,25 @@
 const Joi = require("joi")
 const { PARAMS } = require("../consts")
 
+
+exports.specItems = Joi.object(
+    {
+        "size": Joi.string().required().messages(
+            {
+                "any.required": "Kindly select a size of product to be purchased.",
+                "string.empty": "Kindly select a valid size of product."
+            }
+        ),
+        "count": Joi.number().required().messages(
+            {
+                "any.required": "Kindly provide the number of items being purchased for the specification.",
+                "number.empty": "Kindly select a how much of the specific size to be purchased."
+            }
+        )
+    }
+)
+
+
 exports.addToCartSchema = Joi.object(
     {
         [PARAMS.productId]: Joi.string().required().messages(
@@ -9,25 +28,12 @@ exports.addToCartSchema = Joi.object(
                 "string.empty": "Kindly select a valid product to add to cart."
             }
         ),
-        [PARAMS.units]: Joi.number().required().messages(
+        [PARAMS.specifications]: Joi.array().items(this.specItems).required().messages(
             {
-                "any.required": "kindly provide the units of products being purchased.",
-                "number.empty": "Units to be purchased cannot be less than 1."
+                "any.required": "Kindly provide product specification.",
+                "array.base": "Kindly provide a list of prefered sizes.",
+                'array.includesRequiredUnknowns': "Kindly select at least one size"
             }
-        ),
-        [PARAMS.unit_price]:Joi.number().required().messages(
-            {
-                "any.required": "kindly provide the unit price of products being purchased.",
-                // "number.empty": "Unit price  of product to be purchased cannot be less than 1."
-            }
-        ),
-        [PARAMS.specifications]: Joi.object(
-            // {
-            //     "color",
-            //     "size"
-            // }
-        ).required().messages(
-            { "any.required": "Kindly provide a product specification." }
         )
     }
 ).required().messages(
@@ -39,7 +45,22 @@ exports.addToCartSchema = Joi.object(
 
 
 exports.checkoutSchema = Joi.object(
+    {
+        products: Joi.array().items(this.addToCartSchema).required().messages(
+            {
+                "any.required": "Products required to checkout",
+                "array.base": "Kindly provide a list of products.",
+                'array.includesRequiredUnknowns': "Kindly select at least one product"
+            }
+        ),
 
+        coupon :Joi.string().messages(
+            {
+                "string.empty": "Kindly provide a valid  coupon code."
+            }
+        )
+
+    }
 ).required().messages(
     {
         "any.required": "Checkout details required",
