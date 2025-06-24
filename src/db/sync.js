@@ -5,7 +5,7 @@ const { cart } = require("./models/cart")
 const { category } = require("./models/category")
 const { images } = require("./models/images")
 const { order } = require("./models/order")
-const { product, coupon } = require("./models/product")
+const { product, coupon, specifications } = require("./models/product")
 const { review } = require("./models/review")
 const { shipping } = require("./models/shhipping")
 const { transaction } = require("./models/transaction")
@@ -19,16 +19,17 @@ exports.sync = async () => {
             [
                 // user.sync({ alter: true }), // merge to main
                 // admin.sync({ alter: true }),
-                // cart.sync({ alter: true }), 
+                cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 // images.sync({alter:true}),
-                order.sync({alter:true}),
-                // product.sync({alter:true}),
+                // order.sync({alter:true}),
+                product.sync({alter:true}),
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})
                 // coupon.sync({alter:true})
                 // deliv_locations.sync({alter:true})
+                specifications.sync({alter: true})
             ]
         )
     })

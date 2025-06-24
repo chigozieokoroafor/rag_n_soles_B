@@ -1,6 +1,6 @@
 const { PARAMS } = require("../../util/consts");
 const { category } = require("../models/category");
-const { product } = require("../models/product");
+const { product, specifications } = require("../models/product");
 
 exports.uploadProduct = async (data) => {
     return await product.create(data)
@@ -34,7 +34,16 @@ exports.getspecificProduct = async (productId) => {
                 [PARAMS.uid]: productId,
                 [PARAMS.isDeleted]: false
             },
-            attributes: [PARAMS.categoryId, PARAMS.colors, PARAMS.description, PARAMS.discount, PARAMS.img_url, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.units, PARAMS.specifications],
+            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
+            include: [
+                {
+                    model: specifications
+                },
+                {
+                    model: category,
+                    as: "Category"
+                }
+            ]
 
         }
     )
@@ -47,12 +56,16 @@ exports.searchProduct = async (query, offset, limit) => {
     return await product.findAll(
         {
             where: query,
-            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.spec, PARAMS.status],
+            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
             include: [
                 {
                     model: category,
                     attributes: [PARAMS.uid, PARAMS.name],
                     as: "Category"
+                },
+                {
+                    model: specifications,
+                    attributes: [PARAMS.id, PARAMS.name, PARAMS.units]
                 }
             ],
             offset,
@@ -110,3 +123,10 @@ exports.countAllproducts = async (
     )
 }
 
+exports.reduceProductCount = async (count, id) => {
+    await specifications.decrement(PARAMS.units, { by: count, where: { id } })
+}
+
+exports.insertProductspecification = async (data) => {
+    return await specifications.bulkCreate(data)
+}

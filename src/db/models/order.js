@@ -22,6 +22,9 @@ const order = conn.define(MODEL_NAMES.order, {
     products: {
         type: DataTypes.JSON
     },
+    paymentRef:{
+        type: DataTypes.DOUBLE
+    },
     status: { // delivered or not
         type: DataTypes.STRING(255),
         allowNull: false,

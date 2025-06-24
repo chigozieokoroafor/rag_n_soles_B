@@ -1,14 +1,12 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema } = require("../util/validators/productsValidator");
-
-
 
 
 exports.addProducts = catchAsync(async (req, res) => {
@@ -23,8 +21,9 @@ exports.addProducts = catchAsync(async (req, res) => {
     data[PARAMS.name] = req.body[PARAMS.name]
     data[PARAMS.categoryId] = req.body[PARAMS.categoryId]
     data[PARAMS.price] = req.body[PARAMS.price]
-    data[PARAMS.spec] = JSON.parse(req.body[PARAMS.spec])
     data[PARAMS.status] = req.body[PARAMS.status]
+
+    let spec = JSON.parse(req.body[PARAMS.spec])
 
     let product
 
@@ -39,12 +38,18 @@ exports.addProducts = catchAsync(async (req, res) => {
 
     const productId = product.uid
 
+    spec.forEach((item, index) => {
+        spec[index].productId = productId
+    });
+
+    // console.log(spec)
+    await insertProductspecification(spec)
+
     const images = await processAllImages(req.files)
 
 
     await uploadProductImage(productId, images)
 
-    // console.log(img_list)
 
 })
 
@@ -175,10 +180,6 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     const data = promises[0].value
     const count = promises[1].value
     const total_pages = Math.ceil(count / FETCH_LIMIT)
-
-
-
-
 
 
     return success(res, {

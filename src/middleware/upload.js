@@ -7,7 +7,7 @@ const { ALL_MIME_TYPES } = require("../util/consts")
 const storage = multer.memoryStorage()
 const fileFilter = (req, file, cb) =>{
     const allowedFileTypes = [
-        ALL_MIME_TYPES.jpeg, ALL_MIME_TYPES.jpg, ALL_MIME_TYPES.png
+        ALL_MIME_TYPES.jpeg, ALL_MIME_TYPES.jpg, ALL_MIME_TYPES.png, ALL_MIME_TYPES.xpng
     ]
     console.log("file mimetype", file.mimetype)
     

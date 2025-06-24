@@ -10,7 +10,8 @@ exports.MODEL_NAMES = {
     images:"Images",
     order:"Orders",
     coupon:"Coupon",
-    deliv_locations:"Delivery_Locations"
+    deliv_locations:"Delivery_Locations",
+    specifications:"Product_specifications"
 }
 
 exports.STATUSES = {
@@ -61,7 +62,9 @@ exports.PARAMS = {
     createdAt:"createdAt",
     status:"status",
     business_name:"business_name",
-    role:"role"
+    role:"role",
+    products:"products",
+    product_specifications:"Product_specifications"
     
 }
 
@@ -496,7 +499,8 @@ exports.ALL_MIME_TYPES = {
     "plf": "application/vnd.pocketlearn",
     "pls": "application/pls+xml",
     "pml": "application/vnd.ctc-posml",
-    "png": "image/x-png",
+    "xpng": "image/x-png",
+    "png": "image/png",
     "pnm": "image/x-portable-anymap",
     "portpkg": "application/vnd.macports.portpkg",
     "potm": "application/vnd.ms-powerpoint.template.macroenabled.12",

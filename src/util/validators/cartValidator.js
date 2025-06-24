@@ -4,16 +4,24 @@ const { PARAMS } = require("../consts")
 
 exports.specItems = Joi.object(
     {
+        "id": Joi.number().required().messages(
+            {
+                "any.required": "Kindly the id of specification.",
+                "number.empty": "Kindly select precification."
+            }
+        ),
+
         "size": Joi.string().required().messages(
             {
                 "any.required": "Kindly select a size of product to be purchased.",
                 "string.empty": "Kindly select a valid size of product."
             }
         ),
-        "count": Joi.number().required().messages(
+        "count": Joi.number().min(1).required().messages(
             {
                 "any.required": "Kindly provide the number of items being purchased for the specification.",
-                "number.empty": "Kindly select a how much of the specific size to be purchased."
+                "number.empty": "Kindly select a how much of the specific size to be purchased.",
+                "number.min":"minimus is 1"
             }
         )
     }
@@ -58,7 +66,13 @@ exports.checkoutSchema = Joi.object(
             {
                 "string.empty": "Kindly provide a valid  coupon code."
             }
-        )
+        ),
+        // total_amount: Joi.number().required().messages(
+        //     {
+        //         "any.required":"total_amount required.",
+        //         "number.base":"Kidnly provide a valid amount"
+        //     }
+        // )
 
     }
 ).required().messages(

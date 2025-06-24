@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const { addToCartQuery, fetchCartItems, fetchCartItemsToOrder, updateCartItemsforOrder, createOrder } = require("../db/querys/cart");
-const { getspecificProduct } = require("../db/querys/products");
+const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, internalServerError, success } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment } = require("../util/base");
@@ -110,12 +110,57 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     // till payment is processed before product units are reduced.
 
-    const order = await createOrder(req.body)
+    // const order = await createOrder(req.body)
+    let total_amount = 0.0
+    const products = req.body[PARAMS.products]
 
-    console.log("order:::::", order)
+    const promises = []
+    // exit_iteration = false
+
+    for (cart_item of products) {
+        const product = await getspecificProduct( cart_item[PARAMS.productId])
+        if (!product){
+            notFound(res, "Product not found")
+            // exit_iteration = true
+            return
+        }
+
+        for (spec of cart_item[PARAMS.specifications]){
+            const product_spec = product[PARAMS.product_specifications].find(spec_spec => spec_spec.id == spec.id)
+
+            if (!product_spec){
+                notFound(res, `Specification provided not found: ${spec.size}`, )
+                return
+            }
+
+            if(product_spec.units < spec.count){
+                generalError(res, `available units for size ${spec.size} doesn't reach the requested amount`)
+                return
+            }
 
 
+            total_amount += product.price * spec.count
+            promises.push(reduceProductCount(spec.count, spec.id))
+        }
 
-    return success(res,{}, "working.")
+    };
+
+
+    console.log(`total====> ${total_amount}`)
+
+    req.body.total_amount = total_amount
+
+    const temp_order = await addToCartQuery(req.body)
+
+    const response = await initializePayment(createUUID(), total_amount*100, "", {cartId: temp_order.cartId})
+    if (!response.success){
+        return generalError(res, response.msg, {})
+    }
+
+    success(res,{url: response.url}, "Kindly proceed to making payment.")
+
+    await Promise.allSettled(promises)
+
+    
 
 })
