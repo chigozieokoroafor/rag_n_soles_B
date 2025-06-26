@@ -34,7 +34,7 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
 
             const products = item.products
             const userId = item.userId
-            const amount = item.amount
+            const amount = item.total_amount
 
 
             const trx = await uploadTransaction(
@@ -53,6 +53,7 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
             })
 
             await createOrder(products)
+            await item.destroy()
             
             
         }
