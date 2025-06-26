@@ -48,6 +48,7 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
 
             products.forEach((product, index) =>{
                 product.orderId = orderId
+                product.userId = userId
                 products[index] = product
                 
             })
