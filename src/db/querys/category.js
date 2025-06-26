@@ -45,6 +45,11 @@ exports.getCoupons = async(query,limit, offset) =>{
     )
 }
 
+exports.fetchSingleCoupon = async(code) =>{
+    return await coupon.findOne({where:{code, status: "Active"}})
+}
+
+
 exports.deleteCoupon = async(id) =>{
     return await coupon.destroy({where: {id}})
 }

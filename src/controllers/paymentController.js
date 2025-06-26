@@ -2,12 +2,14 @@
 require("dotenv").config()
 
 const { Op } = require("sequelize");
-const { updateCartItemsforOrder } = require("../db/querys/cart");
-const { updateTransaction } = require("../db/querys/transactions");
+// const { updateCartItemsforOrder } = require("../db/querys/cart");
+// const { updateTransaction } = require("../db/querys/transactions");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { success, generalError } = require("../errorHandler/statusCodes");
 const { PARAMS } = require("../util/consts");
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { uploadTransaction } = require("../db/querys/transactions");
+const { fetchSingleCartItem, createOrder } = require("../db/querys/cart");
 
 const paystackSecret = process.env.PAYSTACK_SECRET
 
@@ -18,21 +20,39 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
     if (hash != req.headers['x-paystack-signature']) {
         return generalError(res, "Lmao, transaction unverified.")
     }
-    console.log("recieved:::webhook", req.body )
+    // console.log("recieved:::webhook", req.body )
     success(res, {}, "Recieved")
     
     try{
         console.log("here::: success")
         const data = req.body;
         if (data.event == "charge.success"){      
-            const cart_ids = data.data.metadata[PARAMS.cart_ids]
-            const orderId = data.data.metadata[PARAMS.orderId]
-            const promises = await Promise.allSettled([updateTransaction({status:"Success"}, orderId ), updateCartItemsforOrder({ orderId: orderId , [PARAMS.ordered]:true}, { id: { [Op.in]: cart_ids } })])
 
-            promises.forEach((promise, index) =>{
-                console.log("promise:::::", index, ":::::", promise.status)
-                console.log("promise:::::", promise.reason)
+            const cartId  = data.data.metadata[PARAMS.cartId]
+
+            const item = await fetchSingleCartItem(cartId)
+
+            const products = item.products
+            const userId = item.userId
+            const amount = item.amount
+
+
+            const trx = await uploadTransaction(
+                {
+                    userId,
+                    reference:data.data.reference,
+                    amount: amount
+                }
+            )
+            const orderId = trx.orderId
+
+            products.forEach((product, index) =>{
+                product.orderId = orderId
+                products[index] = product
+                
             })
+
+            await createOrder(products)
             
             
         }

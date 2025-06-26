@@ -22,11 +22,12 @@ base.get("/products", productController.getAllProductsWithFilter)
 
 
 base.get("/location", adminController.fetchlocation)
+
 // base.get("/products/popular", productController.getPopularProducts)
 // base.get("/products/new", productController.getNewArrivals)
-base.post("/cart", baseAuth, cartController.addItemToCart)
-base.get("/cart", baseAuth, cartController.getCart)
-base.get("/checkout", baseAuth, cartController.checkout)
+// base.post("/cart", baseAuth, cartController.addItemToCart)
+// base.get("/cart", baseAuth, cartController.getCart)
+// base.get("/checkout", baseAuth, cartController.checkout)
 
 
 base.post("/order", baseAuth, cartController.createOrder)

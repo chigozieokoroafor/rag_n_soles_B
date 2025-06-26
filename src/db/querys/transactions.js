@@ -2,7 +2,7 @@ const { PARAMS } = require("../../util/consts");
 const { transaction } = require("../models/transaction");
 
 exports.uploadTransaction = async (data )=>{
-    await transaction.create(data)
+    return await transaction.create(data)
 }
 
 exports.fetchTransactions = async(limit, offset) =>{

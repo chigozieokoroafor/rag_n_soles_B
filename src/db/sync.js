@@ -19,17 +19,17 @@ exports.sync = async () => {
             [
                 // user.sync({ alter: true }), // merge to main
                 // admin.sync({ alter: true }),
-                cart.sync({ alter: true }), //sync with main
+                // cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 // images.sync({alter:true}),
-                // order.sync({alter:true}),
-                product.sync({alter:true}),
+                order.sync({alter:true}),
+                // product.sync({alter:true}),
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
-                // transaction.sync({alter:true})
+                transaction.sync({alter:true})
                 // coupon.sync({alter:true})
                 // deliv_locations.sync({alter:true})
-                specifications.sync({alter: true})
+                // specifications.sync({alter: true})
             ]
         )
     })

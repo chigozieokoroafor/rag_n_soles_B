@@ -22,6 +22,7 @@ exports.STATUSES = {
     processed:"PROCESSING",
     delivered:"DELIVERED",
     transit:"IN TRANSIT",
+    success:"SUCCESS"
     
 
 }
@@ -46,7 +47,7 @@ exports.PARAMS = {
     total_amount:"total_amount",
     isDeleted:"isDeleted",
     ordered:"ordered",
-    cartId:"cart_Id",
+    cartId:"cartId",
     orderId:"orderId",
     reference:"reference",
     amount:"amount",
@@ -64,7 +65,8 @@ exports.PARAMS = {
     business_name:"business_name",
     role:"role",
     products:"products",
-    product_specifications:"Product_specifications"
+    product_specifications:"Product_specifications",
+    
     
 }
 

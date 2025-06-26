@@ -97,7 +97,7 @@ const coupon = conn.define(MODEL_NAMES.coupon, {
         type:DataTypes.STRING(50),
         allowNull:false
     },
-    type:{
+    type:{ //percentage or fixed
         type:DataTypes.STRING(20),
         allowNull:false
     },

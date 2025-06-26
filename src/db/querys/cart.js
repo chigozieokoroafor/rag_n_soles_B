@@ -52,5 +52,11 @@ exports.updateCartItemsforOrder = async (update, where) => {
 
 
 exports.createOrder = async (data) => {
-    return await order.create(data)
+    return await order.bulkCreate(data)
+}
+
+
+
+exports.fetchSingleCartItem = async(cartId) =>{
+    return await cart.findOne({where: {[PARAMS.cartId]: cartId}})
 }

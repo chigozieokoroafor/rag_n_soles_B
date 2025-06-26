@@ -26,6 +26,7 @@ exports.fetchAdmninforMiddleware = async (uid) => {
             where: {
                 [PARAMS.uid]: uid
             },
+            attributes:[PARAMS.uid]
 
         }
     )
