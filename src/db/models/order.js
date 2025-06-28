@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { MODEL_NAMES, STATUSES } = require("../../util/consts");
 const { conn } = require("../base");
+
 // const { createLenUid } = require("../../util/base");
 
 const order = conn.define(MODEL_NAMES.order, {
@@ -32,6 +33,8 @@ const order = conn.define(MODEL_NAMES.order, {
     tableName: MODEL_NAMES.order,
     modelName: MODEL_NAMES.order
 })
+
+
 
 module.exports = {
     order

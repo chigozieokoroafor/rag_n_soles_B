@@ -22,8 +22,8 @@ exports.sync = async () => {
                 // cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 // images.sync({alter:true}),
-                // order.sync({alter:true}),
-                // product.sync({alter:true}),
+                order.sync({alter:true}),
+                product.sync({alter:true}),
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
                 // transaction.sync({alter:true})

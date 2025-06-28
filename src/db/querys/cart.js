@@ -55,6 +55,8 @@ exports.createOrder = async (data) => {
     return await order.bulkCreate(data)
 }
 
+exports.fetchOrders
+
 
 
 exports.fetchSingleCartItem = async(cartId) =>{

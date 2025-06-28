@@ -181,3 +181,9 @@ exports.createOrder = catchAsync(async (req, res) => {
     
 
 })
+
+exports.fetchOrders = catchAsync(async(req, res) =>{
+    const user_id = req.user?.id
+
+    
+})

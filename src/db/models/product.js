@@ -6,6 +6,7 @@ const { MODEL_NAMES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
 const { cart } = require("./cart");
+const { order } = require("./order");
 
 const product = conn.define(MODEL_NAMES.product, {
     id: {
@@ -134,6 +135,9 @@ cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
 
 product.hasMany(specifications, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
 specifications.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
+
+product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.id})
+order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.id })
 
 module.exports = {
     product,
