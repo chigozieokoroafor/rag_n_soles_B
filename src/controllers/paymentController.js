@@ -57,7 +57,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 userId,
                 orderId,
                 reference: data.reference,
-                total_amount: total_amount,
+                total_amount: amount,
 
             })
 
