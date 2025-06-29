@@ -56,7 +56,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             await insertIntoOrdersOnly({
                 userId,
                 orderId,
-                reference: data.reference,
+                reference: data.data.reference,
                 total_amount: amount,
 
             })
