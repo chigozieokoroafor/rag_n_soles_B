@@ -9,7 +9,7 @@ const { success, generalError } = require("../errorHandler/statusCodes");
 const { PARAMS } = require("../util/consts");
 const crypto = require("crypto");
 const { uploadTransaction } = require("../db/querys/transactions");
-const { fetchSingleCartItem, createOrder } = require("../db/querys/cart");
+const { fetchSingleCartItem, createOrder, insertIntoOrdersOnly } = require("../db/querys/cart");
 
 const paystackSecret = process.env.PAYSTACK_SECRET
 
