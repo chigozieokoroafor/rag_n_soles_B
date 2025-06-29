@@ -1,6 +1,7 @@
 const { PARAMS } = require("../../util/consts");
 const { cart } = require("../models/cart");
 const { order } = require("../models/order");
+const { ordersOnly } = require("../models/ordersOnly");
 const { product } = require("../models/product");
 
 exports.addToCartQuery = async (data) => {
@@ -55,8 +56,10 @@ exports.createOrder = async (data) => {
     return await order.bulkCreate(data)
 }
 
+exports.fetchSingleCartItem = async (cartId) => {
+    return await cart.findOne({ where: { [PARAMS.cartId]: cartId } })
+}
 
-
-exports.fetchSingleCartItem = async(cartId) =>{
-    return await cart.findOne({where: {[PARAMS.cartId]: cartId}})
+exports.countOrders = async (userId) => {
+    ordersOnly
 }
