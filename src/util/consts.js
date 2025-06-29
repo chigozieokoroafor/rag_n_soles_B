@@ -11,7 +11,8 @@ exports.MODEL_NAMES = {
     order:"Orders",
     coupon:"Coupon",
     deliv_locations:"Delivery_Locations",
-    specifications:"Product_specifications"
+    specifications:"Product_specifications",
+    ordersOnly:"OrdersOnly"
 }
 
 exports.STATUSES = {
@@ -66,6 +67,11 @@ exports.PARAMS = {
     role:"role",
     products:"products",
     product_specifications:"Product_specifications",
+    deliv_status:"deliv_status",
+    paymentStatus:"paymentStatus",
+    reference:"reference",
+    discount_type:"discount_type",
+    discount_value:"discount_value"
     
     
 }

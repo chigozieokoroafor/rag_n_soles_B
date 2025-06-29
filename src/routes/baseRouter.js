@@ -4,6 +4,7 @@ const productController = require("../controllers/productController")
 const cartController = require("../controllers/cartController")
 const paymentController = require("../controllers/paymentController")
 const  adminController = require("../controllers/adminController")
+const  vendorController = require("../controllers/vendorController")
 
 const { baseAuth } = require("../middleware/auth")
 
@@ -15,8 +16,11 @@ base.get("/verify", baseController.verify)
 
 base.get("/profile",baseAuth, baseController.fetchProfile)
 
-base.get("/category", productController.fetchCategories)
-base.get("/category/:category_id", productController.fetchProductsUnderCategory)
+base.get("/dashboard/metric", baseAuth,  vendorController.getMetrics)
+base.get("/orders", baseAuth, cartController.fetchOrders)
+
+// base.get("/category", productController.fetchCategories)
+// base.get("/category/:category_id", productController.fetchProductsUnderCategory)
 base.get("/product/:product_id", productController.getSpecificProduct)
 base.get("/products", productController.getAllProductsWithFilter)
 

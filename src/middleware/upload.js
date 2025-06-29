@@ -35,7 +35,7 @@ const uploadMiddleWare = (req, res, next) =>{
             return generalError(res, err.message)
         }
 
-        if (!req.files) {
+        if (!req.files || req.files?.length < 1) {
             return generalError(res, 'images required for product.');
           }
 

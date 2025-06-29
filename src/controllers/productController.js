@@ -10,6 +10,9 @@ const { productUploadSchema } = require("../util/validators/productsValidator");
 
 
 exports.addProducts = catchAsync(async (req, res) => {
+
+    console.log("files::::", req.files)
+
     const valid_ = productUploadSchema.validate(req.body)
     if (valid_.error) {
         console.log("error_details::::", valid_.error.details)

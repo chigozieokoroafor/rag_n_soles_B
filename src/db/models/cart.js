@@ -49,9 +49,9 @@ const cart = conn.define(MODEL_NAMES.cart,
             autoIncrement: true,
             primaryKey: true
         },
-        cartId:{
+        cartId: {
             type: DataTypes.STRING(255),
-            defaultValue: ()=>createUUID()
+            defaultValue: () => createUUID()
         },
         userId: {
             type: DataTypes.STRING(40),
@@ -65,13 +65,13 @@ const cart = conn.define(MODEL_NAMES.cart,
             allowNull: false,
             defaultValue: STATUSES.pending
         },
-        total_amount:{
+        total_amount: {
             type: DataTypes.DOUBLE,
-            allowNull:false
+            allowNull: false
         },
-        expiredAt:{
+        expiredAt: {
             type: DataTypes.DATE,
-            defaultValue: () => new Date( new Date().setMinutes( new Date().getMinutes() + 15))
+            defaultValue: () => new Date(new Date().setMinutes(new Date().getMinutes() + 15))
         }
     }
     , {

@@ -13,8 +13,8 @@ const { fetchSingleCartItem, createOrder } = require("../db/querys/cart");
 
 const paystackSecret = process.env.PAYSTACK_SECRET
 
-exports.paymentWebhook = catchAsync(async (req, res)=>{
-    
+exports.paymentWebhook = catchAsync(async (req, res) => {
+
     const hash = crypto.createHmac('sha512', paystackSecret).update(JSON.stringify(req.body)).digest('hex');
 
     if (hash != req.headers['x-paystack-signature']) {
@@ -22,13 +22,13 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
     }
     // console.log("recieved:::webhook", req.body )
     success(res, {}, "Recieved")
-    
-    try{
+
+    try {
         console.log("here::: success")
         const data = req.body;
-        if (data.event == "charge.success"){      
+        if (data.event == "charge.success") {
 
-            const cartId  = data.data.metadata[PARAMS.cartId]
+            const cartId = data.data.metadata[PARAMS.cartId]
 
             const item = await fetchSingleCartItem(cartId)
 
@@ -40,27 +40,35 @@ exports.paymentWebhook = catchAsync(async (req, res)=>{
             const trx = await uploadTransaction(
                 {
                     userId,
-                    reference:data.data.reference,
+                    reference: data.data.reference,
                     amount: amount
                 }
             )
             const orderId = trx.orderId
 
-            products.forEach((product, index) =>{
+            products.forEach((product, index) => {
                 product.orderId = orderId
                 product.userId = userId
                 products[index] = product
-                
+
+            })
+
+            await insertIntoOrdersOnly({
+                userId,
+                orderId,
+                reference: data.reference,
+                total_amount: total_amount,
+
             })
 
             await createOrder(products)
             await item.destroy()
-            
-            
+
+
         }
 
     }
-    catch(error){
+    catch (error) {
         console.log("error::paystackWebhook:::", error)
     }
 })

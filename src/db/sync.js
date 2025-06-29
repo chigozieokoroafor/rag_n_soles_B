@@ -10,6 +10,7 @@ const { review } = require("./models/review")
 const { shipping } = require("./models/shhipping")
 const { transaction } = require("./models/transaction")
 const { deliv_locations } = require("./models/deliv_locations")
+const { ordersOnly } = require("./models/ordersOnly")
 
 
 exports.sync = async () => {
@@ -22,14 +23,15 @@ exports.sync = async () => {
                 // cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 // images.sync({alter:true}),
-                order.sync({alter:true}),
-                product.sync({alter:true}),
+                // order.sync({alter:true}),
+                // product.sync({alter:true}),
                 // review.sync({alter:true}),
                 // shipping.sync({alter:true}),
-                // transaction.sync({alter:true})
-                // coupon.sync({alter:true})
-                // deliv_locations.sync({alter:true})
-                // specifications.sync({alter: true})
+                // transaction.sync({alter:true}),
+                // coupon.sync({alter:true}),
+                // deliv_locations.sync({alter:true}),
+                // specifications.sync({alter: true}),
+                // ordersOnly.sync({alter:true})
             ]
         )
     })
