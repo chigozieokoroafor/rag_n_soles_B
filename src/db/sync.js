@@ -18,7 +18,7 @@ exports.sync = async () => {
     conn.authenticate().then(async () => {
         await Promise.allSettled(
             [
-                // user.sync({ alter: true }), // merge to main
+                user.sync({ alter: true }), // merge to main
                 // admin.sync({ alter: true }),
                 // cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),

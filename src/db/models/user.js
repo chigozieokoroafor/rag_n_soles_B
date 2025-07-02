@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { MODEL_NAMES, STATUSES } = require("../../util/consts");
+const { MODEL_NAMES, STATUSES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
 
@@ -59,7 +59,7 @@ const user = conn.define(MODEL_NAMES.user, {
         type: DataTypes.TEXT("long"),
         allowNull:true
     },
-    shpping_address:{
+    [PARAMS.shpping_address]:{
         type: DataTypes.TEXT("long"),
         allowNull:true 
     }  
