@@ -21,7 +21,7 @@ exports.fetchUserForMiddleware = async (uid) => {
     return await user.findOne(
         {
             where:{uid},
-            attributes:[PARAMS.email, PARAMS.uid, PARAMS.billing_address, PARAMS.shpping_address]
+            attributes:[PARAMS.email, PARAMS.uid, PARAMS.billing_address, PARAMS.shpping_address, PARAMS.business_name, PARAMS.username]
         }
     )
 }
