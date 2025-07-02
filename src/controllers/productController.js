@@ -1,12 +1,12 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema } = require("../util/validators/categoryValidator");
-const { productUploadSchema, productUpdateSchema, productSpecificationUpdateSchema } = require("../util/validators/productsValidator");
+const { productUploadSchema, productUpdateSchema, productSpecificationUpdateSchema, imageUpdateValidator } = require("../util/validators/productsValidator");
 
 
 exports.addProducts = catchAsync(async (req, res) => {
@@ -233,7 +233,16 @@ exports.deleteImages = catchAsync(async (req, res) => {
 })
 
 exports.updateDefaultImages = catchAsync(async (req, res) =>{
-    productId, imageId, isDefault
+    const productId = req.params.productId
+
+    const valid_ = imageUpdateValidator.validate(req.body)
+    if (valid_.error){
+        return generalError(res, valid_.error.message, {})
+    }
+    
+    await updateDefaultImage(productId, req.body[PARAMS.id], req.body[PARAMS.isDefault])
+
+    return success(res, {}, "Updated")
 })
 
 // for search

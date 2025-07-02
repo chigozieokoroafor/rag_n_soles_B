@@ -23,6 +23,8 @@ admin.delete("/product/:productId", adminAuth, productController.deleteProducts)
 admin.put("/product/:productId", adminAuth, uploadMiddleWareNotrequired, productController.updateProducts)
 
 admin.delete("/product/:productId/images", adminAuth, productController.deleteImages)
+admin.put("/product/:productId/images/setDefault", adminAuth, productController.updateDefaultImages)
+
 
 admin.get("/users", adminAuth, adminController.getUsers)
 admin.put("/users", adminAuth, adminController.updateUserStatus)

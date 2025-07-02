@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { PARAMS } = require("../consts");
 
 exports.productUploadSchema = Joi.object(
     {
@@ -130,5 +131,26 @@ exports.productSpecificationUpdateSchema = Joi.array().items(
     {
         "any.required": "Product Specification required as an array if passed",
 
+    }
+)
+
+exports.imageUpdateValidator = Joi.object(
+    {
+        id:Joi.string().required().messages(
+            {
+                "any.required":"Image id required",
+                "string.base":"Kindly provide imgae id as a string/integer"
+            }
+        ),
+        [PARAMS.isDefault]:Joi.boolean().required().messages(
+            {
+                "any.required":"Kindly provide an option if it's default or not",
+                "boolean.base": "Provide your selection as true or false"
+            }
+        )
+    }
+).required().messages(
+    {
+        "any.required": "Request body required, id, isDefault"
     }
 )

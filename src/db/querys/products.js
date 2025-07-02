@@ -158,13 +158,22 @@ exports.deleteBulkSpecification = async (ids) => {
     )
 }
 
-exports.deleteProductImages = async(productId, imageId) =>{
+exports.deleteProductImages = async (productId, imageId) => {
     return await images.destroy(
         {
-            where:{
+            where: {
                 id: imageId,
                 productId: productId
             }
         }
     )
+}
+
+exports.updateDefaultImage = async (productId, imageId, isDefault) => {
+    await images.update({ [PARAMS.isDefault]: isDefault }, {
+        where: {
+            id: imageId,
+            [PARAMS.productId]: productId
+        }
+    })
 }
