@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
-const { MODEL_NAMES, STATUSES } = require("../../util/consts");
+const { MODEL_NAMES, STATUSES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
+const { order } = require("./order");
 // const { createLenUid } = require("../../util/base");
 
 const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
@@ -44,6 +45,10 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
     tableName: MODEL_NAMES.ordersOnly,
     modelName: MODEL_NAMES.ordersOnly
 })
+
+ordersOnly.hasMany(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
+
+order.belongsTo(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
 
 module.exports = {
     ordersOnly

@@ -1,5 +1,6 @@
 const { PARAMS, STATUSES } = require("../../util/consts");
 const { cart } = require("../models/cart");
+const { images } = require("../models/images");
 const { order } = require("../models/order");
 const { ordersOnly } = require("../models/ordersOnly");
 const { product } = require("../models/product");
@@ -108,9 +109,26 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
                 userId: userId,
 
             },
-            attributes:[PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
+            // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
+            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
+            include: [
+                {
+                    model: order,
+                    attributes: [PARAMS.specifications],
+                    include: [
+                        {
+                            model: product,
+                            attributes: [PARAMS.name, PARAMS.price,],
+                            include: [{
+                                model: images,
+                                attributes: [PARAMS.url]
+                            }]
+                        }
+                    ]
+                }
+            ],
             order: [
                 [PARAMS.createdAt, "DESC"]
             ]
@@ -118,8 +136,34 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
     )
 }
 
-exports.insertIntoOrdersOnly = async (data) =>{
+exports.insertIntoOrdersOnly = async (data) => {
     await ordersOnly.create(data)
 }
 
-exports.fetchSingleOrderDetail
+exports.fetchSingleOrderDetail = async (orderId) => {
+
+    return await ordersOnly.findOne(
+        {
+            where: {
+                orderId
+            },
+            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
+            include: [
+                {
+                    model: order,
+                    attributes: [PARAMS.specifications],
+                    include: [
+                        {
+                            model: product,
+                            attributes: [PARAMS.name, PARAMS.price,],
+                            include: [{
+                                model: images,
+                                attributes: [PARAMS.url]
+                            }]
+                        }
+                    ]
+                }
+            ]
+        }
+    )
+}

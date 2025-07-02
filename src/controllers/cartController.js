@@ -1,5 +1,5 @@
 const { Op, where } = require("sequelize");
-const { addToCartQuery, fetchCartItems, fetchCartItemsToOrder, updateCartItemsforOrder, createOrder, fetchOrdersQuery } = require("../db/querys/cart");
+const { addToCartQuery, fetchCartItems, fetchCartItemsToOrder, updateCartItemsforOrder, createOrder, fetchOrdersQuery, fetchSingleOrderDetail } = require("../db/querys/cart");
 const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, internalServerError, success } = require("../errorHandler/statusCodes");
@@ -116,6 +116,11 @@ exports.fetchOrders = catchAsync(async (req, res) => {
 
 })
 
-exports.fetchSpecificOrder = catchAsync(async (req, res) => {
+// exports.fetchSpecificOrder = catchAsync(async (req, res) => {
+//     const orderId = req.params.orderId
 
-})
+//     const data = await fetchSingleOrderDetail(orderId)
+
+//     return success(res, data, "Fasting")
+
+// })

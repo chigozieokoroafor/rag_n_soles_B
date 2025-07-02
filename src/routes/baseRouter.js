@@ -19,6 +19,8 @@ base.get("/profile",baseAuth, baseController.fetchProfile)
 base.get("/dashboard/metric", baseAuth,  vendorController.getMetrics)
 base.get("/orders", baseAuth, cartController.fetchOrders)
 
+// base.get("/order/:orderId", baseAuth, cartController.fetchSpecificOrder)
+
 // base.get("/category", productController.fetchCategories)
 // base.get("/category/:category_id", productController.fetchProductsUnderCategory)
 base.get("/product/:product_id", productController.getSpecificProduct)

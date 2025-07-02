@@ -139,6 +139,9 @@ order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.id })
 product.hasMany(images, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
 images.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
 
+product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
+order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
+
 module.exports = {
     product,
     coupon,
