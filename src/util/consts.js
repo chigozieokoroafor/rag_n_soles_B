@@ -16,14 +16,14 @@ exports.MODEL_NAMES = {
 }
 
 exports.STATUSES = {
-    pending: "PENDING",
+    pending: "Pending",
     to_be_delivered:"",
-    approved:"APPROVED",
-    blocked:"BLOCKED",
-    processed:"PROCESSING",
-    delivered:"DELIVERED",
-    transit:"IN TRANSIT",
-    success:"SUCCESS"
+    approved:"Approved",
+    blocked:"Blocked",
+    processed:"Processing",
+    delivered:"Delivered",
+    transit:"In Transit",
+    success:"Success"
     
 
 }
@@ -54,7 +54,7 @@ exports.PARAMS = {
     amount:"amount",
     cart_ids:"cart_ids",
     billing_address:"billing_address",
-    shpping_address:"shpping_address",
+    shpping_address:"shipping_address",
     isAdminVerified:"isAdminVerified",
     username:"username",
     spec:"spec",
