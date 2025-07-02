@@ -44,6 +44,21 @@ const uploadMiddleWare = (req, res, next) =>{
     })
 }
 
+
+const uploadMiddleWareNotrequired = (req, res, next) =>{
+    const uploadF = upload.array("images")
+    // console.log("tests:::3", req.files)
+
+    uploadF(req, res, (err)=>{
+        if (err){
+            console.log(err)
+            return generalError(res, err.message)
+        }
+        // console.log("file::::", req?.file)
+        next()
+    })
+}
 module.exports = {
-    uploadMiddleWare
+    uploadMiddleWare,
+    uploadMiddleWareNotrequired
 }

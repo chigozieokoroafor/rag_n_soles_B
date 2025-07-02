@@ -1,6 +1,8 @@
+const { Op } = require("sequelize");
 const { PARAMS } = require("../../util/consts");
 const { category } = require("../models/category");
 const { product, specifications } = require("../models/product");
+const { images } = require("../models/images")
 
 exports.uploadProduct = async (data) => {
     return await product.create(data)
@@ -34,7 +36,7 @@ exports.getspecificProduct = async (productId) => {
                 [PARAMS.uid]: productId,
                 [PARAMS.isDeleted]: false
             },
-            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
+            attributes: [PARAMS.categoryId, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
             include: [
                 {
                     model: specifications
@@ -42,6 +44,9 @@ exports.getspecificProduct = async (productId) => {
                 {
                     model: category,
                     as: "Category"
+                },
+                {
+                    model: images
                 }
             ]
 
@@ -56,7 +61,7 @@ exports.searchProduct = async (query, offset, limit) => {
     return await product.findAll(
         {
             where: query,
-            attributes: [PARAMS.categoryId, PARAMS.images, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
+            attributes: [PARAMS.categoryId, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
             include: [
                 {
                     model: category,
@@ -66,6 +71,10 @@ exports.searchProduct = async (query, offset, limit) => {
                 {
                     model: specifications,
                     attributes: [PARAMS.id, PARAMS.name, PARAMS.units]
+                },
+                {
+                    model: images,
+                    attributes: [PARAMS.id, PARAMS.url, PARAMS.isDefault]
                 }
             ],
             offset,
@@ -92,12 +101,14 @@ exports.deleteProductQuery = async (productId) => {
     return await product.update({ [PARAMS.isDeleted]: true }, { where: { [PARAMS.uid]: productId } })
 }
 
-exports.uploadProductImage = async (productId, images) => {
-    return await product.update({
-        images: images
-    }, {
-        where: { uid: productId }
-    })
+exports.uploadProductImage = async (data) => {
+
+    await images.bulkCreate(data)
+    // return await product.update({
+    //     images: images
+    // }, {
+    //     where: { uid: productId }
+    // })
 }
 
 exports.updateProductDetails = async (productId, update) => {
@@ -129,4 +140,31 @@ exports.reduceProductCount = async (count, id) => {
 
 exports.insertProductspecification = async (data) => {
     return await specifications.bulkCreate(data)
+}
+
+exports.updateProductSpecification = async (update, specId) => {
+    await specifications.update(update, { where: { id: specId } })
+}
+
+exports.deleteBulkSpecification = async (ids) => {
+    await specifications.destroy(
+        {
+            where: {
+                id: {
+                    [Op.notIn]: ids
+                }
+            }
+        }
+    )
+}
+
+exports.deleteProductImages = async(productId, imageId) =>{
+    return await images.destroy(
+        {
+            where:{
+                id: imageId,
+                productId: productId
+            }
+        }
+    )
 }

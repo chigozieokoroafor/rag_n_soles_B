@@ -4,9 +4,9 @@ const nodemailer = require("nodemailer")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs");
 const randToken = require("rand-token")
-const axios  = require("axios");
-const { PARAMS, BUNNY} = require("./consts");
-const {Readable} = require("stream")
+const axios = require("axios");
+const { PARAMS, BUNNY } = require("./consts");
+const { Readable } = require("stream")
 
 
 
@@ -200,15 +200,15 @@ exports.generateToken = (payload, expiryTme = 1 * 10 * 60, secret) => {
     return jwt.sign(payload, secret, { expiresIn: expiryTme })
 }
 
-exports.verifytoken = (token, secret = process.env.AUTH_SECRET) =>{
+exports.verifytoken = (token, secret = process.env.AUTH_SECRET) => {
 
     let err, err_status
     let success = false;
-    try{
+    try {
         const payload = jwt.verify(token, secret)
         success = true
-        return {d: payload, success}
-    }catch(error){
+        return { d: payload, success }
+    } catch (error) {
         if (error.name === "TokenExpiredError") {
             err = "Session Expired.";
             err_status = 403;
@@ -218,7 +218,7 @@ exports.verifytoken = (token, secret = process.env.AUTH_SECRET) =>{
             err_status = 498;
         }
 
-        return {err, success, err_status}
+        return { err, success, err_status }
     }
 }
 
@@ -232,7 +232,7 @@ exports.createLenUid = (size) => {
 
 
 exports.initializePayment = async (ref, amount, email, meta) => {
-    console.log("metaL:::::",meta)
+    console.log("metaL:::::", meta)
 
     try {
         const url = "https://api.paystack.co/transaction/initialize"
@@ -245,7 +245,7 @@ exports.initializePayment = async (ref, amount, email, meta) => {
                 email: email,
                 channels: ["card", "bank", "apple_pay", "ussd", "qr", "mobile_money", "bank_transfer", "eft"],
                 // callback_url:"https://deestar.netlify.app/",
-                callback_url:process.env.WEB_BASE_URL,
+                callback_url: process.env.WEB_BASE_URL,
                 metadata: meta,
             },
             {
@@ -272,7 +272,7 @@ exports.initializePayment = async (ref, amount, email, meta) => {
 
 }
 
-exports.sendAdminMailCredentials = (email, password) =>{
+exports.sendAdminMailCredentials = (email, password) => {
     const html = `
     <!DOCTYPE html>
 <html lang="en">
@@ -444,13 +444,13 @@ const uploadToBunny = async (stream, fileName) => {
         null
     }
 
-    console.log("body::::here:::",await response.json())
+    console.log("body::::here:::", await response.json())
 
 
     return `${BUNNY.BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME}/${fileName}`
 }
 
-exports.processAllImages = async (files) => {
+exports.processAllImages = async (files, productId) => {
     const img_list = []
     const promises = []
     files.forEach((item) => {
@@ -462,10 +462,16 @@ exports.processAllImages = async (files) => {
     })
 
     const fulfiled = await Promise.allSettled(promises)
-    fulfiled.forEach(promise => {
+    fulfiled.forEach((promise, index) => {
         if (promise.status == "fulfilled") {
             // console.log("fulfiled:::::",promise.value)
-            img_list.push(promise.value)
+            img_list.push(
+                {
+                    [PARAMS.productId]:productId,
+                    [PARAMS.url]: promise.value,
+                    [PARAMS.isDefault]: true ? index == 0 : false
+                }
+            )
         } else {
             console.log("rejected:::::", promise.reason)
         }

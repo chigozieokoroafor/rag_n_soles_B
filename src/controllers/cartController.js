@@ -112,6 +112,10 @@ exports.fetchOrders = catchAsync(async (req, res) => {
 
     const data = await fetchOrdersQuery(user_id, FETCH_LIMIT, offsetc)
 
-    return success(res, {data}, "fetched")
+    return success(res, data, "fetched")
+
+})
+
+exports.fetchSpecificOrder = catchAsync(async (req, res) => {
 
 })

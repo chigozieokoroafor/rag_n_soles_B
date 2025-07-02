@@ -1,7 +1,7 @@
 const { Router } = require("express")
 const  adminController = require("../controllers/adminController")
 const  productController = require("../controllers/productController")
-const { uploadMiddleWare } = require("../middleware/upload")
+const { uploadMiddleWare, uploadMiddleWareNotrequired } = require("../middleware/upload")
 const { adminAuth } = require("../middleware/auth")
 const multer =require("multer")
 
@@ -20,7 +20,9 @@ admin.post("/product", adminAuth, uploadMiddleWare, productController.addProduct
 admin.get("/products", productController.getAllProductsWithFilter)
 admin.get("/product/:productId", adminAuth, productController.getSpecificProduct)
 admin.delete("/product/:productId", adminAuth, productController.deleteProducts)
-admin.put("/product/:productId", adminAuth, productController.updateProducts)
+admin.put("/product/:productId", adminAuth, uploadMiddleWareNotrequired, productController.updateProducts)
+
+admin.delete("/product/:productId/images", adminAuth, productController.deleteImages)
 
 admin.get("/users", adminAuth, adminController.getUsers)
 admin.put("/users", adminAuth, adminController.updateUserStatus)

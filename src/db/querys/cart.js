@@ -121,3 +121,5 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
 exports.insertIntoOrdersOnly = async (data) =>{
     await ordersOnly.create(data)
 }
+
+exports.fetchSingleOrderDetail

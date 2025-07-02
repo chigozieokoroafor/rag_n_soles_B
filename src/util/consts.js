@@ -71,7 +71,9 @@ exports.PARAMS = {
     paymentStatus:"paymentStatus",
     reference:"reference",
     discount_type:"discount_type",
-    discount_value:"discount_value"
+    discount_value:"discount_value",
+    url:"url",
+    isDefault:"isDefault"
     
     
 }

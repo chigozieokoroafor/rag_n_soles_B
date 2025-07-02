@@ -7,6 +7,7 @@ const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
 const { cart } = require("./cart");
 const { order } = require("./order");
+const { images } = require("./images");
 
 const product = conn.define(MODEL_NAMES.product, {
     id: {
@@ -31,10 +32,6 @@ const product = conn.define(MODEL_NAMES.product, {
 
     price: {
         type: DataTypes.DOUBLE
-    },
-    images: {
-        type: DataTypes.JSON,
-        allowNull: true
     },
     spec: { //{ name: "name of specification", "unit": number of products available for said size/specification}
         type: DataTypes.JSON,
@@ -138,6 +135,9 @@ specifications.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS
 
 product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.id})
 order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.id })
+
+product.hasMany(images, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
+images.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
 
 module.exports = {
     product,
