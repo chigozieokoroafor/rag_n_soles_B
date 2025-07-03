@@ -73,7 +73,9 @@ exports.PARAMS = {
     discount_type:"discount_type",
     discount_value:"discount_value",
     url:"url",
-    isDefault:"isDefault"
+    isDefault:"isDefault",
+    isDeliveryFree:"isDeliveryFree",
+    locationId: "locationId"
     
     
 }

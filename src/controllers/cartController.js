@@ -8,6 +8,7 @@ const { PARAMS, FETCH_LIMIT } = require("../util/consts");
 const { addToCartSchema, checkoutSchema } = require("../util/validators/cartValidator");
 const { uploadTransaction } = require("../db/querys/transactions");
 const { fetchSingleCoupon, updateCoupon } = require("../db/querys/category");
+const { fetchLocations, fetchSpecLocation } = require("../db/querys/admin");
 
 
 exports.createOrder = catchAsync(async (req, res) => {
@@ -16,7 +17,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     const valid_ = checkoutSchema.validate(req.body)
 
     if (valid_.error) {
-        console.log("error::::", valid_.error)
+        // console.log("error::::", valid_.error)
         return generalError(res, valid_.error.message, {})
     }
 
@@ -27,6 +28,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     // const order = await createOrder(req.body)
     let total_amount = 0.0
     const products = req.body[PARAMS.products]
+    let deliveryFee = 0
 
     const promises = []
 
@@ -54,7 +56,6 @@ exports.createOrder = catchAsync(async (req, res) => {
                 return
             }
 
-
             total_amount += product.price * spec.count
             promises.push(reduceProductCount(spec.count, spec.id))
         }
@@ -81,9 +82,21 @@ exports.createOrder = catchAsync(async (req, res) => {
         promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
     }
 
-    console.log(`total====> ${total_amount}`)
+    if (req.body[PARAMS.isDeliveryFree]){
+        const locationId = req.body[PARAMS.locationId]
 
-    req.body.total_amount = total_amount
+        const loc_data = await fetchSpecLocation(locationId)
+
+        if(!loc_data){
+            return notFound
+        }
+    }
+
+
+
+    // console.log(`total====> ${total_amount}`)
+
+    req.body.total_amount = total_amount + deliveryFee
 
     const temp_order = await addToCartQuery(req.body)
 

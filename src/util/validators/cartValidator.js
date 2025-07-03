@@ -67,12 +67,17 @@ exports.checkoutSchema = Joi.object(
                 "string.empty": "Kindly provide a valid  coupon code."
             }
         ),
-        // total_amount: Joi.number().required().messages(
-        //     {
-        //         "any.required":"total_amount required.",
-        //         "number.base":"Kidnly provide a valid amount"
-        //     }
-        // )
+        isDeliveryFree: Joi.boolean().required().messages(
+            {
+                "any.required": "Kindly select your delivery option"
+            }
+        ),
+        locationId: Joi.number().messages(
+            {
+                "number.base":"Kindly select a valid location for delivery"
+            }
+        )
+       
 
     }
 ).required().messages(

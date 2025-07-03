@@ -21,7 +21,7 @@ exports.createAccountSchema = Joi.object(
             "any.required": "Phone number required",
             "string.empty": "Phone number can not be empty"
         }),
-        address: Joi.string().required().messages({
+        [PARAMS.billing_address]: Joi.string().required().messages({
             "any.required": "Address required",
             "string.empty": "Address can not be empty"
         }),
