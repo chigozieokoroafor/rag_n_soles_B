@@ -1,7 +1,7 @@
 require("dotenv").config()
 
 const { Op } = require("sequelize");
-const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation, fetchAdminForProfile } = require("../db/querys/admin");
+const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation, fetchAdminForProfile, updateAdminProfile } = require("../db/querys/admin");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = require("../util/base");
@@ -280,4 +280,20 @@ exports.fetchProfile = catchAsync(async (req, res) => {
     const data = await fetchAdminForProfile(req.user.id)
 
     return success(res, data, "Fetched")
+})
+
+exports.updateProfile = catchAsync(async (req, res) => {
+
+    const userId = req.user.id
+    const valid_ = adminSchema.validate(req.body)
+
+    if (valid_.error){
+        return generalError(res, valid_.error.message, {})
+    }
+
+    await updateAdminProfile(userId, req.body)
+
+    return success(res, {}, "Profile updated.")
+
+    
 })

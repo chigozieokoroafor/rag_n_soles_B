@@ -19,7 +19,7 @@ exports.sync = async () => {
         await Promise.allSettled(
             [
                 // user.sync({ alter: true }), // merge to main
-                // admin.sync({ alter: true }),
+                admin.sync({ alter: true }),
                 // cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 

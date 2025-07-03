@@ -130,10 +130,21 @@ exports.adminSchema = Joi.object(
                 "string.base":"Provide a valid status"
             }
         ),
+        [PARAMS.billing_address]:Joi.string().messages(
+            {
+                "string.base":"Provide address of company"
+            }
+        ),
+        [PARAMS.business_name]: Joi.string().messages(
+            {
+                "string.base":"Provide address of company"
+            }
+        )
+
 
     }
 ).required().messages(
     {
-        "any.required":"Kindly provide admin details to proceed"
+        "any.required":"Kindly provide details to proceed"
     }
 )

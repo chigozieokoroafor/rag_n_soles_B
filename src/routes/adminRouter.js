@@ -12,6 +12,7 @@ const admin = Router()
 // admin.post("/login", adminController.login)
 
 admin.get("/me", adminAuth, adminController.fetchProfile)
+admin.put("/me", adminAuth, adminController.updateProfile)
 
 admin.post("/category", adminAuth, productController.createCategory)
 admin.get("/category",productController.fetchCategories)

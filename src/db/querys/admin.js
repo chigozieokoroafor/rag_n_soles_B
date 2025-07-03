@@ -30,7 +30,7 @@ exports.fetchAdminForProfile = async (uid) => {
 }
 
 exports.updateAdminProfile = async(uid, update) =>{
-    
+   await admin.update(update, {where:{uid}})
 }
 
 exports.fetchAdmninforMiddleware = async (uid) => {
