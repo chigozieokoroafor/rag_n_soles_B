@@ -76,7 +76,9 @@ exports.createOrder = catchAsync(async (req, res) => {
         }
 
         if (coupon_detail?.type == "percentage") {
-            total_amount = (Number(coupon_detail.value) / 0.01) * total_amount
+            total_amount = total_amount - ((Number(coupon_detail.value) / 0.01) * total_amount)
+        }else{
+            total_amount = total_amount - coupon_detail.value
         }
 
         promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
@@ -88,13 +90,11 @@ exports.createOrder = catchAsync(async (req, res) => {
         const loc_data = await fetchSpecLocation(locationId)
 
         if(!loc_data){
-            return notFound
+            return notFound(res, "Location selected Not found")
         }
+
+        deliveryFee = loc_data.price
     }
-
-
-
-    // console.log(`total====> ${total_amount}`)
 
     req.body.total_amount = total_amount + deliveryFee
 

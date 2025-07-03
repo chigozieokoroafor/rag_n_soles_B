@@ -1,6 +1,6 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage, deleteCategory } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
@@ -289,3 +289,8 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 })
 
 
+exports.deleteCategory = catchAsync(async(req, res) =>{
+    const categoryId = req.params.catId
+    await deleteCategory(categoryId)
+    return success(res, {}, "Caegory Deleted and linked products set to inactive.")
+})

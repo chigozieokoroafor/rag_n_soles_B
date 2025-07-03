@@ -171,22 +171,22 @@ exports.updateCouponDetails = catchAsync(async (req, res) => {
 exports.createAdmin = catchAsync(async (req, res) => {
     const valid_ = createAdminSchema.validate(req.body)
 
-    if (valid_.error){
+    if (valid_.error) {
         console.log(valid_.error.details)
         return generalError(res, valid_.error.message)
     }
 
     const admin_exists = await fetchAdmninforLogin(req.body[PARAMS.email])
 
-    if (admin_exists){
+    if (admin_exists) {
         return generalError(res, "An admin with email provided exists", {})
     }
     const pwd = createUUID()
     req.body[PARAMS.password] = hashSync(pwd)
 
-    try{
+    try {
         sendAdminMailCredentials(req.body[PARAMS.email], pwd)
-    }catch(error){
+    } catch (error) {
         return generalError(res, "Unable  to send admin credentials")
     }
 
@@ -194,24 +194,24 @@ exports.createAdmin = catchAsync(async (req, res) => {
 
     success(res, {}, "Account credentials created and sent.")
 
-    
+
 })
 
-exports.fetchAdmins = catchAsync(async(req, res)=>{
+exports.fetchAdmins = catchAsync(async (req, res) => {
     const data = await getadmins()
 
     return success(res, data, "Fetched")
 })
 
-exports.updateAdmin = catchAsync(async(req, res) =>{
-    const uid  = req.params.uid
+exports.updateAdmin = catchAsync(async (req, res) => {
+    const uid = req.params.uid
     const valid_ = adminSchema.validate(req.body)
-    if(valid_.error){
+    if (valid_.error) {
         return generalError(res, valid_.error.message, {})
     }
-    
+
     const admin_exists = checkAdmin(uid)
-    if(!admin_exists){
+    if (!admin_exists) {
         return notFound(res, "Admin profile not found")
     }
 
@@ -225,7 +225,7 @@ exports.updateAdmin = catchAsync(async(req, res) =>{
 exports.createlocation = catchAsync(async (req, res) => {
     const valid_ = locUpload.validate(req.body)
 
-    if (valid_.error){
+    if (valid_.error) {
         console.log(valid_.error.details)
         return generalError(res, valid_.error.message)
     }
@@ -234,25 +234,25 @@ exports.createlocation = catchAsync(async (req, res) => {
 
     success(res, {}, "Delivery location created.")
 
-    
+
 })
 
-exports.fetchlocation = catchAsync(async(req, res)=>{
+exports.fetchlocation = catchAsync(async (req, res) => {
     const data = await fetchLocations()
 
     return success(res, data, "Fetched")
 })
 
-exports.updatelocation = catchAsync(async(req, res) =>{
-    const uid  = req.params.id
+exports.updatelocation = catchAsync(async (req, res) => {
+    const uid = req.params.id
     const valid_ = locUpdate.validate(req.body)
-    if(valid_.error){
+    if (valid_.error) {
         return generalError(res, valid_.error.message, {})
     }
 
 
     const loc = await fetchSpecLocation(uid)
-    if(!loc){
+    if (!loc) {
         return notFound(res, "Delivery Location not found")
     }
     await updateSpecLocation(uid, req.body)
@@ -260,15 +260,20 @@ exports.updatelocation = catchAsync(async(req, res) =>{
     return success(res, {}, "User details updated")
 })
 
-exports.deleteLocation = catchAsync(async(req, res)=>{
-    const uid  = req.params.id
+exports.deleteLocation = catchAsync(async (req, res) => {
+    const uid = req.params.id
 
     const loc = await fetchSpecLocation(uid)
-    if(!loc){
+    if (!loc) {
         return notFound(res, "Delivery Location not found")
     }
 
     await deleteLocation(uid)
 
     return success(res, {}, "Delivery location deleted.")
-}) 
+})
+
+// profile
+exports.fetchProfile = catchAsync(async (req, res) => {
+    return success(res, req.user, "Fetched")
+})

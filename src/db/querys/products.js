@@ -177,3 +177,8 @@ exports.updateDefaultImage = async (productId, imageId, isDefault) => {
         }
     })
 }
+
+exports.deleteCategory = async (catId) =>{
+    await category.destroy({where: {uid: catId}})
+    await product.update({status: "Inactive"}, {where: {categoryId: catId}})
+}

@@ -78,6 +78,14 @@ const cart = conn.define(MODEL_NAMES.cart,
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        [PARAMS.isDeliveryFree]:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        [PARAMS.locationId]:{
+            type: DataTypes.INTEGER,
+            allowNull:true
+        },
 
         expiredAt: {
             type: DataTypes.DATE,
