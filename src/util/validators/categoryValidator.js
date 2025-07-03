@@ -39,6 +39,44 @@ exports.categoryCreationSchema = Joi.object(
 )
 
 
+exports.categoryUpdateSchema = Joi.object(
+    {
+        name: Joi.string().messages(
+            {
+                "any.required": "Kindly provide a category name",
+                "string.empty": "Kindly provide a category name"
+            }
+        ),
+        
+        description: Joi.string().messages(
+            {
+                "any.required": "Kindly provide a category name",
+                "string.empty": "Kindly provide a category name"
+            }
+        ),
+
+        spec: Joi.array().min(1).messages(
+            {
+                "any.required":"Specifications of category required",
+                "array.min": "Kindly provide at least one specification"
+            }
+        )
+
+
+        // file: Joi.string().regex(/^data:image\/png;base64,/).required().messages(
+        //     {
+        //         "any.required": "file required",
+        //         "string.regex.base": "file required as a base64 string",
+        //         "string.empty": "file cannot be empty"
+        //     }
+        // )
+    }
+).required().messages(
+    {
+        "any.required": "Kindly upload a category to continue."
+    }
+)
+
 exports.couponValidator = Joi.object(
     {
         code: Joi.string().required().messages(

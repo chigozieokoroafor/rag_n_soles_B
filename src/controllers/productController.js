@@ -1,11 +1,11 @@
 const { Sequelize, Op } = require("sequelize");
-const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage, deleteCategory } = require("../db/querys/products");
+const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery, deleteCategory, updateCategory, getSingleCategory } = require("../db/querys/category");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
-const { categoryCreationSchema } = require("../util/validators/categoryValidator");
+const { categoryCreationSchema, categoryUpdateSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema, productUpdateSchema, productSpecificationUpdateSchema, imageUpdateValidator } = require("../util/validators/productsValidator");
 
 
@@ -73,12 +73,38 @@ exports.createCategory = catchAsync(async (req, res) => {
 
     return success(res, {}, "Category Created")
 
-
 })
 
 exports.fetchCategories = catchAsync(async (req, res) => {
     const data = await fetchCategoryQuery()
     return success(res, data, "Fetched")
+})
+
+exports.updateCategory = catchAsync(async(req, res) =>{
+  const categoryId = req.params.categoryId
+
+  const valid_ = categoryUpdateSchema.validate(req.body)
+
+  if (valid_.error){
+    return generalError(res, valid_.error.message, {})
+  }
+
+  const cat = await getSingleCategory(categoryId)
+  if(!cat ){
+    return notFound(res, "Category selected not found.")
+  }
+
+  await updateCategory(categoryId, req.body)
+
+  return success(res, {}, "Category updated")
+
+
+})
+
+exports.deleteCategory = catchAsync(async(req, res) =>{
+    const categoryId = req.params.categoryId
+    await deleteCategory(categoryId)
+    return success(res, {}, "Caegory Deleted and linked products set to inactive.")
 })
 
 exports.fetchProductsUnderCategory = catchAsync(async (req, res) => {
@@ -286,11 +312,4 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
         pages: total_pages
     }, "testing")
 
-})
-
-
-exports.deleteCategory = catchAsync(async(req, res) =>{
-    const categoryId = req.params.categoryId
-    await deleteCategory(categoryId)
-    return success(res, {}, "Caegory Deleted and linked products set to inactive.")
 })

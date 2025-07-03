@@ -2,7 +2,7 @@
 const { Op } = require("sequelize");
 const { PARAMS } = require("../../util/consts");
 const { category } = require("../models/category");
-const { coupon } = require("../models/product");
+const { coupon, product } = require("../models/product");
 
 exports.createCategoryQuery = async(data) =>{
     return await category.create(
@@ -49,12 +49,23 @@ exports.fetchSingleCoupon = async(code) =>{
     return await coupon.findOne({where:{code, status: "Active"}})
 }
 
-
 exports.deleteCoupon = async(id) =>{
     return await coupon.destroy({where: {id}})
 }
 
-
 exports.updateCoupon = async(update, id) =>{
     return await coupon.update(update, {where: {id}})
+}
+
+exports.getSingleCategory = async(categoryId) =>{
+    return await category.findOne({where:{uid: categoryId}})
+}
+
+exports.deleteCategory = async (catId) =>{
+    await category.destroy({where: {uid: catId}})
+    await product.update({status: "Inactive"}, {where: {categoryId: catId}})
+}
+
+exports.updateCategory = async(categoryId, update) =>{
+    await category.update(update, {where:{uid: categoryId}})
 }

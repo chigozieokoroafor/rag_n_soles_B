@@ -18,6 +18,8 @@ admin.post("/category", adminAuth, productController.createCategory)
 admin.get("/category",productController.fetchCategories)
 admin.get("/category/:category_id", productController.fetchProductsUnderCategory)
 admin.delete("/category/:categoryId", adminAuth, productController.deleteCategory)
+admin.put("/category/:categoryId", adminAuth, productController.updateCategory)
+
 // admin.get("/product", prod)
 
 admin.post("/product", adminAuth, uploadMiddleWare, productController.addProducts)
