@@ -28,6 +28,11 @@ exports.STATUSES = {
 
 }
 
+exports.DELIVERY_MODES = {
+    delivery: "Delivery",
+    pickup:"Pickup"
+}
+
 exports.PARAMS = {
     id:"id",
     email:"email",
@@ -76,7 +81,8 @@ exports.PARAMS = {
     isDefault:"isDefault",
     isDeliveryFree:"isDeliveryFree",
     locationId: "locationId",
-    
+    deliveryMode:"deliveryMode"
+
     
     
 }

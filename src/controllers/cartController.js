@@ -4,7 +4,7 @@ const { getspecificProduct, reduceProductCount } = require("../db/querys/product
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, internalServerError, success } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment } = require("../util/base");
-const { PARAMS, FETCH_LIMIT } = require("../util/consts");
+const { PARAMS, FETCH_LIMIT, DELIVERY_MODES } = require("../util/consts");
 const { addToCartSchema, checkoutSchema } = require("../util/validators/cartValidator");
 const { uploadTransaction } = require("../db/querys/transactions");
 const { fetchSingleCoupon, updateCoupon } = require("../db/querys/category");
@@ -29,7 +29,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     let total_amount = 0.0
     const products = req.body[PARAMS.products]
     let deliveryFee = 0
-
+    let deliveryMode = DELIVERY_MODES.pickup
     const promises = []
 
     let coupon_detail
@@ -92,11 +92,12 @@ exports.createOrder = catchAsync(async (req, res) => {
         if(!loc_data){
             return notFound(res, "Location selected Not found")
         }
-
+        deliveryMode = DELIVERY_MODES.delivery
         deliveryFee = loc_data.price
     }
 
     req.body.total_amount = total_amount + deliveryFee
+    req.body[PARAMS.deliveryMode] = deliveryMode
 
     const temp_order = await addToCartQuery(req.body)
 

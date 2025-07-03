@@ -40,6 +40,9 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         type:DataTypes.DOUBLE,
         defaultValue:0
         
+    },
+    [PARAMS.deliveryMode]:{
+        type: DataTypes.STRING(20),
     }
 }, {
     tableName: MODEL_NAMES.ordersOnly,

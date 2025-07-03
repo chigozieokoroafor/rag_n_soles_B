@@ -20,7 +20,7 @@ exports.sync = async () => {
             [
                 // user.sync({ alter: true }), // merge to main
                 // admin.sync({ alter: true }),
-                // cart.sync({ alter: true }), //sync with main
+                cart.sync({ alter: true }), //sync with main
                 // category.sync({ alter: true }),
                 
                 // order.sync({alter:true}),
@@ -32,7 +32,7 @@ exports.sync = async () => {
                 // coupon.sync({alter:true}),
                 // deliv_locations.sync({alter:true}),
                 // specifications.sync({alter: true}),
-                // ordersOnly.sync({alter:true})
+                ordersOnly.sync({alter:true})
             ]
         )
     })

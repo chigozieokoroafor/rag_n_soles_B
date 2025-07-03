@@ -58,6 +58,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 orderId,
                 reference: data.data.reference,
                 total_amount: amount,
+                [PARAMS.deliveryMode]: item[PARAMS.deliveryMode]
 
             })
 
