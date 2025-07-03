@@ -290,7 +290,7 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
 
 exports.deleteCategory = catchAsync(async(req, res) =>{
-    const categoryId = req.params.catId
+    const categoryId = req.params.categoryId
     await deleteCategory(categoryId)
     return success(res, {}, "Caegory Deleted and linked products set to inactive.")
 })
