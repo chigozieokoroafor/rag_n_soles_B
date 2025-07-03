@@ -1,7 +1,7 @@
 require("dotenv").config()
 
 const { Op } = require("sequelize");
-const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation } = require("../db/querys/admin");
+const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation, fetchAdminForProfile } = require("../db/querys/admin");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = require("../util/base");
@@ -275,5 +275,9 @@ exports.deleteLocation = catchAsync(async (req, res) => {
 
 // profile
 exports.fetchProfile = catchAsync(async (req, res) => {
-    return success(res, req.user, "Fetched")
+    // const data = req.user
+
+    const data = await fetchAdminForProfile(req.user.id)
+
+    return success(res, data, "Fetched")
 })

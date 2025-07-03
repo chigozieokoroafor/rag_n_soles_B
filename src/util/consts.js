@@ -75,7 +75,8 @@ exports.PARAMS = {
     url:"url",
     isDefault:"isDefault",
     isDeliveryFree:"isDeliveryFree",
-    locationId: "locationId"
+    locationId: "locationId",
+    
     
     
 }

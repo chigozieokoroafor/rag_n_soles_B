@@ -38,6 +38,14 @@ const admin = conn.define(MODEL_NAMES.admin, {
     [PARAMS.role]:{
         type:DataTypes.STRING(20),
         defaultValue:"Admin"
+    },
+    [PARAMS.billing_address]:{
+        type: DataTypes.TEXT("long"),
+        allowNull:true
+    },
+    [PARAMS.business_name]:{
+        type:DataTypes.TEXT("long"),
+        allowNull: true
     }
 }, {
     tableName: MODEL_NAMES.admin,

@@ -11,7 +11,7 @@ const admin = Router()
 
 // admin.post("/login", adminController.login)
 
-admin.put("/me", adminController.fetchProfile)
+admin.get("/me", adminAuth, adminController.fetchProfile)
 
 admin.post("/category", adminAuth, productController.createCategory)
 admin.get("/category",productController.fetchCategories)
@@ -44,8 +44,8 @@ admin.put("/location/:id", adminAuth, adminController.updatelocation)
 admin.delete("/location/:id", adminAuth, adminController.deleteLocation)
 
 
-admin.post("/admin/", adminAuth, adminController.createAdmin)
-admin.get("/admin/", adminAuth, adminController.fetchAdmins)
+admin.post("/admin", adminAuth, adminController.createAdmin)
+admin.get("/admin", adminAuth, adminController.fetchAdmins)
 admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
 
