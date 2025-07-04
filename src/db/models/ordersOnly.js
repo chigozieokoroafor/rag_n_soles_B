@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const { MODEL_NAMES, STATUSES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
 const { order } = require("./order");
+const { user } = require("./user");
 // const { createLenUid } = require("../../util/base");
 
 const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
@@ -50,8 +51,11 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
 })
 
 ordersOnly.hasMany(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
-
 order.belongsTo(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
+
+
+user.hasMany(ordersOnly, {foreignKey: PARAMS.userId, sourceKey: PARAMS.uid})
+ordersOnly.belongsTo(user, {foreignKey: PARAMS.userId, targetKey: PARAMS.uid})
 
 module.exports = {
     ordersOnly

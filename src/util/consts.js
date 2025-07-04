@@ -81,7 +81,8 @@ exports.PARAMS = {
     isDefault:"isDefault",
     isDeliveryFree:"isDeliveryFree",
     locationId: "locationId",
-    deliveryMode:"deliveryMode"
+    deliveryMode:"deliveryMode",
+    userId:"userId"
 
     
     

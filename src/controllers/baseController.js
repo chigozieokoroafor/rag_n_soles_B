@@ -128,5 +128,13 @@ exports.login = catchAsync(async (req, res) => {
 })
 
 exports.fetchProfile = catchAsync(async (req, res) => {
-    return success(res, req.user, "Profile fetched")
+    data = {
+        email: req.user.email,
+        // userType:req.user,
+        billing_address: req.user.billing_address,
+        shipping_address: req.user.shipping_address,
+        business_name: req.user.business_name,
+        username: req.user.username
+    }
+    return success(res, data, "Profile fetched")
 })

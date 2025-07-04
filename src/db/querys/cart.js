@@ -4,6 +4,7 @@ const { images } = require("../models/images");
 const { order } = require("../models/order");
 const { ordersOnly } = require("../models/ordersOnly");
 const { product } = require("../models/product");
+const { user } = require("../models/user");
 
 exports.addToCartQuery = async (data) => {
     return await cart.create(data)
@@ -112,8 +113,45 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
-            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
+            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
             include: [
+                {
+                    model: order,
+                    attributes: [PARAMS.specifications],
+                    include: [
+                        {
+                            model: product,
+                            attributes: [PARAMS.name, PARAMS.price,],
+                            include: [{
+                                model: images,
+                                attributes: [PARAMS.url]
+                            }]
+                        }
+                    ]
+                }
+            ],
+            order: [
+                [PARAMS.createdAt, "DESC"]
+            ]
+        }
+    )
+}
+
+exports.fetchOrdersQueryAdmin = async (limit, skip) => {
+    return await ordersOnly.findAll(
+        {
+
+            // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
+            limit: limit,
+            offset: skip,
+            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
+            include: [
+
+                {
+                    model: user,
+                    attributes:[PARAMS.business_name, PARAMS.email]
+                },
+
                 {
                     model: order,
                     attributes: [PARAMS.specifications],

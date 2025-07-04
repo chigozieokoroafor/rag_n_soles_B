@@ -1,6 +1,7 @@
 const { Router } = require("express")
 const  adminController = require("../controllers/adminController")
 const  productController = require("../controllers/productController")
+const  cartController = require("../controllers/cartController")
 const { uploadMiddleWare, uploadMiddleWareNotrequired } = require("../middleware/upload")
 const { adminAuth } = require("../middleware/auth")
 const multer =require("multer")
@@ -52,7 +53,7 @@ admin.get("/admin", adminAuth, adminController.fetchAdmins)
 admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
 
-
+admin.get("/order", adminAuth, cartController.fetchOrdersAdmin)
 
 module.exports = {
     adminRouter: admin
