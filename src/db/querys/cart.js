@@ -149,7 +149,11 @@ exports.fetchOrdersQueryAdmin = async (limit, skip) => {
 
                 {
                     model: user,
-                    attributes:[PARAMS.business_name, PARAMS.email]
+                    attributes:[PARAMS.business_name, PARAMS.email],
+                    where:{
+
+                    },
+                    required:true
                 },
 
                 {

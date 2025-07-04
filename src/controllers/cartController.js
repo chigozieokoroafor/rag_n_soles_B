@@ -133,6 +133,33 @@ exports.fetchOrders = catchAsync(async (req, res) => {
 exports.fetchOrdersAdmin = catchAsync(async(req, res)=>{
     // limit = 0
     // offset 
+
+    const { status, search, max_price, min_price, page } = req.query
+
+    if (page <= 0 || !page) {
+        return generalError(res, "Page cannot be less than 1")
+    }
+
+    const offset = (Number(page) - 1) * FETCH_LIMIT
+    let actual_query = {}
+    // const query_list = []
+    // let sub = {}
+
+    if (search) {
+        // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
+        actual_query[PARAMS.name] = {
+            [Op.like]: `%${search}%`
+        }
+
+    }
+    if (status) {
+        actual_query[PARAMS.status] = status
+    }
+    if (max_price && min_price) {
+        actual_query[PARAMS.price] = {
+            [Op.between]: [Number(min_price), Number(max_price)]
+        }
+    }
     const data = await fetchOrdersQueryAdmin(10, 0)
 
     return success(res, data, "fetched")

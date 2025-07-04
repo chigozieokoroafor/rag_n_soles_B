@@ -32,6 +32,11 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         allowNull:false,
         defaultValue:STATUSES.pending,   
     },
+    statuses:{
+        type: DataTypes.JSON,
+        defaultValue: [STATUSES.pending]
+        // allowNull:
+    },
     
     discount_type:{
         type:DataTypes.STRING(20),

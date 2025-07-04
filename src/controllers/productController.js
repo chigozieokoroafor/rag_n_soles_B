@@ -282,7 +282,7 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     const offset = (Number(page) - 1) * FETCH_LIMIT
     let actual_query = {}
     // const query_list = []
-    let sub = {}
+    // let sub = {}
 
     if (search) {
         // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
@@ -310,6 +310,6 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     return success(res, {
         products: data,
         pages: total_pages
-    }, "testing")
+    }, "Fetched")
 
 })
