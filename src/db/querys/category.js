@@ -36,7 +36,7 @@ exports.insertCoupon = async(data) =>{
 }
 
 exports.getCoupons = async(query,limit, offset) =>{
-    return coupon.findAll(
+    return await coupon.findAll(
         {
             where:query,
             limit,
@@ -44,6 +44,15 @@ exports.getCoupons = async(query,limit, offset) =>{
         }
     )
 }
+
+exports.countCoupons = async(query) =>{
+    return await coupon.count(
+        {
+            where:query,
+        }
+    )
+}
+
 
 exports.fetchSingleCoupon = async(code) =>{
     return await coupon.findOne({where:{code, status: "Active"}})

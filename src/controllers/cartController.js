@@ -1,14 +1,13 @@
-const { Op, where } = require("sequelize");
-const { addToCartQuery, fetchCartItems, fetchCartItemsToOrder, updateCartItemsforOrder, createOrder, fetchOrdersQuery, fetchSingleOrderDetail, fetchOrdersQueryAdmin } = require("../db/querys/cart");
+const { Op } = require("sequelize");
+const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders } = require("../db/querys/cart");
 const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
-const { generalError, notFound, internalServerError, success } = require("../errorHandler/statusCodes");
+const { generalError, notFound, success } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment } = require("../util/base");
 const { PARAMS, FETCH_LIMIT, DELIVERY_MODES } = require("../util/consts");
-const { addToCartSchema, checkoutSchema } = require("../util/validators/cartValidator");
-const { uploadTransaction } = require("../db/querys/transactions");
-const { fetchSingleCoupon, updateCoupon } = require("../db/querys/category");
-const { fetchLocations, fetchSpecLocation } = require("../db/querys/admin");
+const { checkoutSchema } = require("../util/validators/cartValidator");
+const { fetchSingleCoupon } = require("../db/querys/category");
+const { fetchSpecLocation } = require("../db/querys/admin");
 
 
 exports.createOrder = catchAsync(async (req, res) => {
@@ -77,19 +76,19 @@ exports.createOrder = catchAsync(async (req, res) => {
 
         if (coupon_detail?.type == "percentage") {
             total_amount = total_amount - ((Number(coupon_detail.value) / 0.01) * total_amount)
-        }else{
+        } else {
             total_amount = total_amount - coupon_detail.value
         }
 
         promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
     }
 
-    if (req.body[PARAMS.isDeliveryFree]){
+    if (req.body[PARAMS.isDeliveryFree]) {
         const locationId = req.body[PARAMS.locationId]
 
         const loc_data = await fetchSpecLocation(locationId)
 
-        if(!loc_data){
+        if (!loc_data) {
             return notFound(res, "Location selected Not found")
         }
         deliveryMode = DELIVERY_MODES.delivery
@@ -124,19 +123,22 @@ exports.fetchOrders = catchAsync(async (req, res) => {
 
     const offsetc = FETCH_LIMIT * (Number(page) - 1)
 
-    const data = await fetchOrdersQuery(user_id, FETCH_LIMIT, offsetc)
+    const orders = await fetchOrdersQuery(user_id, FETCH_LIMIT, offsetc)
 
-    return success(res, data, "fetched")
+    const total = await countAllOrders({ userId: user_id })
+    const pages = Math.ceil(total / FETCH_LIMIT)
+
+    return success(res, { orders, pages }, "fetched")
 
 })
 
-exports.fetchOrdersAdmin = catchAsync(async(req, res)=>{
+exports.fetchOrdersAdmin = catchAsync(async (req, res) => {
     // limit = 0
     // offset 
 
-    const { status, search, max_price, min_price, page } = req.query
+    const { status, search, page } = req.query
 
-    if (page <= 0 || !page) {
+    if (page <= 0 || !page || Number.isNaN(page)) {
         return generalError(res, "Page cannot be less than 1")
     }
 
@@ -155,12 +157,10 @@ exports.fetchOrdersAdmin = catchAsync(async(req, res)=>{
     if (status) {
         actual_query[PARAMS.status] = status
     }
-    if (max_price && min_price) {
-        actual_query[PARAMS.price] = {
-            [Op.between]: [Number(min_price), Number(max_price)]
-        }
-    }
-    const data = await fetchOrdersQueryAdmin(10, 0)
+    
+    const orders = await fetchOrdersQueryAdmin(FETCH_LIMIT, offset)
+    const total = await countAllOrders()
+    const pages = Math.ceil(total / FETCH_LIMIT)
 
-    return success(res, data, "fetched")
+    return success(res, { pages, orders }, "fetched")
 })

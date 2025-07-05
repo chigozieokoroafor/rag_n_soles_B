@@ -8,7 +8,7 @@ const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = r
 const { FETCH_LIMIT, PARAMS, STATUSES } = require("../util/consts");
 const { loginValidator, createAdminSchema, adminSchema } = require("../util/validators/accountValidator");
 const { countAllproducts } = require("../db/querys/products");
-const { insertCoupon, getCoupons, deleteCoupon, updateCoupon } = require("../db/querys/category");
+const { insertCoupon, getCoupons, deleteCoupon, updateCoupon, countCoupons } = require("../db/querys/category");
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 const { hashSync } = require("bcryptjs");
 const { locUpload, locUpdate } = require("../util/validators/locationValidator");
@@ -133,9 +133,11 @@ exports.fetchCoupons = catchAsync(async (req, res) => {
 
     const offset = FETCH_LIMIT * (Number(page) - 1)
 
-    const data = await getCoupons(actual_query, FETCH_LIMIT, offset)
+    const coupons = await getCoupons(actual_query, FETCH_LIMIT, offset)
+    const count = await countCoupons(actual_query)
+    const pages = Math.ceil(count/FETCH_LIMIT)
 
-    return success(res, data, "Fetched.")
+    return success(res, {page: pages, coupons}, "Fetched.")
 })
 
 exports.deleteCoupon = catchAsync(async (req, res) => {

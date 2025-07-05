@@ -178,8 +178,13 @@ exports.fetchOrdersQueryAdmin = async (limit, skip) => {
     )
 }
 
+exports.countAllOrders = async(query) =>{
+    
+    return await ordersOnly.count({where: query})
+}
+
 exports.insertIntoOrdersOnly = async (data) => {
-    await ordersOnly.create(data)
+    return await ordersOnly.create(data)
 }
 
 exports.fetchSingleOrderDetail = async (orderId) => {
