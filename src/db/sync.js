@@ -7,10 +7,11 @@ const { images } = require("./models/images")
 const { order } = require("./models/order")
 const { product, coupon, specifications } = require("./models/product")
 const { review } = require("./models/review")
-const { shipping } = require("./models/shhipping")
+const { shipping } = require("./models/shipping")
 const { transaction } = require("./models/transaction")
 const { deliv_locations } = require("./models/deliv_locations")
 const { ordersOnly } = require("./models/ordersOnly")
+const { notifications } = require("./models/notifications")
 
 
 exports.sync = async () => {
@@ -32,7 +33,8 @@ exports.sync = async () => {
                 // coupon.sync({alter:true}),
                 // deliv_locations.sync({alter:true}),
                 // specifications.sync({alter: true}),
-                // ordersOnly.sync({alter:true})
+                // ordersOnly.sync({alter:true}),
+                // notifications.sync({alter:true})
             ]
         )
     })

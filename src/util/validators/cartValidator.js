@@ -1,5 +1,5 @@
 const Joi = require("joi")
-const { PARAMS } = require("../consts")
+const { PARAMS, STATUSES } = require("../consts")
 
 
 exports.specItems = Joi.object(
@@ -21,7 +21,7 @@ exports.specItems = Joi.object(
             {
                 "any.required": "Kindly provide the number of items being purchased for the specification.",
                 "number.empty": "Kindly select a how much of the specific size to be purchased.",
-                "number.min":"minimus is 1"
+                "number.min": "minimus is 1"
             }
         )
     }
@@ -62,7 +62,7 @@ exports.checkoutSchema = Joi.object(
             }
         ),
 
-        coupon :Joi.string().messages(
+        coupon: Joi.string().messages(
             {
                 "string.empty": "Kindly provide a valid  coupon code."
             }
@@ -74,15 +74,36 @@ exports.checkoutSchema = Joi.object(
         ),
         locationId: Joi.number().messages(
             {
-                "number.base":"Kindly select a valid location for delivery"
+                "number.base": "Kindly select a valid location for delivery"
             }
         )
-       
+
 
     }
 ).required().messages(
     {
         "any.required": "Checkout details required",
         "object.empty": "Cart to checkout cannot be empty"
+    }
+)
+
+exports.orderUpdate = Joi.object(
+    {
+        orderId: Joi.string().required().messages(
+            {
+                "any.required": "Select orider to update"
+            }
+        ),
+
+        status: Joi.string().valid(STATUSES.processing, STATUSES.pickup, STATUSES.ready, STATUSES.pickedUp, STATUSES.transit, STATUSES.delivered).required().messages(
+            {
+                "any.required": "Select a valid order status to proceed"
+            }
+        )
+    }
+).required().messages(
+
+    {
+        "any.required":"Kidnly select an order to update"
     }
 )

@@ -12,7 +12,8 @@ exports.MODEL_NAMES = {
     coupon:"Coupon",
     deliv_locations:"Delivery_Locations",
     specifications:"Product_specifications",
-    ordersOnly:"OrdersOnly"
+    ordersOnly:"OrdersOnly",
+    notifications:"Notifications"
 }
 
 exports.STATUSES = {
@@ -23,7 +24,11 @@ exports.STATUSES = {
     processed:"Processing",
     delivered:"Delivered",
     transit:"In Transit",
-    success:"Success"
+    success:"Success",
+    processing:"Processing",
+    pickup: "Pickup",
+    ready:"Ready for Pickup",
+    pickedUp: "Picked Up"
     
 
 }
@@ -82,7 +87,12 @@ exports.PARAMS = {
     isDeliveryFree:"isDeliveryFree",
     locationId: "locationId",
     deliveryMode:"deliveryMode",
-    userId:"userId"
+    userId:"userId",
+    title:"title",
+    alert:"alert",
+    isRead:"isRead",
+    type:"type",
+    statuses:"statuses"
 
     
     
@@ -93,6 +103,14 @@ exports.BUNNY = {
     BUNNY_STORAGE_ZONE_NAME : process.env.BUNNY_STORAGE_ZONE_NAME,
     BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME : process.env.BUNNY_CUSTOM_FILE_UPLOAD_HOSTNAME,
     BUNNY_BASE_HOSTNAME : 'https://storage.bunnycdn.com', 
+}
+
+exports.NOTIFICATION_TITLES = {
+    order_new:{title:"New Order Recieved",alert: "high", type: "Order"},
+    order_update:{title:"Order Update", alert: "low", type: "Order"},
+    vendor:{title: "New Vendor Registration", alert: "medium", type: "Vendor"},
+    stock:{title:"Low Stock Alert", alert:"high",type: "Stock"},
+    coupon:{title:"Coupon Usage Alert", alert: "medium", type: "Coupon"}
 }
 
 

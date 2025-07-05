@@ -1,11 +1,11 @@
 require("dotenv").config()
 
 const { fetchAdmninforLogin } = require("../db/querys/admin");
-const { checkUserExists, createUserAccount, verifyUser, getUserByEmail } = require("../db/querys/users");
+const { checkUserExists, createUserAccount, verifyUser, getUserByEmail, createNotification, fetchUserForMiddleware } = require("../db/querys/users");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, newError, notFound, redirect } = require("../errorHandler/statusCodes");
 const { sendAccountVerificationMail, hashPassword, generateToken, createUUID, verifytoken, checkPassword } = require("../util/base");
-const { PARAMS } = require("../util/consts");
+const { PARAMS, NOTIFICATION_TITLES } = require("../util/consts");
 const { createAccountSchema, loginValidator } = require("../util/validators/accountValidator");
 
 
@@ -46,6 +46,8 @@ exports.createAccount = catchAsync(async (req, res) => {
     success(res, {}, "Verification mail sent to Mail")
 
     sendAccountVerificationMail(email, baseUrl, name)
+    
+
 })
 
 exports.verify = catchAsync(async (req, res) => {
@@ -57,15 +59,18 @@ exports.verify = catchAsync(async (req, res) => {
     }
 
     // console.log("payload:::", payload)
-
     const uid = payload.d.id
+    const user = fetchUserForMiddleware(uid)
+    if(!user){
+        return notFound(res, "User not found")
+    }
 
     const update = await verifyUser(uid)
 
     if (update[0] < 1) {
         return generalError(res, "Unable to verify mail")
     }
-
+    await createNotification(NOTIFICATION_TITLES.vendor.title, `${user[PARAMS.business_name]} just created an account and is waiting for approval`, NOTIFICATION_TITLES.vendor.alert, NOTIFICATION_TITLES.vendor.type)
     return redirect(res, process.env.WEB_BASE_URL_VERIFICATION)
 
 })

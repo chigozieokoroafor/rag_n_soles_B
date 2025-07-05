@@ -53,7 +53,6 @@ exports.updateCartItemsforOrder = async (update, where) => {
     await cart.update(update, { where: where })
 }
 
-
 exports.createOrder = async (data) => {
     return await order.bulkCreate(data)
 }
@@ -113,7 +112,7 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
-            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
+            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
             include: [
                 {
                     model: order,
@@ -144,7 +143,7 @@ exports.fetchOrdersQueryAdmin = async (limit, skip) => {
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
-            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
+            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.statuses, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
             include: [
 
                 {
@@ -179,11 +178,12 @@ exports.fetchOrdersQueryAdmin = async (limit, skip) => {
 }
 
 exports.countAllOrders = async(query) =>{
-    
+
     return await ordersOnly.count({where: query})
 }
 
 exports.insertIntoOrdersOnly = async (data) => {
+    data.statuses = [STATUSES.pending]
     return await ordersOnly.create(data)
 }
 
@@ -194,23 +194,27 @@ exports.fetchSingleOrderDetail = async (orderId) => {
             where: {
                 orderId
             },
-            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
-            include: [
-                {
-                    model: order,
-                    attributes: [PARAMS.specifications],
-                    include: [
-                        {
-                            model: product,
-                            attributes: [PARAMS.name, PARAMS.price,],
-                            include: [{
-                                model: images,
-                                attributes: [PARAMS.url]
-                            }]
-                        }
-                    ]
-                }
-            ]
+            // attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
+            // include: [
+            //     {
+            //         model: order,
+            //         attributes: [PARAMS.specifications],
+            //         include: [
+            //             {
+            //                 model: product,
+            //                 attributes: [PARAMS.name, PARAMS.price,],
+            //                 include: [{
+            //                     model: images,
+            //                     attributes: [PARAMS.url]
+            //                 }]
+            //             }
+            //         ]
+            //     }
+            // ]
         }
     )
+}
+
+exports.updateOrderStatus = async(orderId, update) =>{
+    ordersOnly.u
 }

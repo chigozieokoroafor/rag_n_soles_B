@@ -1,4 +1,6 @@
+const { Op } = require("sequelize")
 const { PARAMS } = require("../../util/consts")
+const { notifications } = require("../models/notifications")
 const { user } = require("../models/user")
 
 exports.checkUserExists = async (email) => {
@@ -28,4 +30,34 @@ exports.fetchUserForMiddleware = async (uid) => {
 
 exports.updateUserdetail = async (uid, update) => {
     await user.update(update, { where: { uid } })
+}
+
+exports.createNotification = async (title, description, alert_, type) => {
+    await notifications.create({
+        title,
+        description,
+        alert: alert_,
+        type: type
+    })
+}
+
+exports.fetchNotifications = async (query, limit, offset) => {
+    return await notifications.findAll(
+        {
+            where: query,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]]
+        }
+    )
+}
+
+exports.countNotifications = async(query) =>{
+    return await notifications.count({where:query})
+}
+
+exports.readNotification = async(notificationIds) =>{
+    await notifications.update({[PARAMS.isRead] : true}, {where: {
+        [Op.in]: notificationIds
+    }})
 }

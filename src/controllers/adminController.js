@@ -13,6 +13,7 @@ const { couponValidator, couponUpdateValidator } = require("../util/validators/c
 const { hashSync } = require("bcryptjs");
 const { locUpload, locUpdate } = require("../util/validators/locationValidator");
 const { countAllOrders } = require("../db/querys/cart");
+const { fetchNotifications, countNotifications, readNotification } = require("../db/querys/users");
 
 
 exports.getUsers = catchAsync(async (req, res) => {
@@ -83,7 +84,7 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
         },
         orders: {
             total: await countAllOrders([]),
-            pending: await countAllOrders({[PARAMS.deliv_status]: STATUSES.pending})
+            pending: await countAllOrders({ [PARAMS.deliv_status]: STATUSES.pending })
         },
         lowstock: 0
     }
@@ -136,9 +137,9 @@ exports.fetchCoupons = catchAsync(async (req, res) => {
 
     const coupons = await getCoupons(actual_query, FETCH_LIMIT, offset)
     const count = await countCoupons(actual_query)
-    const pages = Math.ceil(count/FETCH_LIMIT)
+    const pages = Math.ceil(count / FETCH_LIMIT)
 
-    return success(res, {page: pages, coupons}, "Fetched.")
+    return success(res, { page: pages, coupons }, "Fetched.")
 })
 
 exports.deleteCoupon = catchAsync(async (req, res) => {
@@ -290,7 +291,7 @@ exports.updateProfile = catchAsync(async (req, res) => {
     const userId = req.user.id
     const valid_ = adminSchema.validate(req.body)
 
-    if (valid_.error){
+    if (valid_.error) {
         return generalError(res, valid_.error.message, {})
     }
 
@@ -298,5 +299,42 @@ exports.updateProfile = catchAsync(async (req, res) => {
 
     return success(res, {}, "Profile updated.")
 
+
+})
+
+// notifications
+exports.getNotifications = catchAsync(async (req, res) => {
+    const { search, page, filter } = req.query
+    if (!page || page < 1 || Number.isNaN(page)) {
+        return generalError(res, "Kindly provide a page greater than 0.")
+    }
+
+    const offset = (Number(page) - 1) * FETCH_LIMIT
+    let query = {}
+
+    if (search) {
+        query[PARAMS.description] = {
+            [Op.like]: `%${search}%`
+        }
+    }
+    if (filter && filter != "Unread") {
+        query[PARAMS.type] = filter
+    } else if (filter == "Unread") {
+        query[PARAMS.isRead] = false
+    }
+
+    const notifications = await fetchNotifications(query, FETCH_LIMIT, offset)
+    const total = countNotifications(query)
+
+    const pages = Math.ceil(total / FETCH_LIMIT)
+
+    return success(res, { notifications, pages }, "Fetched")
+})
+
+exports.readNotifications = catchAsync(async (req, res) => {
+    const notificationIds  = req.body.notifications
     
+    await readNotification(notificationIds)
+
+    return success(res, "Marked as read,")
 })

@@ -54,6 +54,10 @@ admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
 
 admin.get("/order", adminAuth, cartController.fetchOrdersAdmin)
+admin.put("/order", adminAuth, cartController.updateStatusOfOrders)
+
+admin.get("/notifications", adminAuth, adminController.getNotifications)
+admin.put("/notifications", adminAuth, adminController.readNotifications)
 
 module.exports = {
     adminRouter: admin

@@ -1,11 +1,11 @@
 const { Op } = require("sequelize");
-const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders } = require("../db/querys/cart");
+const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders, fetchSingleOrderDetail } = require("../db/querys/cart");
 const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, success } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment } = require("../util/base");
-const { PARAMS, FETCH_LIMIT, DELIVERY_MODES } = require("../util/consts");
-const { checkoutSchema } = require("../util/validators/cartValidator");
+const { PARAMS, FETCH_LIMIT, DELIVERY_MODES, NOTIFICATION_TITLES } = require("../util/consts");
+const { checkoutSchema, orderUpdate } = require("../util/validators/cartValidator");
 const { fetchSingleCoupon } = require("../db/querys/category");
 const { fetchSpecLocation } = require("../db/querys/admin");
 
@@ -21,7 +21,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     }
 
     req.body.userId = user_id
-
+    let couponUsed = false
     // till payment is processed before product units are reduced.
 
     // const order = await createOrder(req.body)
@@ -79,7 +79,7 @@ exports.createOrder = catchAsync(async (req, res) => {
         } else {
             total_amount = total_amount - coupon_detail.value
         }
-
+        // await createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
         promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
     }
 
@@ -157,10 +157,40 @@ exports.fetchOrdersAdmin = catchAsync(async (req, res) => {
     if (status) {
         actual_query[PARAMS.status] = status
     }
-    
+
     const orders = await fetchOrdersQueryAdmin(FETCH_LIMIT, offset)
     const total = await countAllOrders()
     const pages = Math.ceil(total / FETCH_LIMIT)
 
     return success(res, { pages, orders }, "fetched")
+})
+
+exports.updateStatusOfOrders = catchAsync(async (req, res) => {
+    const valid_ = orderUpdate.validate(req.body)
+
+    if (valid_.error) {
+        return generalError(res, valid_.error.message)
+    }
+
+    const order = await fetchSingleOrderDetail(req.body[PARAMS.orderId])
+    const statuses = order.statuses
+
+    if (statuses.includes(req.body.status)){
+        return generalError(res, "Cannnot set status at current time")
+    }
+    statuses.push(req.body.status)
+
+    // console.log(statuses)
+
+    const update = {
+        [PARAMS.statuses]: statuses,
+        [PARAMS.deliv_status]: req.body.status
+    }
+
+    await order.update(update)
+
+    
+
+    return success(res, order, "Order Updated")
+
 })

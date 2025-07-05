@@ -6,10 +6,11 @@ const { Op } = require("sequelize");
 // const { updateTransaction } = require("../db/querys/transactions");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { success, generalError } = require("../errorHandler/statusCodes");
-const { PARAMS } = require("../util/consts");
+const { PARAMS, NOTIFICATION_TITLES } = require("../util/consts");
 const crypto = require("crypto");
 const { uploadTransaction } = require("../db/querys/transactions");
 const { fetchSingleCartItem, createOrder, insertIntoOrdersOnly } = require("../db/querys/cart");
+const { fetchUserForMiddleware, createNotification } = require("../db/querys/users");
 
 const paystackSecret = process.env.PAYSTACK_SECRET
 
@@ -24,7 +25,6 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
     success(res, {}, "Recieved")
 
     try {
-        console.log("here::: success")
         const data = req.body;
         if (data.event == "charge.success") {
 
@@ -65,6 +65,8 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             await createOrder(products)
             await item.destroy()
 
+            const user = await fetchUserForMiddleware(userId)
+            await createNotification(NOTIFICATION_TITLES.order_new.title, `${user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
 
         }
 
