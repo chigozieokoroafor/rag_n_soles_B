@@ -12,6 +12,7 @@ const { insertCoupon, getCoupons, deleteCoupon, updateCoupon, countCoupons } = r
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 const { hashSync } = require("bcryptjs");
 const { locUpload, locUpdate } = require("../util/validators/locationValidator");
+const { countAllOrders } = require("../db/querys/cart");
 
 
 exports.getUsers = catchAsync(async (req, res) => {
@@ -81,8 +82,8 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
             blocked: await countVendors({ [PARAMS.status]: STATUSES.blocked }),
         },
         orders: {
-            total: 0,
-            pending: 0
+            total: await countAllOrders([]),
+            pending: await countAllOrders({[PARAMS.deliv_status]: STATUSES.pending})
         },
         lowstock: 0
     }
