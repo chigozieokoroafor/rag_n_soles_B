@@ -29,15 +29,39 @@ exports.createAccountSchema = Joi.object(
             "any.required": "Business name required.",
             "string.empty": "Business name can not be empty"
         }),
-
-        // username:Joi.string().messages({
-        //     "string.base":"kindly enter a prefered username",
-        //     "string.empty":"Username should not be empty."
-        // })
     }
 ).required().messages({
     "any.required": "Account required."
 })
+
+
+exports.updateAccountSchema = Joi.object(
+    {
+        
+        name: Joi.string().messages({
+            "any.required": "Contact person name required",
+            "string.empty": "Contact person name can not be empty"
+        }),
+        phone_no: Joi.string().messages({
+            "any.required": "Phone number required",
+            "string.empty": "Phone number can not be empty"
+        }),
+        [PARAMS.billing_address]: Joi.string().messages({
+            "any.required": "Address required",
+            "string.empty": "Address can not be empty"
+        }),
+        business_name: Joi.string().messages({
+            "any.required": "Business name required.",
+            "string.empty": "Business name can not be empty"
+        }),
+
+    }
+).required().messages({
+    "any.required": "Account required."
+})
+
+
+
 
 exports.loginValidator = Joi.object(
     {

@@ -17,7 +17,7 @@ exports.createAccount = catchAsync(async (req, res) => {
 
     // use express sesion for this. and not normal bearer jwts
 
-    const { email, name, username, password } = req.body
+    const { email, name, password } = req.body
 
     const user = await checkUserExists(email)
     if (user) {
@@ -127,14 +127,3 @@ exports.login = catchAsync(async (req, res) => {
 
 })
 
-exports.fetchProfile = catchAsync(async (req, res) => {
-    data = {
-        email: req.user.email,
-        // userType:req.user,
-        billing_address: req.user.billing_address,
-        shipping_address: req.user.shipping_address,
-        business_name: req.user.business_name,
-        username: req.user.username
-    }
-    return success(res, data, "Profile fetched")
-})

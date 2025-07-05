@@ -14,7 +14,8 @@ base.post("/register", baseController.createAccount)
 base.post("/login", baseController.login)
 base.get("/verify", baseController.verify)
 
-base.get("/profile",baseAuth, baseController.fetchProfile)
+base.get("/me",baseAuth, vendorController.fetchMe)
+base.put("/me", baseAuth, vendorController.updateMe)
 
 base.get("/dashboard/metric", baseAuth,  vendorController.getMetrics)
 base.get("/orders", baseAuth, cartController.fetchOrders)
