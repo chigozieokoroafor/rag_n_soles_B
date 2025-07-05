@@ -3,6 +3,7 @@ const { countOrders } = require("../db/querys/cart");
 const { checkUserExists, createUserAccount, verifyUser, getUserByEmail, updateUserdetail } = require("../db/querys/users");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, newError, notFound, redirect } = require("../errorHandler/statusCodes");
+const { hashPassword } = require("../util/base");
 
 const { PARAMS, FETCH_LIMIT } = require("../util/consts");
 const { updateAccountSchema } = require("../util/validators/accountValidator");
@@ -54,13 +55,12 @@ exports.updateMe = catchAsync(async (req, res) => {
 })
 
 exports.changePassword = catchAsync(async (req, res) =>{
-    const passwrd = req.body?.password
+    const password = req.body?.password
 
     if(!password){
         return generalError(res, "Password required", {})
     }
-
-    const pwd = bcrypt.hashSync(passwrd)
+    const pwd = hashPassword(password)
 
     await updateUserdetail(req.user.id, {password: pwd})
 
