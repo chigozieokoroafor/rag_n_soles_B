@@ -17,6 +17,8 @@ base.get("/verify", baseController.verify)
 base.get("/me",baseAuth, vendorController.fetchMe)
 base.put("/me", baseAuth, vendorController.updateMe)
 
+base.put("/me/password", baseAuth, vendorController.changePassword)
+
 base.get("/dashboard/metric", baseAuth,  vendorController.getMetrics)
 base.get("/orders", baseAuth, cartController.fetchOrders)
 

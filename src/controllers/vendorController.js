@@ -53,4 +53,16 @@ exports.updateMe = catchAsync(async (req, res) => {
 
 })
 
+exports.changePassword = catchAsync(async (req, res) =>{
+    const passwrd = req.body?.password
 
+    if(!password){
+        return generalError(res, "Password required", {})
+    }
+
+    const pwd = bcrypt.hashSync(passwrd)
+
+    await updateUserdetail(req.user.id, {password: pwd})
+
+    success(res, {}, "Passowrd updated")
+})
