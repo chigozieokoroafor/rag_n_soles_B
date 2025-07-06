@@ -216,5 +216,5 @@ exports.fetchSingleOrderDetail = async (orderId) => {
 }
 
 exports.updateOrderStatus = async(orderId, update) =>{
-    ordersOnly.u
+    await ordersOnly.update(update, {where: {orderId}})
 }

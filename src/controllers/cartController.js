@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders, fetchSingleOrderDetail } = require("../db/querys/cart");
+const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders, fetchSingleOrderDetail, updateOrderStatus } = require("../db/querys/cart");
 const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, success } = require("../errorHandler/statusCodes");
@@ -175,7 +175,7 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
     const order = await fetchSingleOrderDetail(req.body[PARAMS.orderId])
     const statuses = order.statuses
 
-    if (statuses.includes(req.body.status)){
+    if (statuses.includes(req.body.status)) {
         return generalError(res, "Cannnot set status at current time")
     }
     statuses.push(req.body.status)
@@ -187,9 +187,9 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
         [PARAMS.deliv_status]: req.body.status
     }
 
-    await order.update(update)
+    await updateOrderStatus(req.body[PARAMS.orderId], update)
 
-    
+
 
     return success(res, order, "Order Updated")
 
