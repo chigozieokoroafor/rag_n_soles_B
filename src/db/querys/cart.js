@@ -102,13 +102,10 @@ exports.countOrders = async (userId) => {
 
 }
 
-exports.fetchOrdersQuery = async (userId, limit, skip) => {
+exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
     return await ordersOnly.findAll(
         {
-            where: {
-                userId: userId,
-
-            },
+            where: whereQ,
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
@@ -136,9 +133,10 @@ exports.fetchOrdersQuery = async (userId, limit, skip) => {
     )
 }
 
-exports.fetchOrdersQueryAdmin = async (limit, skip) => {
+exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
     return await ordersOnly.findAll(
         {
+            where:query,
 
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
@@ -178,7 +176,6 @@ exports.fetchOrdersQueryAdmin = async (limit, skip) => {
 }
 
 exports.countAllOrders = async(query) =>{
-
     return await ordersOnly.count({where: query})
 }
 

@@ -16,6 +16,9 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         type: DataTypes.STRING(40),
         allowNull: false
     },
+    vendorName:{
+        type: DataTypes.STRING(255),
+    },
     orderId: {
         type: DataTypes.STRING(255),
     },

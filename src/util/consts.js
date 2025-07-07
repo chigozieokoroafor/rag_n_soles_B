@@ -92,7 +92,8 @@ exports.PARAMS = {
     alert:"alert",
     isRead:"isRead",
     type:"type",
-    statuses:"statuses"
+    statuses:"statuses",
+    vendorName:"vendorName"
 
     
     

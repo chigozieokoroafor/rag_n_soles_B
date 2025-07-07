@@ -115,17 +115,42 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 exports.fetchOrders = catchAsync(async (req, res) => {
     const user_id = req.user?.id
-    const { page } = req.query
+    // const { page } = req.query
 
-    if (!page || Number(page) < 1 || Number.isNaN(page)) {
-        return generalError(res, "Kindly provide page as a number greater than 0")
+    // if (!page || Number(page) < 1 || Number.isNaN(page)) {
+    //     return generalError(res, "Kindly provide page as a number greater than 0")
+    // }
+
+    // const offsetc = FETCH_LIMIT * (Number(page) - 1)
+
+
+    const { status, search, page } = req.query
+
+    if (page <= 0 || !page || Number.isNaN(page)) {
+        return generalError(res, "Page cannot be less than 1")
     }
 
-    const offsetc = FETCH_LIMIT * (Number(page) - 1)
+    const offset = (Number(page) - 1) * FETCH_LIMIT
+    let actual_query = {
+        [PARAMS.userId]: user_id
+    }
+    
 
-    const orders = await fetchOrdersQuery(user_id, FETCH_LIMIT, offsetc)
+    if (search) {
+        // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
 
-    const total = await countAllOrders({ userId: user_id })
+        actual_query[PARAMS.orderId] = {
+                [Op.like]: `%${search}%`
+            }
+
+    }
+    if (status) {
+        actual_query[PARAMS.deliv_status] = status
+    }
+
+    const orders = await fetchOrdersQuery(actual_query, FETCH_LIMIT, offset)
+
+    const total = await countAllOrders(actual_query)
     const pages = Math.ceil(total / FETCH_LIMIT)
 
     return success(res, { orders, pages }, "fetched")
@@ -144,22 +169,27 @@ exports.fetchOrdersAdmin = catchAsync(async (req, res) => {
 
     const offset = (Number(page) - 1) * FETCH_LIMIT
     let actual_query = {}
-    // const query_list = []
-    // let sub = {}
+    
 
     if (search) {
         // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
-        actual_query[PARAMS.name] = {
-            [Op.like]: `%${search}%`
+
+        actual_query[Op.or] = {
+            [PARAMS.orderId] : {
+                [Op.like]: `%${search}%`
+            },
+            [PARAMS.vendorName]:{
+                [Op.like]: `%${search}%`
+            }
         }
 
     }
     if (status) {
-        actual_query[PARAMS.status] = status
+        actual_query[PARAMS.deliv_status] = status
     }
 
-    const orders = await fetchOrdersQueryAdmin(FETCH_LIMIT, offset)
-    const total = await countAllOrders()
+    const orders = await fetchOrdersQueryAdmin(actual_query, FETCH_LIMIT, offset)
+    const total = await countAllOrders(actual_query)
     const pages = Math.ceil(total / FETCH_LIMIT)
 
     return success(res, { pages, orders }, "fetched")

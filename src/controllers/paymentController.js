@@ -35,6 +35,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             const products = item.products
             const userId = item.userId
             const amount = item.total_amount
+            const user = await fetchUserForMiddleware(userId)
 
 
             const trx = await uploadTransaction(
@@ -58,14 +59,15 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 orderId,
                 reference: data.data.reference,
                 total_amount: amount,
-                [PARAMS.deliveryMode]: item[PARAMS.deliveryMode]
+                [PARAMS.deliveryMode]: item[PARAMS.deliveryMode],
+                [PARAMS.vendorName]: user[PARAMS.business_name] ?? user[PARAMS.name]
 
             })
 
             await createOrder(products)
             await item.destroy()
 
-            const user = await fetchUserForMiddleware(userId)
+            
             await createNotification(NOTIFICATION_TITLES.order_new.title, `${user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
 
         }
