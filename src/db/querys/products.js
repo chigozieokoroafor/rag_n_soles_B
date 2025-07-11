@@ -146,10 +146,11 @@ exports.updateProductSpecification = async (update, specId) => {
     await specifications.update(update, { where: { id: specId } })
 }
 
-exports.deleteBulkSpecification = async (ids) => {
+exports.deleteBulkSpecification = async (productId, ids) => {
     await specifications.destroy(
         {
             where: {
+                productId: productId,
                 id: {
                     [Op.notIn]: ids
                 }

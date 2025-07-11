@@ -222,7 +222,7 @@ exports.updateProducts = catchAsync(async (req, res) => {
 
 
             if (existing_specifications_id.length > 0) {
-                await deleteBulkSpecification(existing_specifications_id)
+                await deleteBulkSpecification(productId, existing_specifications_id)
             }
 
             if (existing_specifications.length > 0) {
