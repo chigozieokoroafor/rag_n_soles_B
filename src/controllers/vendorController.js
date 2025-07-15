@@ -12,14 +12,6 @@ const { updateAccountSchema } = require("../util/validators/accountValidator");
 exports.getMetrics = catchAsync(async (req, res) => {
     const userId = req.user.id
 
-    const { page } = req.query
-
-    if (!page || Number(page) < 1 || Number.isNaN(page)) {
-        return generalError(res, "Kindly provide page as a number greater than 0")
-    }
-
-    const offsetc = FETCH_LIMIT * (Number(page) - 1)
-
     const data = await countOrders(userId,)
 
     return success(res, data, "fetched")
