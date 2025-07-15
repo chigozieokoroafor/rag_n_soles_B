@@ -107,10 +107,10 @@ exports.productUpdateSchema = Joi.object(
 
 exports.productSpecificationUpdateSchema = Joi.array().items(
     {
-        id: Joi.string().messages(
+        id: Joi.number().messages(
             {
                 "any.required": "product specification id required",
-                "string.base": "Kindly provide a valid specification id"
+                "number.base": "Kindly provide a valid specification id"
             }
         ),
 
