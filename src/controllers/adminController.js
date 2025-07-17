@@ -170,7 +170,6 @@ exports.updateCouponDetails = catchAsync(async (req, res) => {
     return success(res, {}, "Coupon updated")
 })
 
-
 // team members
 exports.createAdmin = catchAsync(async (req, res) => {
     const valid_ = createAdminSchema.validate(req.body)

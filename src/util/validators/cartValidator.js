@@ -76,6 +76,28 @@ exports.checkoutSchema = Joi.object(
             {
                 "number.base": "Kindly select a valid location for delivery"
             }
+        ),
+        dest_address: Joi.object(
+            {
+                name: Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the name of reciepient",
+                        "string.base":"Kindly provide a valid name"
+                    }
+                ),
+                phone_no:Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the phone no of reciepient",
+                        "string.base":"Kindly provide a valid phone number"
+                    }
+                ),
+                address: Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the address of reciepient",
+                        "string.base":"Kindly provide a valid address"
+                    }
+                )
+            }
         )
 
 
@@ -104,6 +126,6 @@ exports.orderUpdate = Joi.object(
 ).required().messages(
 
     {
-        "any.required":"Kidnly select an order to update"
+        "any.required": "Kidnly select an order to update"
     }
 )
