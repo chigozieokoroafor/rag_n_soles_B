@@ -27,7 +27,7 @@ base.get("/orders", baseAuth, cartController.fetchOrders)
 // base.get("/category", productController.fetchCategories)
 // base.get("/category/:category_id", productController.fetchProductsUnderCategory)
 base.get("/product/:product_id", productController.getSpecificProduct)
-base.get("/products", productController.getAllProductsWithFilter)
+base.get("/products", baseAuth, productController.getAllProductsWithFilter)
 
 
 base.get("/location", adminController.fetchlocation)

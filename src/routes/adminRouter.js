@@ -24,7 +24,7 @@ admin.put("/category/:categoryId", adminAuth, productController.updateCategory)
 // admin.get("/product", prod)
 
 admin.post("/product", adminAuth, uploadMiddleWare, productController.addProducts)
-admin.get("/products", productController.getAllProductsWithFilter)
+admin.get("/products", adminAuth, productController.getAllProductsWithFilter)
 admin.get("/product/:productId", adminAuth, productController.getSpecificProduct)
 admin.delete("/product/:productId", adminAuth, productController.deleteProducts)
 admin.put("/product/:productId", adminAuth, uploadMiddleWareNotrequired, productController.updateProducts)

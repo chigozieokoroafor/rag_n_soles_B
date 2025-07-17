@@ -273,6 +273,9 @@ exports.updateDefaultImages = catchAsync(async (req, res) =>{
 
 // for search
 exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
+
+    
+
     const { category, search, max_price, min_price, page } = req.query
 
     if (page <= 0 || !page) {
@@ -281,6 +284,10 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
     const offset = (Number(page) - 1) * FETCH_LIMIT
     let actual_query = {}
+
+    if(req.user.userType = "Vendor"){
+        actual_query.status = "Active"
+    }
     // const query_list = []
     // let sub = {}
 
