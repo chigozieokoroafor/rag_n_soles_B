@@ -82,21 +82,28 @@ exports.checkoutSchema = Joi.object(
                 name: Joi.string().required().messages(
                     {
                         "any.required": "Kindly provide the name of reciepient",
-                        "string.base":"Kindly provide a valid name"
+                        "string.base":"Kindly provide a valid  name of reciepient",
+                        "string.empty":"Kindly provide a valid  name of reciepient",
                     }
                 ),
                 phone_no:Joi.string().required().messages(
                     {
                         "any.required": "Kindly provide the phone no of reciepient",
-                        "string.base":"Kindly provide a valid phone number"
+                        "string.base":"Kindly provide a valid phone number",
+                        "string.empty":"Kindly provide a valid phone number",
                     }
                 ),
                 address: Joi.string().required().messages(
                     {
                         "any.required": "Kindly provide the address of reciepient",
-                        "string.base":"Kindly provide a valid address"
+                        "string.base":"Kindly provide a valid address",
+                        "string.empty":"Kindly provide a valid address",
                     }
                 )
+            }
+        ).required().messages(
+            {
+                "any.required":"kidnly provide delivery details to proceed."
             }
         )
 

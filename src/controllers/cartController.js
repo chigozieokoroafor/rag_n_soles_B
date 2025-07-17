@@ -10,6 +10,22 @@ const { fetchSingleCoupon } = require("../db/querys/category");
 const { fetchSpecLocation } = require("../db/querys/admin");
 
 
+exports.validateCoupon = catchAsync(async (req, res) => {
+    const { coupon } = req.body
+
+    if(!coupon){
+        return generalError(res, "Kindly provide a coupon to validate", {})
+    }
+
+    const coupons = await fetchSingleCoupon(coupon)
+
+    if(!coupons){
+        return generalError(res, "Coupon not valid/expired", {})
+    }
+
+    return success(res, { type: coupons.type, value: coupons.value }, "Fetched.")
+})
+
 exports.createOrder = catchAsync(async (req, res) => {
     const user_id = req.user?.id
 
@@ -83,7 +99,7 @@ exports.createOrder = catchAsync(async (req, res) => {
         promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
     }
 
-    if (req.body[PARAMS.isDeliveryFree]) {
+    if (!req.body[PARAMS.isDeliveryFree]) {
         const locationId = req.body[PARAMS.locationId]
 
         const loc_data = await fetchSpecLocation(locationId)

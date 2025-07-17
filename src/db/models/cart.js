@@ -46,6 +46,10 @@ const cart = conn.define(MODEL_NAMES.cart,
             type: DataTypes.STRING(20),
             defaultValue: DELIVERY_MODES.pickup
         },
+        dest_address:{
+            type: DataTypes.JSON,
+            allowNull:true
+        },
 
         expiredAt: {
             type: DataTypes.DATE,

@@ -38,6 +38,7 @@ base.get("/location", adminController.fetchlocation)
 // base.get("/cart", baseAuth, cartController.getCart)
 // base.get("/checkout", baseAuth, cartController.checkout)
 
+base.post("/coupon/validate", baseAuth, cartController.validateCoupon)
 
 base.post("/order", baseAuth, cartController.createOrder)
 

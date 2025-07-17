@@ -16,54 +16,57 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         type: DataTypes.STRING(40),
         allowNull: false
     },
-    vendorName:{
+    vendorName: {
         type: DataTypes.STRING(255),
     },
     orderId: {
         type: DataTypes.STRING(255),
     },
-    reference:{
+    reference: {
         type: DataTypes.STRING(255),
-        allowNull:false
+        allowNull: false
     },
-    total_amount:{
+    total_amount: {
         type: DataTypes.DOUBLE,
-        allowNull:false
+        allowNull: false
     },
-    deliv_status:{
+    deliv_status: {
         type: DataTypes.STRING(20),
-        allowNull:false,
-        defaultValue:STATUSES.pending,   
+        allowNull: false,
+        defaultValue: STATUSES.pending,
     },
-    statuses:{
+    statuses: {
         type: DataTypes.JSON,
         defaultValue: [STATUSES.pending]
         // allowNull:
     },
-    
-    discount_type:{
-        type:DataTypes.STRING(20),
-        allowNull:true
-    },
-    discount_value:{
-        type:DataTypes.DOUBLE,
-        defaultValue:0
-        
-    },
-    [PARAMS.deliveryMode]:{
+
+    discount_type: {
         type: DataTypes.STRING(20),
-    }
+        allowNull: true
+    },
+    discount_value: {
+        type: DataTypes.DOUBLE,
+        defaultValue: 0
+    },
+    [PARAMS.deliveryMode]: {
+        type: DataTypes.STRING(20),
+    },
+    [PARAMS.dest_address]: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
 }, {
     tableName: MODEL_NAMES.ordersOnly,
     modelName: MODEL_NAMES.ordersOnly
 })
 
-ordersOnly.hasMany(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
-order.belongsTo(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
+ordersOnly.hasMany(order, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
+order.belongsTo(order, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
 
 
-user.hasMany(ordersOnly, {foreignKey: PARAMS.userId, sourceKey: PARAMS.uid})
-ordersOnly.belongsTo(user, {foreignKey: PARAMS.userId, targetKey: PARAMS.uid})
+user.hasMany(ordersOnly, { foreignKey: PARAMS.userId, sourceKey: PARAMS.uid })
+ordersOnly.belongsTo(user, { foreignKey: PARAMS.userId, targetKey: PARAMS.uid })
 
 module.exports = {
     ordersOnly
