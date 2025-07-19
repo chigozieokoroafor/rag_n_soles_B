@@ -17,8 +17,6 @@ const order = conn.define(MODEL_NAMES.order, {
     },
     orderId: {
         type: DataTypes.STRING(255),
-        // defaultValue: () =>"ORD_"+createLenUid(6)
-        // unique:false
     },
     productId: {
         type: DataTypes.STRING(255)

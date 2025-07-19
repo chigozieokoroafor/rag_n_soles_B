@@ -1,5 +1,6 @@
 const { PARAMS, STATUSES } = require("../../util/consts");
 const { cart } = require("../models/cart");
+const { deliv_locations } = require("../models/deliv_locations");
 const { images } = require("../models/images");
 const { order } = require("../models/order");
 const { ordersOnly } = require("../models/ordersOnly");
@@ -126,6 +127,11 @@ exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
                             }
                         }
                     ]
+                },
+                {
+                    model: deliv_locations,
+                    attributes: [PARAMS.location, PARAMS.price, PARAMS.period],
+                    as: "deliveryLocation"
                 }
             ],
             order: [
@@ -146,14 +152,11 @@ exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
             attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.statuses, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode, PARAMS.dest_address],
             include: [
 
-                // {
-                //     model: user,
-                //     attributes: [PARAMS.business_name, PARAMS.email],
-                //     where: {
-
-                //     },
-                //     required: true
-                // },
+                {
+                    model: deliv_locations,
+                    attributes: [PARAMS.location, PARAMS.price, PARAMS.period],
+                    as: "deliveryLocation"
+                },
 
                 {
                     model: order,
@@ -194,24 +197,7 @@ exports.fetchSingleOrderDetail = async (orderId) => {
         {
             where: {
                 orderId
-            },
-            // attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt],
-            // include: [
-            //     {
-            //         model: order,
-            //         attributes: [PARAMS.specifications],
-            //         include: [
-            //             {
-            //                 model: product,
-            //                 attributes: [PARAMS.name, PARAMS.price,],
-            //                 include: [{
-            //                     model: images,
-            //                     attributes: [PARAMS.url]
-            //                 }]
-            //             }
-            //         ]
-            //     }
-            // ]
+            }
         }
     )
 }
@@ -243,6 +229,11 @@ exports.fetchOrderDetailForReciept = async (orderId) => {
                             }
                         }
                     ]
+                },
+                {
+                    model: deliv_locations,
+                    attributes: [PARAMS.location, PARAMS.price, PARAMS.period],
+                    as: "deliveryLocation"
                 }
             ]
         }

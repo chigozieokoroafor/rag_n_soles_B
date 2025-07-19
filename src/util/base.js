@@ -244,9 +244,9 @@ exports.initializePayment = async (ref, amount, email, meta) => {
                 amount: `${amount * 100}`,
                 email: email,
                 channels: ["card", "bank", "apple_pay", "ussd", "qr", "mobile_money", "bank_transfer", "eft"],
-                // callback_url:"https://deestar.netlify.app/",
-                // https://rags-and-soles.netlify.app/order-detail/{orderId}?source=paystack&status=true
-                callback_url: process.env.WEB_BASE_URL+ `/order-detail/{orderId}?source=paystack&status=true`,
+                
+                // https://rags-and-soles.netlify.app/order-confirmed/?source=paystack&status=success
+                callback_url: process.env.WEB_BASE_URL+ `/order-confirmed/?source=paystack&status=success`,
                 metadata: meta,
             },
             {

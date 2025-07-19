@@ -95,6 +95,8 @@ exports.PARAMS = {
     statuses:"statuses",
     vendorName:"vendorName",
     dest_address:"dest_address",
+    period:"period",
+    location:"location"
 
     
     

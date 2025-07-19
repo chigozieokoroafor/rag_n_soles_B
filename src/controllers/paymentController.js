@@ -71,6 +71,9 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             
             await createNotification(NOTIFICATION_TITLES.order_new.title, `${user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
 
+            // send email notification at this point to vendors with the order of their detail with this link below
+            // https://rags-and-soles.netlify.app/order-detail/{orderId}
+
         }
 
     }
