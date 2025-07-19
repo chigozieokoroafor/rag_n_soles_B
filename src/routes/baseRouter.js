@@ -21,6 +21,7 @@ base.put("/me/password", baseAuth, vendorController.changePassword)
 
 base.get("/dashboard/metric", baseAuth,  vendorController.getMetrics)
 base.get("/orders", baseAuth, cartController.fetchOrders)
+base.get("/orders/:orderId", cartController.fetchSingleOrder)
 
 // base.get("/order/:orderId", baseAuth, cartController.fetchSpecificOrder)
 

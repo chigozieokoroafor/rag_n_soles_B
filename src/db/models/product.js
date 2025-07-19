@@ -137,6 +137,14 @@ product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.id})
 order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.id })
 
 product.hasMany(images, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
+product.hasOne(images, {
+    as: 'defaultImage',
+    foreignKey: PARAMS.productId,
+    sourceKey: PARAMS.uid,
+    scope: {
+        isDefault: true
+    }
+});
 images.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
 
 product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})

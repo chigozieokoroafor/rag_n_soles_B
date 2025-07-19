@@ -109,7 +109,7 @@ exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
-            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
+            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode, PARAMS.dest_address],
             include: [
                 {
                     model: order,
@@ -117,11 +117,13 @@ exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
                     include: [
                         {
                             model: product,
-                            attributes: [PARAMS.name, PARAMS.price,],
-                            include: [{
+                            attributes: [PARAMS.name, PARAMS.price],
+                            include: {
                                 model: images,
-                                attributes: [PARAMS.url]
-                            }]
+                                attributes: [PARAMS.url, PARAMS.isDefault],
+                                as: "defaultImage"
+                                
+                            }
                         }
                     ]
                 }
@@ -136,22 +138,22 @@ exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
 exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
     return await ordersOnly.findAll(
         {
-            where:query,
+            where: query,
 
             // attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.discount_value],
             limit: limit,
             offset: skip,
-            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.statuses, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode],
+            attributes: [PARAMS.orderId, PARAMS.total_amount, PARAMS.deliv_status, PARAMS.statuses, PARAMS.discount_type, PARAMS.discount_value, PARAMS.createdAt, PARAMS.deliveryMode, PARAMS.dest_address],
             include: [
 
-                {
-                    model: user,
-                    attributes:[PARAMS.business_name, PARAMS.email],
-                    where:{
+                // {
+                //     model: user,
+                //     attributes: [PARAMS.business_name, PARAMS.email],
+                //     where: {
 
-                    },
-                    required:true
-                },
+                //     },
+                //     required: true
+                // },
 
                 {
                     model: order,
@@ -160,10 +162,12 @@ exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
                         {
                             model: product,
                             attributes: [PARAMS.name, PARAMS.price,],
-                            include: [{
+                            include: {
                                 model: images,
-                                attributes: [PARAMS.url]
-                            }]
+                                attributes: [PARAMS.url, PARAMS.isDefault],
+                                as: "defaultImage"
+                                
+                            }
                         }
                     ]
                 }
@@ -175,8 +179,8 @@ exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
     )
 }
 
-exports.countAllOrders = async(query) =>{
-    return await ordersOnly.count({where: query})
+exports.countAllOrders = async (query) => {
+    return await ordersOnly.count({ where: query })
 }
 
 exports.insertIntoOrdersOnly = async (data) => {
@@ -212,6 +216,39 @@ exports.fetchSingleOrderDetail = async (orderId) => {
     )
 }
 
-exports.updateOrderStatus = async(orderId, update) =>{
-    await ordersOnly.update(update, {where: {orderId}})
+exports.fetchOrderDetailForReciept = async (orderId) => {
+
+    // product.hasOne(images, { foreignKey: PARAMS.productId, sourceKey: PARAMS.uid })
+    // images.belongsTo(product, { foreignKey: PARAMS.productId, targetKey: PARAMS.uid })
+
+    return await ordersOnly.findOne(
+        {
+            where: {
+                orderId
+            },
+            attributes: [PARAMS.total_amount, PARAMS.deliv_status, PARAMS.discount_type, PARAMS.dest_address, PARAMS.discount_value, PARAMS.createdAt],
+            include: [
+                {
+                    model: order,
+                    attributes: [PARAMS.specifications],
+                    include: [
+                        {
+                            model: product,
+                            attributes: [PARAMS.name, PARAMS.price,],
+                            include: {
+                                model: images,
+                                attributes: [PARAMS.url, PARAMS.isDefault],
+                                as: "defaultImage"
+                                
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    )
+}
+
+exports.updateOrderStatus = async (orderId, update) => {
+    await ordersOnly.update(update, { where: { orderId } })
 }
