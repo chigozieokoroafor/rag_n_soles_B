@@ -116,7 +116,7 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     const temp_order = await addToCartQuery(req.body)
 
-    const response = await initializePayment(createUUID(), total_amount, req.user?.email, { cartId: temp_order.cartId })
+    const response = await initializePayment(createUUID(), req.body.total_amount, req.user?.email, { cartId: temp_order.cartId })
     if (!response.success) {
         return generalError(res, response.msg, {})
     }
