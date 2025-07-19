@@ -29,6 +29,7 @@ base.get("/orders/:orderId", cartController.fetchSingleOrder)
 // base.get("/category/:category_id", productController.fetchProductsUnderCategory)
 base.get("/product/:product_id", productController.getSpecificProduct)
 base.get("/products", baseAuth, productController.getAllProductsWithFilter)
+base.post("/cart/products", productController.getProductsByIds)
 
 
 base.get("/location", adminController.fetchlocation)

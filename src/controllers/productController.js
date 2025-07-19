@@ -1,6 +1,6 @@
 const { Sequelize, Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery, deleteCategory, updateCategory, getSingleCategory } = require("../db/querys/category");
-const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage } = require("../db/querys/products");
+const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage, getProductsByIds } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
 const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
@@ -317,6 +317,25 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     return success(res, {
         products: data,
         pages: total_pages
+    }, "Fetched")
+
+})
+
+exports.getProductsByIds = catchAsync(async (req, res) => {
+    const ids = req.body.ids
+
+    // console.log("ids", id)
+    if (!ids) {
+        return generalError(res, "Provide product ids to get")
+    }
+
+    // const promises = await Promise.allSettled([])
+
+    const data = await getProductsByIds(ids)
+
+
+    return success(res, {
+        products: data
     }, "Fetched")
 
 })

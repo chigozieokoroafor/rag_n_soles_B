@@ -178,3 +178,35 @@ exports.updateDefaultImage = async (productId, imageId, isDefault) => {
         }
     })
 }
+
+exports.getProductsByIds = async(ids) =>{
+    
+
+    return await product.findAll(
+        {
+            where: {
+                uid: {
+                    [Op.in]: ids
+                },
+                isDeleted: false
+            },
+            attributes: [PARAMS.categoryId, PARAMS.name, PARAMS.price, PARAMS.uid, PARAMS.status],
+            include: [
+                {
+                    model: category,
+                    attributes: [PARAMS.uid, PARAMS.name],
+                    as: "Category"
+                },
+                {
+                    model: specifications,
+                    attributes: [PARAMS.id, PARAMS.name, PARAMS.units]
+                },
+                {
+                    model: images,
+                    attributes: [PARAMS.id, PARAMS.url, PARAMS.isDefault]
+                }
+            ],
+        }
+
+    )
+}
