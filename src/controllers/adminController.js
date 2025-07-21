@@ -92,6 +92,13 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
     return success(res, data, "fetched.")
 })
 
+
+exports.graph =  catchAsync( async (req, res) =>{
+    
+})
+
+
+
 exports.createCoupon = catchAsync(async (req, res) => {
     const valid_ = couponValidator.validate(req.body)
 
@@ -222,7 +229,6 @@ exports.updateAdmin = catchAsync(async (req, res) => {
 
     return success(res, {}, "User details updated")
 })
-
 
 // billing
 exports.createlocation = catchAsync(async (req, res) => {

@@ -23,10 +23,6 @@ const user = conn.define(MODEL_NAMES.user, {
         type: DataTypes.STRING(255),
         allowNull:true
     },
-    // username:{
-    //     type: DataTypes.STRING(255),
-    //     allowNull:true
-    // },
     email:{
         type: DataTypes.STRING(255),
         allowNull:true,

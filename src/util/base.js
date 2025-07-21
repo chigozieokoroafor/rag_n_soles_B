@@ -53,139 +53,76 @@ exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachment
 }
 
 exports.sendAccountVerificationMail = (email, verificationLink, username) => {
+
+    const year = new Date().getFullYear()
     const html = `
     <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email - Rag_n_Soles</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-        }
-        .header {
-            background-color: #4a148c; /* Deep purple */
-            padding: 20px;
-            text-align: center;
-        }
-        .logo {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0;
-        }
-        .content {
-            padding: 30px;
-        }
-        .verification-box {
-            background-color: #f3e5f5; /* Light purple background */
-            border-radius: 5px;
-            padding: 25px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .button {
-            display: inline-block;
-            background-color: #7b1fa2; /* Medium purple */
-            color: #ffffff;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            margin: 15px 0;
-            font-size: 16px;
-        }
-        .disclaimer {
-            background-color: #ede7f6; /* Very light purple */
-            padding: 15px;
-            border-left: 4px solid #9575cd; /* Light-medium purple */
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #757575;
-            font-size: 12px;
-        }
-        a {
-            color: #6a1b9a; /* Dark purple for links */
-            text-decoration: underline;
-        }
-        @media only screen and (max-width: 600px) {
-            .content {
-                padding: 20px;
-            }
-        }
-    </style>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f7f8fa; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .btn { display: inline-block; background-color: #4f46e5; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+    .footer { margin-top: 30px; color: #888; font-size: 12px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="logo">Rag_n_Soles</h1>
-        </div>
-        
-        <div class="content">
-            <h2>Verify Your Email Address</h2>
-            
-            <p>Hello ${username ?? ''},</p>
-            
-            <p>Thank you for creating an account with Rag_n_Soles, your premier destination for phones and the latest gadgets. We're excited to have you join our tech community!</p>
-            
-            <p>To complete your registration and access exclusive deals on the newest tech products, please verify your email address by clicking the button below:</p>
-            
-            <div class="verification-box">
-                <p>Please click the link below to verify your email address:</p>
-                <a href="${verificationLink}" >Verify My Email</a>
-                <p>This link will expire shortly.</p>
-            </div>
-            
-            <p>Once verified, you'll have access to:</p>
-            <ul>
-                <li>Exclusive member-only deals</li>
-                <li>Early access to new product releases</li>
-                <li>Special promotions and discounts</li>
-                <li>Personalized tech recommendations</li>
-            </ul>
-            
-            <div class="disclaimer">
-                <strong>IMPORTANT:</strong> If you did not create an account with Rag_n_Soles, please disregard this email. No action is needed, and your email will not be used without your permission. This email was sent as a result of a sign-up request for your email address.
-            </div>
-            
-            <p>If you have any questions or need assistance, our customer support team is here to help. Simply reply to this email or contact us at support@Rag_n_Soles.com.</p>
-            
-            <p>Thank you for choosing Rag_n_Soles for all your technology needs!</p>
-            
-            <p>Best regards,<br>
-            The Rag_n_Soles Team</p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; 2025 Rag_n_Soles. All rights reserved.</p>
-            <p>123 Tech Avenue, Innovation City, TC 12345</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Unsubscribe</a></p>
-        </div>
+  <div class="container">
+    <h2>Welcome to Rag N Soles</h2>
+    <p>Hi ${username ?? ""},</p>
+    <p>Thank you for joining our marketplace! You're just one step away from getting started.</p>
+    <p>Please verify your email address by clicking the button below:</p>
+    <p><a class="btn" href="${verificationLink}">Verify Email</a></p>
+    <p>If you did not create an account with us, please ignore this email.</p>
+    <div class="footer">
+      &copy; ${year} Rag N Soles. All rights reserved.
     </div>
+  </div>
 </body>
 </html>
     `
 
-    const subject = "Verify Your Email - Rag_n_Soles"
+    const subject = "Verify Your Email - Rag N Soles"
 
     this.sendEmail(subject, email, html)
 }
+
+
+exports.sendPasswordResetMail = (email, reset_link, username) => {
+
+    const year = new Date().getFullYear()
+    const html = `
+    <<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f7f8fa; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .btn { display: inline-block; background-color: #ef4444; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+    .footer { margin-top: 30px; color: #888; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Password Reset Request </h2>
+    <p>Hi ${username ?? ""},</p>
+    <p>We received a request to reset your password for your Rag N Soles account.</p>
+    <p>If this was you, you can reset your password by clicking the button below:</p>
+    <p><a class="btn" href="${reset_link}">Reset Password</a></p>
+    <p>This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
+    <div class="footer">
+      &copy; ${year} Rag N Soles. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+    `
+
+    const subject = "Verify Your Email - Rag N Soles"
+
+    this.sendEmail(subject, email, html)
+}
+
 
 exports.hashPassword = (pwd) => {
     const salt = bcrypt.genSaltSync()
@@ -244,9 +181,9 @@ exports.initializePayment = async (ref, amount, email, meta) => {
                 amount: `${amount * 100}`,
                 email: email,
                 channels: ["card", "bank", "apple_pay", "ussd", "qr", "mobile_money", "bank_transfer", "eft"],
-                
+
                 // https://rags-and-soles.netlify.app/order-confirmed/?source=paystack&status=success
-                callback_url: process.env.WEB_BASE_URL+ `/order-confirmed?source=paystack&status=success`,
+                callback_url: process.env.WEB_BASE_URL + `/order-confirmed?source=paystack&status=success`,
                 metadata: meta,
             },
             {
@@ -468,7 +405,7 @@ exports.processAllImages = async (files, productId) => {
             // console.log("fulfiled:::::",promise.value)
             img_list.push(
                 {
-                    [PARAMS.productId]:productId,
+                    [PARAMS.productId]: productId,
                     [PARAMS.url]: promise.value,
                     [PARAMS.isDefault]: true ? index == 0 : false
                 }
