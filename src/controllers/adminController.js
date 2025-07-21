@@ -333,7 +333,7 @@ exports.getNotifications = catchAsync(async (req, res) => {
 
     const pages = Math.ceil(total / FETCH_LIMIT)
 
-    return success(res, { notifications, pages }, "Fetched")
+    return success(res, { notifications, pages, count: total }, "Fetched")
 })
 
 exports.readNotifications = catchAsync(async (req, res) => {
