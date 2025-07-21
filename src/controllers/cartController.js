@@ -54,7 +54,6 @@ exports.createOrder = catchAsync(async (req, res) => {
         const product = await getspecificProduct(cart_item[PARAMS.productId])
         if (!product) {
             notFound(res, "Product not found")
-            // exit_iteration = true
             return
         }
 
@@ -67,11 +66,12 @@ exports.createOrder = catchAsync(async (req, res) => {
             }
 
             if (product_spec.units < spec.count) {
-                generalError(res, `available units for size ${spec.size} doesn't reach the requested amount`)
+                generalError(res, `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`)
                 return
             }
 
             total_amount += product.price * spec.count
+            
             promises.push(reduceProductCount(spec.count, spec.id))
         }
 

@@ -329,7 +329,7 @@ exports.getNotifications = catchAsync(async (req, res) => {
     }
 
     const notifications = await fetchNotifications(query, FETCH_LIMIT, offset)
-    const total = countNotifications(query)
+    const total = await countNotifications(query)
 
     const pages = Math.ceil(total / FETCH_LIMIT)
 
