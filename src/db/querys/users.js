@@ -58,6 +58,6 @@ exports.countNotifications = async(query) =>{
 
 exports.readNotification = async(notificationIds) =>{
     await notifications.update({[PARAMS.isRead] : true}, {where: {
-        [Op.in]: notificationIds
+        id:{[Op.in]: notificationIds}
     }})
 }
