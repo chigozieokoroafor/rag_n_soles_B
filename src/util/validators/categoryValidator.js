@@ -139,7 +139,12 @@ exports.couponUpdateValidator = Joi.object(
                 
             }
         ),
-
+        status: Joi.string().messages(
+            {
+                "any.required": "Discount type required",
+                "string.empty":"Kindly provide  a valid status: Expired/Active.",
+            }
+        ),
         value: Joi.number().messages(
             {
                 "any.required": "Discount value required",

@@ -48,7 +48,9 @@ exports.createOrder = catchAsync(async (req, res) => {
     const promises = []
 
     let coupon_detail
+    let couponId
     // exit_iteration = false
+    const spec_list  = []
 
     for (cart_item of products) {
         const product = await getspecificProduct(cart_item[PARAMS.productId])
@@ -71,8 +73,15 @@ exports.createOrder = catchAsync(async (req, res) => {
             }
 
             total_amount += product.price * spec.count
-            
-            promises.push(reduceProductCount(spec.count, spec.id))
+
+            spec_list.push(
+                {
+                    count: spec.count,
+                    id: spec.id
+                }
+            )
+
+            // promises.push(reduceProductCount(spec.count, spec.id))
         }
 
     };
@@ -83,7 +92,7 @@ exports.createOrder = catchAsync(async (req, res) => {
             return notFound(res, `Coupon code '${req.body.coupon}' not found.`)
         }
 
-        if (coupon_detail.limit >= coupon_detail.usage) {
+        if (coupon_detail.limit <= coupon_detail.usage) {
             generalError(res, "Coupon expired")
             // await updateCoupon({status: "Expired"}, coupon_detail.id)
             await coupon_detail.update({ status: "Expired" }, { where: { id: coupon_detail.id } })
@@ -95,8 +104,11 @@ exports.createOrder = catchAsync(async (req, res) => {
         } else {
             total_amount = total_amount - coupon_detail.value
         }
+
+
         // await createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
-        promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
+        // promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
+        couponId = coupon_detail.id
     }
 
     if (!req.body[PARAMS.isDeliveryFree]) {
@@ -122,6 +134,9 @@ exports.createOrder = catchAsync(async (req, res) => {
     }
 
     success(res, { url: response.url }, "Kindly proceed to making payment.")
+    
+    spec_list.forEach((item) => promises.push(reduceProductCount(item.count, item.id)))
+    promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId} }))
 
     await Promise.allSettled(promises)
 

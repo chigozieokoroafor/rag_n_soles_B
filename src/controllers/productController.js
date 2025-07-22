@@ -1,9 +1,9 @@
-const { Sequelize, Op } = require("sequelize");
+const { Op } = require("sequelize");
 const { checkCategoryExists, createCategoryQuery, fetchCategoryQuery, deleteCategory, updateCategory, getSingleCategory } = require("../db/querys/category");
 const { uploadProduct, getProductsByCategory, getspecificProduct, searchProduct, deleteProductQuery, uploadProductImage, updateProductDetails, countProducts, insertProductspecification, deleteBulkSpecification, updateProductSpecification, deleteProductImages, updateDefaultImage, getProductsByIds } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
-const { createUUID, sendEmail, processFile, processAllImages } = require("../util/base");
+const { sendEmail, processAllImages } = require("../util/base");
 const { FETCH_LIMIT, PARAMS } = require("../util/consts");
 const { categoryCreationSchema, categoryUpdateSchema } = require("../util/validators/categoryValidator");
 const { productUploadSchema, productUpdateSchema, productSpecificationUpdateSchema, imageUpdateValidator } = require("../util/validators/productsValidator");
@@ -80,28 +80,28 @@ exports.fetchCategories = catchAsync(async (req, res) => {
     return success(res, data, "Fetched")
 })
 
-exports.updateCategory = catchAsync(async(req, res) =>{
-  const categoryId = req.params.categoryId
+exports.updateCategory = catchAsync(async (req, res) => {
+    const categoryId = req.params.categoryId
 
-  const valid_ = categoryUpdateSchema.validate(req.body)
+    const valid_ = categoryUpdateSchema.validate(req.body)
 
-  if (valid_.error){
-    return generalError(res, valid_.error.message, {})
-  }
+    if (valid_.error) {
+        return generalError(res, valid_.error.message, {})
+    }
 
-  const cat = await getSingleCategory(categoryId)
-  if(!cat ){
-    return notFound(res, "Category selected not found.")
-  }
+    const cat = await getSingleCategory(categoryId)
+    if (!cat) {
+        return notFound(res, "Category selected not found.")
+    }
 
-  await updateCategory(categoryId, req.body)
+    await updateCategory(categoryId, req.body)
 
-  return success(res, {}, "Category updated")
+    return success(res, {}, "Category updated")
 
 
 })
 
-exports.deleteCategory = catchAsync(async(req, res) =>{
+exports.deleteCategory = catchAsync(async (req, res) => {
     const categoryId = req.params.categoryId
     await deleteCategory(categoryId)
     return success(res, {}, "Caegory Deleted and linked products set to inactive.")
@@ -156,7 +156,7 @@ exports.updateProducts = catchAsync(async (req, res) => {
 
     const valid_ = productUpdateSchema.validate(req.body)
     if (valid_.error) {
-        
+
         generalError(res, valid_.error.message, {})
         return
     }
@@ -175,15 +175,15 @@ exports.updateProducts = catchAsync(async (req, res) => {
     if (update[PARAMS.spec]) {
         try {
             spec = JSON.parse(update[PARAMS.spec])
-        }catch(error){
+        } catch (error) {
             spec = update[PARAMS.spec]
         }
-        
+
 
         const sepc_valid_ = productSpecificationUpdateSchema.validate(spec)
 
         if (sepc_valid_.error) {
-            
+
             generalError(res, sepc_valid_.error.message, {})
             return
         }
@@ -258,14 +258,14 @@ exports.deleteImages = catchAsync(async (req, res) => {
 
 })
 
-exports.updateDefaultImages = catchAsync(async (req, res) =>{
+exports.updateDefaultImages = catchAsync(async (req, res) => {
     const productId = req.params.productId
 
     const valid_ = imageUpdateValidator.validate(req.body)
-    if (valid_.error){
+    if (valid_.error) {
         return generalError(res, valid_.error.message, {})
     }
-    
+
     await updateDefaultImage(productId, req.body[PARAMS.id], req.body[PARAMS.isDefault])
 
     return success(res, {}, "Updated")
@@ -283,7 +283,7 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
     const offset = (Number(page) - 1) * FETCH_LIMIT
     let actual_query = {}
 
-    if(req.user.userType == "Vendor"){
+    if (req.user.userType == "Vendor") {
         actual_query.status = "Active"
     }
 
