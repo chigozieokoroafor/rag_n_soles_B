@@ -94,9 +94,12 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
 
 
 exports.graph =  catchAsync( async (req, res) =>{
-    
-})
+    const { year, month } = req.query
 
+
+
+    return
+})
 
 
 exports.createCoupon = catchAsync(async (req, res) => {
