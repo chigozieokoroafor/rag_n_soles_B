@@ -87,7 +87,7 @@ exports.searchProduct = async (query, offset, limit) => {
 
 exports.countProducts = async (query) => {
 
-    query[PARAMS.isDeleted] = true
+    query[PARAMS.isDeleted] = false
 
     return await product.count(
         {

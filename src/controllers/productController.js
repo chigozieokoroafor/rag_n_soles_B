@@ -285,6 +285,7 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
     if (req.user.userType == "Vendor") {
         actual_query.status = "Active"
+        
     }
 
     if (search) {
@@ -307,7 +308,9 @@ exports.getAllProductsWithFilter = catchAsync(async (req, res) => {
 
     const data = promises[0].value
     const count = promises[1].value
-    const total_pages = Math.ceil(count / FETCH_LIMIT)
+
+    // console.log("count", count)
+    const total_pages = Math.ceil(count / FETCH_LIMIT) + 1
 
 
     return success(res, {
