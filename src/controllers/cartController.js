@@ -13,13 +13,13 @@ const { fetchSpecLocation } = require("../db/querys/admin");
 exports.validateCoupon = catchAsync(async (req, res) => {
     const { coupon } = req.body
 
-    if(!coupon){
+    if (!coupon) {
         return generalError(res, "Kindly provide a coupon to validate", {})
     }
 
     const coupons = await fetchSingleCoupon(coupon)
 
-    if(!coupons){
+    if (!coupons) {
         return generalError(res, "Coupon not valid/expired", {})
     }
 
@@ -50,7 +50,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     let coupon_detail
     let couponId
     // exit_iteration = false
-    const spec_list  = []
+    const spec_list = []
 
     for (cart_item of products) {
         const product = await getspecificProduct(cart_item[PARAMS.productId])
@@ -134,9 +134,11 @@ exports.createOrder = catchAsync(async (req, res) => {
     }
 
     success(res, { url: response.url }, "Kindly proceed to making payment.")
-    
+
     spec_list.forEach((item) => promises.push(reduceProductCount(item.count, item.id)))
-    promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId} }))
+    if (couponId) {
+        promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId } }))
+    }
 
     await Promise.allSettled(promises)
 
@@ -165,14 +167,14 @@ exports.fetchOrders = catchAsync(async (req, res) => {
     let actual_query = {
         [PARAMS.userId]: user_id
     }
-    
+
 
     if (search) {
         // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
 
         actual_query[PARAMS.orderId] = {
-                [Op.like]: `%${search}%`
-            }
+            [Op.like]: `%${search}%`
+        }
 
     }
     if (status) {
@@ -200,16 +202,16 @@ exports.fetchOrdersAdmin = catchAsync(async (req, res) => {
 
     const offset = (Number(page) - 1) * FETCH_LIMIT
     let actual_query = {}
-    
+
 
     if (search) {
         // query_list.push(Sequelize.literal(`MATCH (${PARAMS.name}) AGAINST("${search}" IN BOOLEAN MODE)`),)
 
         actual_query[Op.or] = {
-            [PARAMS.orderId] : {
+            [PARAMS.orderId]: {
                 [Op.like]: `%${search}%`
             },
-            [PARAMS.vendorName]:{
+            [PARAMS.vendorName]: {
                 [Op.like]: `%${search}%`
             }
         }
@@ -256,10 +258,10 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
 
 })
 
-exports.fetchSingleOrder = catchAsync(async(req, res) =>{
+exports.fetchSingleOrder = catchAsync(async (req, res) => {
     const orderId = req.params.orderId
 
     const order = await fetchOrderDetailForReciept(orderId)
 
-    return success(res, order, )
+    return success(res, order,)
 })
