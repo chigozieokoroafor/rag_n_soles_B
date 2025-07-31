@@ -65,7 +65,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 [PARAMS.dest_address]: item[PARAMS.dest_address],
                 [PARAMS.year]: new Date().getFullYear(),
                 [PARAMS.month]: new Date().getMonth(),
-                [PARAMS.day]: new Date().getDate(),
+                [PARAMS.date]: new Date().getDate(),
 
             })
 
