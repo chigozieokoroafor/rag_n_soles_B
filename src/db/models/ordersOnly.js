@@ -61,6 +61,22 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         type: DataTypes.JSON,
         allowNull: true
     },
+
+    [PARAMS.year]:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: ()=>{ new Date().getFullYear() }
+    },
+    [PARAMS.month]:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: ()=>{ new Date().getMonth() }
+    },
+    [PARAMS.date]:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: () =>{new Date().getDate()}
+    }
 }, {
     tableName: MODEL_NAMES.ordersOnly,
     modelName: MODEL_NAMES.ordersOnly

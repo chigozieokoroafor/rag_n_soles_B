@@ -96,10 +96,10 @@ exports.PARAMS = {
     vendorName:"vendorName",
     dest_address:"dest_address",
     period:"period",
-    location:"location"
-
-    
-    
+    location:"location",
+    year: "year",
+    month: "month",
+    date: "date"
 }
 
 exports.BUNNY = {
