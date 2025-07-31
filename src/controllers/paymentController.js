@@ -64,9 +64,8 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 [PARAMS.vendorName]: user[PARAMS.business_name] ?? user[PARAMS.name],
                 [PARAMS.dest_address]: item[PARAMS.dest_address],
                 [PARAMS.year]: new Date().getFullYear(),
-                [PARAMS.month]: new Date().getMonth(),
+                [PARAMS.month]: (new Date().getMonth())+1,
                 [PARAMS.date]: new Date().getDate(),
-
             })
 
             await createOrder(products)
