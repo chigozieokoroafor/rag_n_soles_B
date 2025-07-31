@@ -39,7 +39,7 @@ class Auth {
             if (!(payload.userType == "Admin")){
                 user_data = (await fetchUserForMiddleware(payload.id ?? payload.uid))?.toJSON()
             }else{
-                console.log("entered here")
+                // console.log("entered here")
                 user_data = (await fetchAdmninforMiddleware(payload.id ?? payload.uid))?.toJSON()
             }
 

@@ -171,10 +171,12 @@ exports.sendResetLink = catchAsync(async (req, res) => {
     const token = generateToken({ email: email, userType: user_type }, 1 * 10 * 60, process.env.AUTH_SECRET)
 
     const resetLink = process.env.WEB_BASE_URL + `/reset-password?token=${token}&email=${email}`
+    
+    success(res, {}, "Reset link sent.")
 
     sendPasswordResetMail(email, resetLink, "")
 
-    return success(res, {}, "Reset link sent.")
+    
 })
 
 exports.resetPwd = catchAsync(async (req, res) => {
