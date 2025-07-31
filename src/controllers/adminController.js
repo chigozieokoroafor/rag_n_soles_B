@@ -12,7 +12,7 @@ const { insertCoupon, getCoupons, deleteCoupon, updateCoupon, countCoupons } = r
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 const { hashSync } = require("bcryptjs");
 const { locUpload, locUpdate } = require("../util/validators/locationValidator");
-const { countAllOrders } = require("../db/querys/cart");
+const { countAllOrders, getTotal, getDailyTotals } = require("../db/querys/cart");
 const { fetchNotifications, countNotifications, readNotification } = require("../db/querys/users");
 
 
@@ -94,11 +94,19 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
 
 
 exports.graph =  catchAsync( async (req, res) =>{
-    const { year, month } = req.query
+    let { startDate, endDate } = req.query
 
+    // startDate = new Date(startDate).toUTCString()
+    // endDate = new Date(endDate).toUTCString()
+    const total = await getTotal(startDate, endDate)
+    const daily_totals = await getDailyTotals(startDate, endDate)
+    
+    const data = {
+        interval: daily_totals,
+        total: total[0].total
+    }
 
-
-    return
+    return success(res, data, "Fetched.")
 })
 
 

@@ -1,3 +1,4 @@
+const { Sequelize, Op } = require("sequelize");
 const { PARAMS, STATUSES } = require("../../util/consts");
 const { cart } = require("../models/cart");
 const { deliv_locations } = require("../models/deliv_locations");
@@ -123,7 +124,7 @@ exports.fetchOrdersQuery = async (whereQ, limit, skip) => {
                                 model: images,
                                 attributes: [PARAMS.url, PARAMS.isDefault],
                                 as: "defaultImage"
-                                
+
                             }
                         }
                     ]
@@ -169,7 +170,7 @@ exports.fetchOrdersQueryAdmin = async (query, limit, skip) => {
                                 model: images,
                                 attributes: [PARAMS.url, PARAMS.isDefault],
                                 as: "defaultImage"
-                                
+
                             }
                         }
                     ]
@@ -225,7 +226,7 @@ exports.fetchOrderDetailForReciept = async (orderId) => {
                                 model: images,
                                 attributes: [PARAMS.url, PARAMS.isDefault],
                                 as: "defaultImage"
-                                
+
                             }
                         }
                     ]
@@ -243,3 +244,44 @@ exports.fetchOrderDetailForReciept = async (orderId) => {
 exports.updateOrderStatus = async (orderId, update) => {
     await ordersOnly.update(update, { where: { orderId } })
 }
+
+
+exports.getTotal = async (startDate, endDate) => {
+    return await ordersOnly.findAll(
+        {
+            where: Sequelize.literal(`
+      DATE_FORMAT(${PARAMS.createdAt}, '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
+    `),
+            attributes: [
+
+                [
+                    Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+                    'total'
+                ]
+            ],
+            raw: true
+        }
+    )
+}
+
+
+exports.getDailyTotals = async (startDate, endDate) => {
+    return await ordersOnly.findAll({
+        where: Sequelize.literal(`
+      DATE_FORMAT(${PARAMS.createdAt}, '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
+    `),
+        attributes: [
+            [
+                Sequelize.literal(`DATE_FORMAT (${PARAMS.createdAt}, '%Y-%m-%d')`),
+                'date'
+            ],
+            [
+                Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+                'total'
+            ]
+        ],
+        group: [Sequelize.literal(`DATE(${PARAMS.createdAt})`)],
+        order: [[Sequelize.literal(`DATE(${PARAMS.createdAt})`), 'ASC']],
+        raw: true
+    });
+};

@@ -37,6 +37,7 @@ admin.get("/users", adminAuth, adminController.getUsers)
 admin.put("/users", adminAuth, adminController.updateUserStatus)
 
 admin.get("/dashboard/metrics", adminAuth, adminController.dashboardMetrics)
+admin.get("/dashboard/graph", adminAuth, adminController.graph)
 
 admin.post("/coupon", adminAuth, adminController.createCoupon)
 admin.get("/coupon", adminAuth, adminController.fetchCoupons)
