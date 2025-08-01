@@ -36,6 +36,8 @@ exports.createOrder = catchAsync(async (req, res) => {
         return generalError(res, valid_.error.message, {})
     }
 
+    console.log("req.payload:::::", req.body)
+
     req.body.userId = user_id
     let couponUsed = false
     // till payment is processed before product units are reduced.
