@@ -39,8 +39,6 @@ exports.createOrder = catchAsync(async (req, res) => {
     // console.log("req.payload:::::", req.body)
 
     req.body.userId = user_id
-    let discount_type
-    let discount_value
     // till payment is processed before product units are reduced.
 
     // const order = await createOrder(req.body)
@@ -143,7 +141,8 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     spec_list.forEach((item) => promises.push(reduceProductCount(item.count, item.id)))
     if (couponId) {
-        promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId } }))
+        promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId } }), createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert))
+        
     }
 
     await Promise.allSettled(promises)
