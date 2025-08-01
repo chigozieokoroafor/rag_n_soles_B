@@ -5,7 +5,7 @@ const { generate } = require("rand-token");
 const { createUUID } = require("../../util/base");
 
 const cart = conn.define(MODEL_NAMES.cart,
-    
+
     {
         id: {
             type: DataTypes.INTEGER,
@@ -33,22 +33,30 @@ const cart = conn.define(MODEL_NAMES.cart,
             type: DataTypes.DOUBLE,
             allowNull: false
         },
-        [PARAMS.isDeliveryFree]:{
+        [PARAMS.isDeliveryFree]: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
 
-        [PARAMS.locationId]:{
+        [PARAMS.locationId]: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        deliveryMode:{
+        deliveryMode: {
             type: DataTypes.STRING(20),
             defaultValue: DELIVERY_MODES.pickup
         },
-        dest_address:{
+        dest_address: {
             type: DataTypes.JSON,
-            allowNull:true
+            allowNull: true
+        },
+        discount_type: {
+            type: DataTypes.STRING(20),
+            allowNull: true
+        },
+        discount_value: {
+            type: DataTypes.DOUBLE,
+            defaultValue: 0
         },
 
         expiredAt: {

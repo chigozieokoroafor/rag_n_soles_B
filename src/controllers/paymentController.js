@@ -66,6 +66,8 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 [PARAMS.year]: new Date().getFullYear(),
                 [PARAMS.month]: (new Date().getMonth())+1,
                 [PARAMS.date]: new Date().getDate(),
+                [PARAMS.discount_type]: item[PARAMS.discount_type],
+                [PARAMS.discount_value]: item[PARAMS.discount_value]
             })
 
             await createOrder(products)

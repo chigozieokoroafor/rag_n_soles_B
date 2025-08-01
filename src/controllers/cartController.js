@@ -36,10 +36,11 @@ exports.createOrder = catchAsync(async (req, res) => {
         return generalError(res, valid_.error.message, {})
     }
 
-    console.log("req.payload:::::", req.body)
+    // console.log("req.payload:::::", req.body)
 
     req.body.userId = user_id
-    let couponUsed = false
+    let discount_type
+    let discount_value
     // till payment is processed before product units are reduced.
 
     // const order = await createOrder(req.body)
@@ -106,6 +107,9 @@ exports.createOrder = catchAsync(async (req, res) => {
         } else {
             total_amount = total_amount - coupon_detail.value
         }
+
+        req.body[PARAMS.discount_type] = coupon_detail?.type
+        req.body[PARAMS.discount_value] = coupon_detail?.value
 
 
         // await createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
