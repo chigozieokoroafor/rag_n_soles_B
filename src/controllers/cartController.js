@@ -203,11 +203,11 @@ exports.createOrder = catchAsync(async (req, res) => {
     if (couponId) {
         promises.push(
             coupon_detail.increment("usage", { by: 1, where: { id: couponId } }), 
-            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
+            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert))
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert))
     await Promise.allSettled(promises)
 
 
