@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const { addToCartQuery, fetchOrdersQuery, fetchOrdersQueryAdmin, countAllOrders, fetchSingleOrderDetail, updateOrderStatus, fetchOrderDetailForReciept } = require("../db/querys/cart");
 const { getspecificProduct, reduceProductCount } = require("../db/querys/products");
 const { catchAsync } = require("../errorHandler/allCatch");
-const { generalError, notFound, success } = require("../errorHandler/statusCodes");
+const { generalError, notFound, success, newError } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment } = require("../util/base");
 const { PARAMS, FETCH_LIMIT, DELIVERY_MODES, NOTIFICATION_TITLES } = require("../util/consts");
 const { checkoutSchema, orderUpdate } = require("../util/validators/cartValidator");
@@ -26,6 +26,64 @@ exports.validateCoupon = catchAsync(async (req, res) => {
     return success(res, { type: coupons.type, value: coupons.value }, "Fetched.")
 })
 
+
+async function processOrder(products) {
+    const spec_list = [];
+    let total_amount = 0.0;
+
+    for (const cart_item of products) {
+        const product = await getspecificProduct(cart_item[PARAMS.productId]);
+
+        if (!product) {
+            return {
+                type: "error",
+                body: { code: 404, msg: "Product not found" }
+            };
+        }
+
+        for (const spec of cart_item[PARAMS.specifications]) {
+            const product_spec = product[PARAMS.product_specifications].find(
+                (spec_spec) => spec_spec.id == spec.id
+            );
+
+            if (!product_spec) {
+                return {
+                    type: "error",
+                    body: {
+                        code: 404,
+                        msg: `Specification not found for ${product.name}: Size ${spec.size}`
+                    }
+                };
+            }
+
+            if (product_spec.units < spec.count) {
+                return {
+                    type: "error",
+                    body: {
+                        code: 400,
+                        msg: `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`
+                    }
+                };
+            }
+
+            total_amount += product.price * spec.count;
+
+            spec_list.push({
+                count: spec.count,
+                id: spec.id
+            });
+        }
+    }
+
+    return {
+        type: "success",
+        body: {
+            spec_list,
+            total_amount
+        }
+    };
+}
+
 exports.createOrder = catchAsync(async (req, res) => {
     const user_id = req.user?.id
 
@@ -42,7 +100,7 @@ exports.createOrder = catchAsync(async (req, res) => {
     // till payment is processed before product units are reduced.
 
     // const order = await createOrder(req.body)
-    let total_amount = 0.0
+    // let total_amount = 0.0
     const products = req.body[PARAMS.products]
     let deliveryFee = 0
     let deliveryMode = DELIVERY_MODES.pickup
@@ -50,42 +108,48 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     let coupon_detail
     let couponId
-    // exit_iteration = false
-    const spec_list = []
+    // const spec_list = []
 
-    for (cart_item of products) {
-        const product = await getspecificProduct(cart_item[PARAMS.productId])
-        if (!product) {
-            notFound(res, "Product not found")
-            return
-        }
+    // for (cart_item of products) {
+    //     const product = await getspecificProduct(cart_item[PARAMS.productId])
+    //     if (!product) {
+    //         notFound(res, "Product not found")
+    //         return
+    //     }
 
-        for (spec of cart_item[PARAMS.specifications]) {
-            const product_spec = product[PARAMS.product_specifications].find(spec_spec => spec_spec.id == spec.id)
+    //     for (spec of cart_item[PARAMS.specifications]) {
+    //         const product_spec = product[PARAMS.product_specifications].find(spec_spec => spec_spec.id == spec.id)
 
-            if (!product_spec) {
-                notFound(res, `Specification provided not found: ${spec.size}`,)
-                return
-            }
+    //         if (!product_spec) {
+    //             notFound(res, `Specification provided not found: ${spec.size}`,)
+    //             return
+    //         }
 
-            if (product_spec.units < spec.count) {
-                generalError(res, `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`)
-                return
-            }
+    //         if (product_spec.units < spec.count) {
+    //             generalError(res, `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`)
+    //             return
+    //         }
 
-            total_amount += product.price * spec.count
+    //         total_amount += product.price * spec.count
 
-            spec_list.push(
-                {
-                    count: spec.count,
-                    id: spec.id
-                }
-            )
+    //         spec_list.push(
+    //             {
+    //                 count: spec.count,
+    //                 id: spec.id
+    //             }
+    //         )
 
-            // promises.push(reduceProductCount(spec.count, spec.id))
-        }
+    //     }
 
-    };
+    // };
+
+    const processedOrder = await processOrder(products)
+    if (processedOrder.type == "error") {
+        return newError(res, processedOrder.body.msg, processedOrder.body.code)
+    }
+
+    let total_amount = processedOrder.body?.total_amount
+    const spec_list = processedOrder.body?.spec_list
 
     if (req.body.coupon) {
         coupon_detail = await fetchSingleCoupon(req.body.coupon)
@@ -95,7 +159,6 @@ exports.createOrder = catchAsync(async (req, res) => {
 
         if (coupon_detail.limit <= coupon_detail.usage) {
             generalError(res, "Coupon expired")
-            // await updateCoupon({status: "Expired"}, coupon_detail.id)
             await coupon_detail.update({ status: "Expired" }, { where: { id: coupon_detail.id } })
             return
         }
@@ -108,10 +171,6 @@ exports.createOrder = catchAsync(async (req, res) => {
 
         req.body[PARAMS.discount_type] = coupon_detail?.type
         req.body[PARAMS.discount_value] = coupon_detail?.value
-
-
-        // await createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
-        // promises.push(coupon_detail.increment("usage", { by: 1, where: { id: coupon_detail.id } }))
         couponId = coupon_detail.id
     }
 
@@ -141,10 +200,13 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     spec_list.forEach((item) => promises.push(reduceProductCount(item.count, item.id)))
     if (couponId) {
-        promises.push(coupon_detail.increment("usage", { by: 1, where: { id: couponId } }), createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert))
-        
+        promises.push(
+            coupon_detail.increment("usage", { by: 1, where: { id: couponId } }), 
+            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert)
+        )
     }
 
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert))
     await Promise.allSettled(promises)
 
 
@@ -270,3 +332,8 @@ exports.fetchSingleOrder = catchAsync(async (req, res) => {
 
     return success(res, order,)
 })
+
+exports.manualOrder = catchAsync(async (req, res) => {
+    this.createOrder(req, res)
+})
+

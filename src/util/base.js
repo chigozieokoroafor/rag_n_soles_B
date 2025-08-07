@@ -7,6 +7,21 @@ const randToken = require("rand-token")
 const axios = require("axios");
 const { PARAMS, BUNNY } = require("./consts");
 const { Readable } = require("stream")
+const fs = require("fs");
+const path = require("path");
+const handlebars = require("handlebars")
+// const {cre} = require("../util/mail_handlebar")
+// import fs from 'fs';
+// import path from 'path';
+// // import nodemailer from 'nodemailer';
+// import handlebars from 'handlebars';
+
+// 1. Compile the Handlebars Template
+const baseDir = path.resolve(__dirname, "../../templates")
+const templatePath = path.join(baseDir, 'order_confirmation_template.html');
+// console.log("temp==>> ",baseDir)
+const source = fs.readFileSync(templatePath, 'utf8');
+const template = handlebars.compile(source);
 
 
 
@@ -342,6 +357,11 @@ exports.sendAdminMailCredentials = (email, password) => {
     this.sendEmail(subject, email, html)
 }
 
+exports.sendOrderMailToUser = (email, subject, data) => {
+    const generatedTemplate = template(data)
+
+    this.sendEmail(subject, email, generatedTemplate)
+}
 // exports.uploadToBunny = async(blob, )
 
 exports.processFile = async (buffer, fileName) => {

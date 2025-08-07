@@ -116,6 +116,65 @@ exports.checkoutSchema = Joi.object(
     }
 )
 
+exports.manualOrderSchema = Joi.object(
+   {
+        products: Joi.array().items(this.addToCartSchema).required().messages(
+            {
+                "any.required": "Products required to checkout",
+                "array.base": "Kindly provide a list of products.",
+                'array.includesRequiredUnknowns': "Kindly select at least one product"
+            }
+        ),
+
+        // coupon: Joi.string().messages(
+        //     {
+        //         "string.empty": "Kindly provide a valid  coupon code."
+        //     }
+        // ),
+        isDeliveryFree: Joi.boolean().required().messages(
+            {
+                "any.required": "Kindly select your delivery option"
+            }
+        ),
+        locationId: Joi.number().messages(
+            {
+                "number.base": "Kindly select a valid location for delivery"
+            }
+        ),
+        dest_address: Joi.object(
+            {
+                name: Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the name of reciepient",
+                        "string.base":"Kindly provide a valid  name of reciepient",
+                        "string.empty":"Kindly provide a valid  name of reciepient",
+                    }
+                ),
+                phone_no:Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the phone no of reciepient",
+                        "string.base":"Kindly provide a valid phone number",
+                        "string.empty":"Kindly provide a valid phone number",
+                    }
+                ),
+                address: Joi.string().required().messages(
+                    {
+                        "any.required": "Kindly provide the address of reciepient",
+                        "string.base":"Kindly provide a valid address",
+                        "string.empty":"Kindly provide a valid address",
+                    }
+                )
+            }
+        ).required().messages(
+            {
+                "any.required":"kidnly provide delivery details to proceed."
+            }
+        )
+
+
+    }
+)
+
 exports.orderUpdate = Joi.object(
     {
         orderId: Joi.string().required().messages(
