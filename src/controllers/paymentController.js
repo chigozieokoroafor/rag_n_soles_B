@@ -22,7 +22,8 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
     if (hash != req.headers['x-paystack-signature']) {
         return generalError(res, "Lmao, transaction unverified.")
     }
-    // console.log("recieved:::webhook", req.body )
+    console.log("recieved:::webhook ===> ", req.body )
+
     success(res, {}, "Recieved")
 
     try {
@@ -38,7 +39,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             const amount = item.total_amount
             const user = await fetchUserForMiddleware(userId)
 
-            console.log("products ==> ", products)
+            // console.log("products ==> ", products)
 
 
             const trx = await uploadTransaction(

@@ -8,6 +8,7 @@ const { PARAMS, FETCH_LIMIT, DELIVERY_MODES, NOTIFICATION_TITLES } = require("..
 const { checkoutSchema, orderUpdate } = require("../util/validators/cartValidator");
 const { fetchSingleCoupon } = require("../db/querys/category");
 const { fetchSpecLocation } = require("../db/querys/admin");
+const { createNotification } = require("../db/querys/users");
 
 
 exports.validateCoupon = catchAsync(async (req, res) => {
