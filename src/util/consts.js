@@ -99,7 +99,8 @@ exports.PARAMS = {
     location:"location",
     year: "year",
     month: "month",
-    date: "date"
+    date: "date",
+    address:"address"
 }
 
 exports.BUNNY = {

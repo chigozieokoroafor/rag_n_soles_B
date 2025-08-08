@@ -89,7 +89,9 @@
       <img src="{{ image }}" alt="{{ name }}" />
       <div class="product-details">
         <div><strong>{{ name }}</strong></div>
-        <div>Size: {{ size }} | Qty: {{ quantity }}</div>
+        {{#each specifications}}
+        <div>Size: {{ size }} | Qty: {{ count }}</div>
+        {{/each}}
         <div>₦{{ price }} each</div>
       </div>
     </div>
