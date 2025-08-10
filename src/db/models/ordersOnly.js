@@ -15,7 +15,7 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
     },
     userId: {
         type: DataTypes.STRING(40),
-        allowNull: false
+        allowNull: true
     },
     vendorName: {
         type: DataTypes.STRING(255),
@@ -62,28 +62,28 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
         allowNull: true
     },
 
-    [PARAMS.year]:{
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: ()=>{ new Date().getFullYear() }
-    },
-    [PARAMS.month]:{
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: ()=>{ new Date().getMonth() }
-    },
-    [PARAMS.date]:{
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: () =>{new Date().getDate()}
-    }
+    // [PARAMS.year]:{
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    //     defaultValue: ()=>{ new Date().getFullYear() }
+    // },
+    // [PARAMS.month]:{
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    //     defaultValue: ()=>{ new Date().getMonth() }
+    // },
+    // [PARAMS.date]:{
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    //     defaultValue: () =>{new Date().getDate()}
+    // }
 }, {
     tableName: MODEL_NAMES.ordersOnly,
     modelName: MODEL_NAMES.ordersOnly
 })
 
 ordersOnly.hasMany(order, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
-order.belongsTo(order, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
+order.belongsTo(ordersOnly, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
 
 // deliv_locations.hasMany(ordersOnly, {foreignKey: PARAMS.locationId, sourceKey: PARAMS.id})
 ordersOnly.hasOne(deliv_locations, {foreignKey: PARAMS.id, sourceKey: PARAMS.locationId, as:"deliveryLocation"})

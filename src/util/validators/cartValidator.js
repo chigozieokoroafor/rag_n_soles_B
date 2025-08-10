@@ -118,6 +118,22 @@ exports.checkoutSchema = Joi.object(
 
 exports.manualOrderSchema = Joi.object(
    {
+
+        email:Joi.string().email().messages(
+            {
+                "string.email":"Kidnly provide a valid email for the owner",
+                "string.base":"Kindly provide email as a string"
+            }
+        ), 
+
+        name: Joi.string().messages(
+            {
+                "string.base": "Kindly provide name of the reciepient"
+            }
+        ),
+
+
+
         products: Joi.array().items(this.addToCartSchema).required().messages(
             {
                 "any.required": "Products required to checkout",
@@ -126,11 +142,11 @@ exports.manualOrderSchema = Joi.object(
             }
         ),
 
-        // coupon: Joi.string().messages(
-        //     {
-        //         "string.empty": "Kindly provide a valid  coupon code."
-        //     }
-        // ),
+        coupon: Joi.string().messages(
+            {
+                "string.empty": "Kindly provide a valid  coupon code."
+            }
+        ),
         isDeliveryFree: Joi.boolean().required().messages(
             {
                 "any.required": "Kindly select your delivery option"
@@ -167,7 +183,7 @@ exports.manualOrderSchema = Joi.object(
             }
         ).required().messages(
             {
-                "any.required":"kidnly provide delivery details to proceed."
+                "any.required":"kindly provide delivery details to proceed."
             }
         )
 

@@ -75,7 +75,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 return {
                     name: specificProduct.name,
                     specifications: product.specifications,
-                    quantity: 1,
+                    // quantity: 1,
                     price: specificProduct.price,
                     image: specificProduct.Images[0].url,
 
@@ -93,9 +93,9 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
                 [PARAMS.deliveryMode]: item[PARAMS.deliveryMode],
                 [PARAMS.vendorName]: user[PARAMS.business_name] ?? user[PARAMS.name],
                 [PARAMS.dest_address]: item[PARAMS.dest_address],
-                [PARAMS.year]: new Date().getFullYear(),
-                [PARAMS.month]: (new Date().getMonth()) + 1,
-                [PARAMS.date]: new Date().getDate(),
+                // [PARAMS.year]: new Date().getFullYear(),
+                // [PARAMS.month]: (new Date().getMonth()) + 1,
+                // [PARAMS.date]: new Date().getDate(),
                 [PARAMS.discount_type]: item[PARAMS.discount_type],
                 [PARAMS.discount_value]: item[PARAMS.discount_value]
             })

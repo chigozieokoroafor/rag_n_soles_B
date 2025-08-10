@@ -1,10 +1,10 @@
 const { Router } = require("express")
-const  adminController = require("../controllers/adminController")
-const  productController = require("../controllers/productController")
-const  cartController = require("../controllers/cartController")
+const adminController = require("../controllers/adminController")
+const productController = require("../controllers/productController")
+const cartController = require("../controllers/cartController")
 const { uploadMiddleWare, uploadMiddleWareNotrequired } = require("../middleware/upload")
 const { adminAuth } = require("../middleware/auth")
-const multer =require("multer")
+const multer = require("multer")
 
 
 const admin = Router()
@@ -16,7 +16,7 @@ admin.get("/me", adminAuth, adminController.fetchProfile)
 admin.put("/me", adminAuth, adminController.updateProfile)
 
 admin.post("/category", adminAuth, productController.createCategory)
-admin.get("/category",productController.fetchCategories)
+admin.get("/category", productController.fetchCategories)
 admin.get("/category/:category_id", productController.fetchProductsUnderCategory)
 admin.delete("/category/:categoryId", adminAuth, productController.deleteCategory)
 admin.put("/category/:categoryId", adminAuth, productController.updateCategory)
@@ -56,6 +56,7 @@ admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
 admin.get("/order", adminAuth, cartController.fetchOrdersAdmin)
 admin.put("/order", adminAuth, cartController.updateStatusOfOrders)
+admin.post("/order", adminAuth, cartController.manualOrder)
 
 admin.get("/notifications", adminAuth, adminController.getNotifications)
 admin.put("/notifications", adminAuth, adminController.readNotifications)

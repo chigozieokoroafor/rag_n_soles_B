@@ -13,7 +13,7 @@ const order = conn.define(MODEL_NAMES.order, {
     },
     userId: {
         type: DataTypes.STRING(40),
-        allowNull: false
+        allowNull: true
     },
     orderId: {
         type: DataTypes.STRING(255),

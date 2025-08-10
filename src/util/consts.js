@@ -100,7 +100,8 @@ exports.PARAMS = {
     year: "year",
     month: "month",
     date: "date",
-    address:"address"
+    address:"address",
+    isManual:"isManual"
 }
 
 exports.BUNNY = {

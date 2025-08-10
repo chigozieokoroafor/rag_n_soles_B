@@ -31,6 +31,10 @@ const transaction = conn.define(MODEL_NAMES.transaction, {
     status: {
         type: DataTypes.STRING(50),
         defaultValue: STATUSES.success
+    },
+    isManual: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     tableName: MODEL_NAMES.transaction,
@@ -38,8 +42,8 @@ const transaction = conn.define(MODEL_NAMES.transaction, {
 })
 
 
-transaction.hasMany(order, {foreignKey: PARAMS.orderId})
-order.belongsTo(transaction, {foreignKey: PARAMS.orderId})
+transaction.hasMany(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
+order.belongsTo(transaction, {foreignKey: PARAMS.orderId, targetKey:PARAMS.orderId})
 
 
 module.exports = {
