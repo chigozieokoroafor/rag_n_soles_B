@@ -98,7 +98,7 @@ exports.login = catchAsync(async (req, res) => {
     }
 
     if (admin) {
-        user_type = "Admin"
+        user_type = admin?.role
         user = admin
     }
 
