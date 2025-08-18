@@ -71,7 +71,7 @@ exports.verify = catchAsync(async (req, res) => {
     if (update[0] < 1) {
         return generalError(res, "Unable to verify mail")
     }
-    await createNotification(NOTIFICATION_TITLES.vendor.title, `${user[PARAMS.business_name]} just created an account and is waiting for approval`, NOTIFICATION_TITLES.vendor.alert, NOTIFICATION_TITLES.vendor.type)
+    await createNotification(NOTIFICATION_TITLES.vendor.title, `${user[PARAMS.business_name]?? user[PARAMS.name]} just created an account and is waiting for approval`, NOTIFICATION_TITLES.vendor.alert, NOTIFICATION_TITLES.vendor.type)
     return redirect(res, process.env.WEB_BASE_URL_VERIFICATION)
 
 })

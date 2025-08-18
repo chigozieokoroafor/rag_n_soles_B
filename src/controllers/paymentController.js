@@ -104,7 +104,7 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
             await item.destroy()
 
 
-            await createNotification(NOTIFICATION_TITLES.order_new.title, `${user[PARAMS.business_name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
+            await createNotification(NOTIFICATION_TITLES.order_new.title, `${user[PARAMS.business_name] ?? user[PARAMS.name]} placed a new order  worth ${amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
 
             const data_ = {
                 customerName: user[PARAMS.name],
