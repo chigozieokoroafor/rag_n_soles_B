@@ -243,7 +243,6 @@ async function processManualOrder(cartId, reference, email, name) {
     }
 }
 
-
 exports.createOrder = catchAsync(async (req, res) => {
     const user_id = req.user?.id
 
@@ -494,6 +493,7 @@ exports.fetchSingleOrder = catchAsync(async (req, res) => {
 })
 
 exports.manualOrder = catchAsync(async (req, res) => {
+
     const user_id = req.user?.id
 
     let who_ordered = user_id
@@ -587,7 +587,7 @@ exports.manualOrder = catchAsync(async (req, res) => {
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `Admin user ${req.user.name} placed a new order for ${req.body?.email ?? !req.body?.name}  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type))
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `Admin user, ${req.user.name}, placed a new order for ${req.body?.email ?? req.body?.name}  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type))
     await Promise.allSettled(promises)
 
 

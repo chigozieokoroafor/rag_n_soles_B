@@ -11,7 +11,7 @@ const conn_option = {
     host: process.env.DB_HOST ,
     port: process.env.DB_PORT ,
     dialect: 'mysql',
-    logging: true
+    logging: false
     // logging: isDevelopment, // ensure this is a boolean
 };
 
