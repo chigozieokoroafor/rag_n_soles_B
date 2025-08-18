@@ -209,10 +209,10 @@ async function processManualOrder(cartId, reference, email, name) {
 
         createOrder(products),
 
-        createNotification(NOTIFICATION_TITLES.order_new.title, `Manual order worth ${amount} for ${products.length} distict items placed. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type )
+        createNotification(NOTIFICATION_TITLES.order_new.title, `Manual order worth ${amount} for ${products.length} distict items placed. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
     ])
 
-    promises.forEach((item, index) =>{
+    promises.forEach((item, index) => {
         console.log("index=======>", index)
         console.log("index=======>", item.status)
         console.log("index=======>", item.reason)
@@ -362,11 +362,11 @@ exports.createOrder = catchAsync(async (req, res) => {
     if (couponId) {
         promises.push(
             coupon_detail.increment("usage", { by: 1, where: { id: couponId } }),
-            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert, NOTIFICATION_TITLES.coupon.type)
+            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} used coupon, ${req.body.coupon} `, NOTIFICATION_TITLES.coupon.alert, NOTIFICATION_TITLES.coupon.type)
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.alert))
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.alert))
     await Promise.allSettled(promises)
 
 
@@ -583,11 +583,11 @@ exports.manualOrder = catchAsync(async (req, res) => {
     if (couponId) {
         promises.push(
             coupon_detail.increment("usage", { by: 1, where: { id: couponId } }),
-            createNotification(NOTIFICATION_TITLES.coupon.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.coupon.alert, NOTIFICATION_TITLES.coupon.type)
+            createNotification(NOTIFICATION_TITLES.coupon.title, `Admin user, ${req.user.name}, used coupon for ${req.body?.email ?? req.body?.name}'s order`, NOTIFICATION_TITLES.coupon.alert, NOTIFICATION_TITLES.coupon.type)
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type))
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `Admin user ${req.user.name} placed a new order for ${req.body?.email ?? !req.body?.name}  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type))
     await Promise.allSettled(promises)
 
 
