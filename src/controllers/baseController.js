@@ -114,7 +114,7 @@ exports.login = catchAsync(async (req, res) => {
 
 
     if (user_type == "Vendor" && !user[PARAMS.isAdminVerified]) {
-        return generalError(res, "Account requires validation by admin.", {})
+        return generalError(res, "Account is pending admin approval.", {})
     }
 
     const secret = user_type == "Vendor" ? process.env.AUTH_SECRET : process.env.ADMIN_SECRET
