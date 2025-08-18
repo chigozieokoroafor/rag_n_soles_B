@@ -36,7 +36,7 @@ class Auth {
             const payload = jwt.verify(token, this.secret);
             
             let user_data
-            if (!(payload.userType == "Admin")){
+            if (!(payload.userType == "Admin"|| payload.userType =="Editor")){
                 user_data = (await fetchUserForMiddleware(payload.id ?? payload.uid))?.toJSON()
             }else{
                 // console.log("entered here")
