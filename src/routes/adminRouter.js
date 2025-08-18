@@ -49,7 +49,7 @@ admin.put("/location/:id", adminAuth, adminController.updatelocation)
 admin.delete("/location/:id", adminAuth, adminController.deleteLocation)
 
 
-admin.post("/admin", adminAuth, adminController.createAdmin)
+admin.post("/admin/create", adminAuth, adminController.createAdmin)
 admin.get("/admin", adminAuth, adminController.fetchAdmins)
 admin.put("/admin/:uid", adminAuth, adminController.updateAdmin)
 
