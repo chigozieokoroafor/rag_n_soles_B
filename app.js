@@ -3,7 +3,7 @@ const cors = require("cors")
 const { errorHandler } = require("./src/errorHandler/errorHandler")
 const { success, notFound } = require("./src/errorHandler/statusCodes")
 const { sync } = require("./src/db/sync")
-const { createDatabaseIfNotExists } = require("./src/db/base")
+// const { createDatabaseIfNotExists } = require("./src/db/base")
 const { baseRouter } = require("./src/routes/baseRouter")
 const { adminRouter } = require("./src/routes/adminRouter")
 const { createAdmin } = require("./src/db/querys/admin")
@@ -37,22 +37,22 @@ app.use(errorHandler)
 
 const port = process.env.PORT ?? 9500
 
-createDatabaseIfNotExists().then(() => {
-    sync().then(() => {
-        createAdmin().then(() => {
-            app.listen(port, () => {
-                console.log("running:::", port)
-            })
-        }
-        ).catch((error) => {
-            console.log("unable to create admin")
-            console.log(error)
+// createDatabaseIfNotExists().then(() => {
+sync().then(() => {
+    createAdmin().then(() => {
+        app.listen(port, () => {
+            console.log("running:::", port)
         })
-    }).catch((error) => {
-        console.log("unable to sync")
+    }
+    ).catch((error) => {
+        console.log("unable to create admin")
         console.log(error)
     })
-}).catch((db_create_error) => {
-    console.log("unable to createDb:::")
-    console.log(db_create_error)
+}).catch((error) => {
+    console.log("unable to sync")
+    console.log(error)
 })
+// }).catch((db_create_error) => {
+//     console.log("unable to createDb:::")
+//     console.log(db_create_error)
+// })
