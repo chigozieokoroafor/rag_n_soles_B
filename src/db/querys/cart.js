@@ -1,5 +1,5 @@
 const { Sequelize, Op } = require("sequelize");
-const { PARAMS, STATUSES } = require("../../util/consts");
+const { PARAMS, STATUSES, MODEL_NAMES } = require("../../util/consts");
 const { cart } = require("../models/cart");
 const { deliv_locations } = require("../models/deliv_locations");
 const { images } = require("../models/images");
@@ -246,42 +246,81 @@ exports.updateOrderStatus = async (orderId, update) => {
 }
 
 
-exports.getTotal = async (startDate, endDate) => {
-    return await ordersOnly.findAll(
-        {
-            where: Sequelize.literal(`
-      DATE_FORMAT(${PARAMS.createdAt}, '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
-    `),
-            attributes: [
+// exports.getTotal = async (startDate, endDate) => {
+//     return await ordersOnly.findAll(
+//         {
+//             where: Sequelize.literal(`
+//       DATE_FORMAT('${PARAMS.createdAt}', '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
+//     `),
+//             attributes: [
 
-                [
-                    Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
-                    'total'
-                ]
-            ],
-            raw: true
-        }
-    )
-}
+//                 [
+//                     Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+//                     'total'
+//                 ]
+//             ],
+//             raw: true
+//         }
+//     )
+// }
+
+
+exports.getTotal = async (startDate, endDate) => {
+  return await ordersOnly.findAll({
+    where: {
+      [PARAMS.createdAt]: {
+        [Op.between]: [new Date(startDate), new Date(endDate)]
+      }
+    },
+    attributes: [
+      [Sequelize.fn("SUM", Sequelize.col(PARAMS.total_amount)), "total"]
+    ],
+    raw: true
+  });
+};
+
+
+// exports.getDailyTotals = async (startDate, endDate) => {
+//     return await ordersOnly.findAll({
+//         where: Sequelize.literal(`
+//       DATE_FORMAT('${PARAMS.createdAt}', '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
+//     `),
+//         attributes: [
+//             [
+//                 Sequelize.literal(`DATE_FORMAT ('${PARAMS.createdAt}', '%Y-%m-%d')`),
+//                 'date'
+//             ],
+//             [
+//                 Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+//                 'total'
+//             ]
+//         ],
+//         group: [Sequelize.literal(`DATE('${PARAMS.createdAt}')`)],
+//         order: [[Sequelize.literal(`DATE('${PARAMS.createdAt}')`), 'ASC']],
+//         raw: true
+//     });
+// };
 
 
 exports.getDailyTotals = async (startDate, endDate) => {
-    return await ordersOnly.findAll({
-        where: Sequelize.literal(`
-      DATE_FORMAT(${PARAMS.createdAt}, '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
-    `),
-        attributes: [
-            [
-                Sequelize.literal(`DATE_FORMAT (${PARAMS.createdAt}, '%Y-%m-%d')`),
-                'date'
-            ],
-            [
-                Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
-                'total'
-            ]
-        ],
-        group: [Sequelize.literal(`DATE(${PARAMS.createdAt})`)],
-        order: [[Sequelize.literal(`DATE(${PARAMS.createdAt})`), 'ASC']],
-        raw: true
-    });
+  return await ordersOnly.findAll({
+    where: {
+      [PARAMS.createdAt]: {
+        [Op.between]: [new Date(startDate), new Date(endDate)]
+      }
+    },
+    attributes: [
+      [
+        Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`),
+        'date'
+      ],
+      [
+        Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+        'total'
+      ]
+    ],
+    group: [Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`)],
+    order: [[Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`), 'ASC']],
+    raw: true
+  });
 };
