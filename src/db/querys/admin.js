@@ -82,7 +82,7 @@ exports.getAllUsers = async (query, limit, offset) => {
     return await user.findAll(
         {
             where: query,
-            attributes: [PARAMS.uid, PARAMS.username, PARAMS.email, PARAMS.name, PARAMS.phone_no, PARAMS.createdAt, PARAMS.status, PARAMS.billing_address, PARAMS.shpping_address, PARAMS.business_name],
+            attributes: [PARAMS.uid, PARAMS.email, PARAMS.name, PARAMS.phone_no, PARAMS.createdAt, PARAMS.status, PARAMS.billing_address, PARAMS.shpping_address, PARAMS.business_name],
             order: [[PARAMS.createdAt, "DESC"]],
             limit,
             offset
