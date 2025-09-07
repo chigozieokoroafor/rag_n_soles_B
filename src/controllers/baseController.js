@@ -61,7 +61,7 @@ exports.verify = catchAsync(async (req, res) => {
 
     // console.log("payload:::", payload)
     const uid = payload.d.id
-    const user = fetchUserForMiddleware(uid)
+    const user = await fetchUserForMiddleware(uid)
     if (!user) {
         return notFound(res, "User not found")
     }
@@ -71,7 +71,10 @@ exports.verify = catchAsync(async (req, res) => {
     if (update[0] < 1) {
         return generalError(res, "Unable to verify mail")
     }
-    await createNotification(NOTIFICATION_TITLES.vendor.title, `${user[PARAMS.business_name]?? user[PARAMS.name]} just created an account and is waiting for approval`, NOTIFICATION_TITLES.vendor.alert, NOTIFICATION_TITLES.vendor.type)
+
+    const name = user[PARAMS.business_name] || user[PARAMS.name]
+
+    await createNotification(NOTIFICATION_TITLES.vendor.title, `${name} just created an account and is waiting for approval`, NOTIFICATION_TITLES.vendor.alert, NOTIFICATION_TITLES.vendor.type)
     return redirect(res, process.env.WEB_BASE_URL_VERIFICATION)
 
 })
