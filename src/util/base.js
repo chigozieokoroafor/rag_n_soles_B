@@ -38,7 +38,7 @@ exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachment
         });
 
         const mailOptions = {
-            from: `"RAG_N_SOLES" <${process.env.MAIL_USER}>`, // sender address
+            from: `"Rags & Soles" <${process.env.MAIL_USER}>`, // sender address
             to, // list of receivers
             subject, // Subject line
             html,  // html body
@@ -83,21 +83,21 @@ exports.sendAccountVerificationMail = (email, verificationLink, username) => {
 </head>
 <body>
   <div class="container">
-    <h2>Welcome to Rag N Soles</h2>
+    <h2>Welcome to RAGS & SOLES</h2>
     <p>Hi ${username ?? ""},</p>
     <p>Thank you for joining our marketplace! You're just one step away from getting started.</p>
     <p>Please verify your email address by clicking the button below:</p>
     <p><a class="btn" href="${verificationLink}">Verify Email</a></p>
     <p>If you did not create an account with us, please ignore this email.</p>
     <div class="footer">
-      &copy; ${year} Rag N Soles. All rights reserved.
+      &copy; ${year} RAGS & SOLES. All rights reserved.
     </div>
   </div>
 </body>
 </html>
     `
 
-    const subject = "Verify Your Email - Rag N Soles"
+    const subject = "Verify Your Email - RAGS & SOLES"
 
     this.sendEmail(subject, email, html)
 }
@@ -121,19 +121,19 @@ exports.sendPasswordResetMail = (email, reset_link, username) => {
   <div class="container">
     <h2>Password Reset Request </h2>
     <p>Hi ${username ?? ""},</p>
-    <p>We received a request to reset your password for your Rag N Soles account.</p>
+    <p>We received a request to reset your password for your RAGS & SOLES account.</p>
     <p>If this was you, you can reset your password by clicking the button below:</p>
     <p><a class="btn" href="${reset_link}">Reset Password</a></p>
     <p>This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
     <div class="footer">
-      &copy; ${year} Rag N Soles. All rights reserved.
+      &copy; ${year} RAGS & SOLES. All rights reserved.
     </div>
   </div>
 </body>
 </html>
     `
 
-    const subject = "Verify Your Email - Rag N Soles"
+    const subject = "Verify Your Email - RAGS & SOLES"
 
     this.sendEmail(subject, email, html)
 }
@@ -226,13 +226,16 @@ exports.initializePayment = async (ref, amount, email, meta) => {
 }
 
 exports.sendAdminMailCredentials = (email, password) => {
+    
+
+    const path_ = path.resolve("templates/logo.png")
     const html = `
-    <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin credentials - Rag_n_Soles</title>
+    <title>Admin credentials - Rags & Soles</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -248,49 +251,22 @@ exports.sendAdminMailCredentials = (email, password) => {
             background-color: #ffffff;
         }
         .header {
-            background-color: #4a148c; /* Deep purple */
+            background-color: #3b82f6;
             padding: 20px;
             text-align: center;
         }
-        .logo {
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 0;
+        .header img {
+            max-width: 200px; /* Adjust size */
+            height: auto;
         }
         .content {
             padding: 30px;
-        }
-        .verification-box {
-            background-color: #f3e5f5; /* Light purple background */
-            border-radius: 5px;
-            padding: 25px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .button {
-            display: inline-block;
-            background-color: #7b1fa2; /* Medium purple */
-            color: #ffffff;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            margin: 15px 0;
-            font-size: 16px;
         }
         .credentials {
             background-color: #f1f1f1;
             padding: 15px;
             border-radius: 5px;
             font-family: monospace;
-        }
-        .disclaimer {
-            background-color: #ede7f6; /* Very light purple */
-            padding: 15px;
-            border-left: 4px solid #9575cd; /* Light-medium purple */
-            margin: 20px 0;
-            font-size: 14px;
         }
         .footer {
             text-align: center;
@@ -300,7 +276,7 @@ exports.sendAdminMailCredentials = (email, password) => {
             font-size: 12px;
         }
         a {
-            color: #6a1b9a; /* Dark purple for links */
+            color: #3b82f6;
             text-decoration: underline;
         }
         @media only screen and (max-width: 600px) {
@@ -313,46 +289,41 @@ exports.sendAdminMailCredentials = (email, password) => {
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="logo">Rag_n_Soles</h1>
+            <!-- Replace text logo with image -->
+            <img src="${path_}" alt="Rags & Soles Logo">
         </div>
         
         <div class="content">
-            
-            
             <p>Hello,</p>
-            
             
             <p>Your administrator account has been successfully created. Please find your credentials below:</p>
 
             <div class="credentials">
                 <p><strong>Username / Email:</strong> ${email}</p>
-                <p><strong>Password:</strong> ${password} </p>
+                <p><strong>Password:</strong> ${password}</p>
             </div>
 
             <p>For security reasons, we recommend changing your password upon first login.</p>
 
             <p>If you did not request this account, please contact us immediately.</p>
             
-        
-            <p>If you have any questions or need assistance, our customer support team is here to help. Simply reply to this email or contact us at support@rag_n_Soles.com.</p>
-            
-            
+            <p>If you have any questions or need assistance, our customer support team is here to help. Simply reply to this email or contact us at Ragsnsoles@gmail.com.</p>
             
             <p>Best regards,<br>
-            The Rag_n_Soles Team</p>
+            The Rags & Soles Team</p>
         </div>
         
         <div class="footer">
-            <p>&copy; 2025 Rag_n_Soles. All rights reserved.</p>
-            <!-- <p>123 Tech Avenue, Innovation City, TC 12345</p> -->
+            <p>&copy; 2025 Rags & Soles. All rights reserved.</p>
             <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Unsubscribe</a></p>
         </div>
     </div>
 </body>
 </html>
+
     `
 
-    const subject = "Admin Credentials - Rag_n_Soles"
+    const subject = "Admin Credentials - Rags & Soles"
 
     this.sendEmail(subject, email, html)
 }
