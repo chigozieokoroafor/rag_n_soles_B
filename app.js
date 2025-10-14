@@ -15,7 +15,7 @@ const app = express()
 
 app.use(cors(
     {
-        origin: ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "https://rags-and-soles.netlify.app", "https://rags-n-soles.vercel.app", "https://rags-n-soles-frontend.onrender.com", "https://ragsandsoles.com"]
+        origin: ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "https://rags-and-soles.netlify.app", "https://rags-n-soles.vercel.app", "https://rags-n-soles-frontend.onrender.com", "https://ragsandsoles.com", "https://www.ragsandsoles.com"]
     }
 ))
 
