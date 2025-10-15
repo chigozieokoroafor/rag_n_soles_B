@@ -136,6 +136,46 @@ exports.login = catchAsync(async (req, res) => {
 
 })
 
+exports.resendVerificationLink = catchAsync(async (req, res) =>{
+    const email = req.body?.email
+
+    if (!email) {
+        return generalError(res, "Kindly provide an email to proceed", {})
+    }
+
+
+    let user_type = "Vendor"
+    let user
+
+    const promises = await Promise.allSettled([getUserByEmail(req.body?.email), fetchAdmninforLogin(req.body?.email)])
+
+    const vendor = promises[0].value
+    const admin = promises[1].value
+
+
+    if (vendor) {
+        user = vendor
+    }
+
+    if (admin) {
+
+        return notFound(res, "Account with email provided not found")
+        // user_type = "Admin"
+        // user = admin
+    }
+
+    if (!user) {
+        return notFound(res, "Account with email provided not found")
+    }
+
+    const token = generateToken({ id: user.uid }, 1 * 10 * 60, process.env.AUTH_SECRET)
+    const baseUrl = process.env.API_BASE_URL + `?token=${token}`
+
+    success(res, {}, "Verification mail sent to Mail")
+
+    sendAccountVerificationMail(email, baseUrl, user.name)
+})
+
 exports.sendResetLink = catchAsync(async (req, res) => {
     const email = req.body?.email
 

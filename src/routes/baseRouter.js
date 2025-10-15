@@ -13,6 +13,9 @@ const base = Router()
 base.post("/register", baseController.createAccount)
 base.post("/login", baseController.login)
 base.get("/verify", baseController.verify)
+
+base.post("/resend-verify", baseController.resendVerificationLink)
+
 base.post("/send-reset", baseController.sendResetLink)
 base.post("/resetPassword", baseController.resetPwd)
 
