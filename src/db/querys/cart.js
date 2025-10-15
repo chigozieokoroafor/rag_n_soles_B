@@ -12,26 +12,6 @@ exports.addToCartQuery = async (data) => {
     return await cart.create(data)
 }
 
-exports.fetchCartItems = async (uid, offset, limit) => {
-    return await cart.findAll(
-        {
-            where: {
-                uid,
-                [PARAMS.ordered]: false
-
-            },
-            include: [
-                {
-                    model: product,
-                    attributes: [PARAMS.uid, PARAMS.img_url, PARAMS.specifications, PARAMS.name]
-                }
-            ],
-            offset,
-            limit
-        }
-    )
-}
-
 exports.fetchCartItemsToOrder = async (uid) => {
     return await cart.findAll(
         {
@@ -41,12 +21,6 @@ exports.fetchCartItemsToOrder = async (uid) => {
 
             },
             attributes: [PARAMS.id, PARAMS.total_amount]
-            // include:[
-            //     {
-            //         model:product,
-            //         attributes:[PARAMS.uid, PARAMS.img_url, PARAMS.specifications, PARAMS.name]
-            //     }
-            // ]
         }
     )
 }
@@ -245,26 +219,6 @@ exports.updateOrderStatus = async (orderId, update) => {
     await ordersOnly.update(update, { where: { orderId } })
 }
 
-
-// exports.getTotal = async (startDate, endDate) => {
-//     return await ordersOnly.findAll(
-//         {
-//             where: Sequelize.literal(`
-//       DATE_FORMAT('${PARAMS.createdAt}', '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
-//     `),
-//             attributes: [
-
-//                 [
-//                     Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
-//                     'total'
-//                 ]
-//             ],
-//             raw: true
-//         }
-//     )
-// }
-
-
 exports.getTotal = async (startDate, endDate) => {
   return await ordersOnly.findAll({
     where: {
@@ -278,29 +232,6 @@ exports.getTotal = async (startDate, endDate) => {
     raw: true
   });
 };
-
-
-// exports.getDailyTotals = async (startDate, endDate) => {
-//     return await ordersOnly.findAll({
-//         where: Sequelize.literal(`
-//       DATE_FORMAT('${PARAMS.createdAt}', '%Y-%m-%d') BETWEEN '${startDate}' AND '${endDate}'
-//     `),
-//         attributes: [
-//             [
-//                 Sequelize.literal(`DATE_FORMAT ('${PARAMS.createdAt}', '%Y-%m-%d')`),
-//                 'date'
-//             ],
-//             [
-//                 Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
-//                 'total'
-//             ]
-//         ],
-//         group: [Sequelize.literal(`DATE('${PARAMS.createdAt}')`)],
-//         order: [[Sequelize.literal(`DATE('${PARAMS.createdAt}')`), 'ASC']],
-//         raw: true
-//     });
-// };
-
 
 exports.getDailyTotals = async (startDate, endDate) => {
   return await ordersOnly.findAll({

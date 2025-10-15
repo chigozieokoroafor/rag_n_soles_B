@@ -348,6 +348,8 @@ exports.createOrder = catchAsync(async (req, res) => {
     req.body.total_amount = total_amount + deliveryFee
     req.body[PARAMS.deliveryMode] = deliveryMode
 
+    console.log("body ====> ", req.body)
+
     const temp_order = await addToCartQuery(req.body)
 
     const response = await initializePayment(createUUID(), req.body.total_amount, req.user?.email, { cartId: temp_order.cartId })

@@ -126,8 +126,8 @@ const coupon = conn.define(MODEL_NAMES.coupon, {
 })
 
 
-product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})
-cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
+// product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})
+// cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
 
 
 product.hasMany(specifications, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
