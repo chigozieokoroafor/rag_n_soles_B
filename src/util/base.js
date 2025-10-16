@@ -38,7 +38,7 @@ exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachment
         });
 
         const mailOptions = {
-            from: `"Rags & Soles" <${process.env.MAIL_USER}>`, // sender address
+            from: `<${process.env.MAIL_USER}>`, // sender address
             to, // list of receivers
             subject, // Subject line
             html,  // html body
@@ -51,8 +51,6 @@ exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachment
             envelope.from = process.env.MAIL_USER
             mailOptions.envelope = envelope;
         }
-
-        // mailOptions.cc = envelope.cc
 
         smtpTransport.sendMail(mailOptions, (err, result) => {
             if (err) {
