@@ -103,7 +103,7 @@ exports.graph =  catchAsync( async (req, res) =>{
     
     const data = {
         interval: daily_totals,
-        total: total[0].total
+        total: total[0].total || 0.0 
     }
 
     return success(res, data, "Fetched.")
