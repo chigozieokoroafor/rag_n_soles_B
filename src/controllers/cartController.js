@@ -133,17 +133,17 @@ async function processManualOrder(cartId, reference, email, name) {
     }))
 
     const payload = {
-            userId,
-            orderId,
-            reference: reference,
-            total_amount: amount,
-            [PARAMS.locationId]: item[PARAMS.locationId],
-            [PARAMS.deliveryMode]: item[PARAMS.deliveryMode],
-            [PARAMS.vendorName]: name ?? "Manual Order",
-            [PARAMS.dest_address]: item[PARAMS.dest_address],
-            [PARAMS.discount_type]: item[PARAMS.discount_type],
-            [PARAMS.discount_value]: item[PARAMS.discount_value]
-        }
+        userId,
+        orderId,
+        reference: reference,
+        total_amount: amount,
+        [PARAMS.locationId]: item[PARAMS.locationId],
+        [PARAMS.deliveryMode]: item[PARAMS.deliveryMode],
+        [PARAMS.vendorName]: name ?? "Manual Order",
+        [PARAMS.dest_address]: item[PARAMS.dest_address],
+        [PARAMS.discount_type]: item[PARAMS.discount_type],
+        [PARAMS.discount_value]: item[PARAMS.discount_value]
+    }
 
     await item.destroy()
 
@@ -406,27 +406,28 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
         }
     })
 
-    const data_ = {
-        customerName: order[MODEL_NAMES.user][PARAMS.name],
-        orderId: req.body[PARAMS.orderId],
-        status: req.body.status.toLocaleUpperCase(),
-        orderDate: order[PARAMS.createdAt],
-        totalAmount: Number(order.total_amount).toLocaleString(),
-        items: templateItems,
-        delivery: {
-            recipient: order[PARAMS.dest_address][PARAMS.name],
-            address: order[PARAMS.dest_address][PARAMS.address],
-            phone: order[PARAMS.dest_address][PARAMS.phone_no],
-            zone: order["deliveryLocation"][PARAMS.location],
-            estimate: order["deliveryLocation"][PARAMS.period],
-        },
-        orderLink: process.env.WEB_BASE_URL + `/order-detail/${req.body[PARAMS.orderId]}` //'https://ragsandsoles.com/orders/RNS-294102',
-    };
+    if (order[MODEL_NAMES.user] != null ) {
+        const data_ = {
+            customerName: order[MODEL_NAMES.user][PARAMS.name],
+            orderId: req.body[PARAMS.orderId],
+            status: req.body.status.toLocaleUpperCase(),
+            orderDate: order[PARAMS.createdAt],
+            totalAmount: Number(order.total_amount).toLocaleString(),
+            items: templateItems,
+            delivery: {
+                recipient: order[PARAMS.dest_address][PARAMS.name],
+                address: order[PARAMS.dest_address][PARAMS.address],
+                phone: order[PARAMS.dest_address][PARAMS.phone_no],
+                zone: order["deliveryLocation"][PARAMS.location],
+                estimate: order["deliveryLocation"][PARAMS.period],
+            },
+            orderLink: process.env.WEB_BASE_URL + `/order-detail/${req.body[PARAMS.orderId]}` //'https://ragsandsoles.com/orders/RNS-294102',
+        };
 
 
 
-    sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
-
+        sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
+    }
 })
 
 exports.fetchSingleOrder = catchAsync(async (req, res) => {
