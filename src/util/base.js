@@ -167,6 +167,21 @@ exports.sendDeclinedMailToUser = (email, subject, data) => {
     this.sendEmail(subject, email, generatedTemplate)
 }
 
+exports.sendBlockedMailToUser = (email, subject, data) => {
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'blocked.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    data.logo = process.env.LOGO_URL
+    data.support_mail = process.env.MAIL_USER
+    data.dashboard_link = process.env.WEB_BASE_URL
+
+    const generatedTemplate = template(data)
+
+    this.sendEmail(subject, email, generatedTemplate)
+}
+
 exports.hashPassword = (pwd) => {
     const salt = bcrypt.genSaltSync()
     return bcrypt.hashSync(pwd, salt)

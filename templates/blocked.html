@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Account Approved - Rags & Soles</title>
+  <title>Account Blocked - Rags & Soles</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,6 +40,16 @@
       line-height: 1.6;
       margin: 10px 0;
     }
+    .status-box {
+      display: inline-block;
+      background-color: #fee2e2;
+      color: #b91c1c;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      border: 1px solid #fecaca;
+      margin: 20px 0;
+    }
     .btn {
       display: inline-block;
       background-color: #3b82f6;
@@ -70,14 +80,30 @@
       <img src="{{ logo }}" alt="Rags & Soles Logo" />
     </div>
     <div class="content">
-      <h2>Welcome to RAGS & SOLES</h2>
+      <h2>Account Blocked</h2>
       <p>Hi {{username}},</p>
-      <p>Your account has been approved.</p>
-      <p>You can now access your dashboard by clicking the button below:</p>
-      <p style="text-align: center;">
-        <a class="btn" href="{{dashboard_link}}">Go to Dashboard</a>
+      <div style="text-align:center;">
+        <div class="status-box">Account Temporarily Blocked</div>
+      </div>
+
+      <p>
+        We've temporarily blocked your account due to unusual activity or a violation of our platform's policies.
       </p>
-      <p>If you have any questions, feel free to reach out at 
+
+      <p>
+        This is a preventive measure to ensure the safety and integrity of both your account and the Rags & Soles community.
+      </p>
+
+      <p>
+        If you believe this was a mistake or would like to appeal the decision, please contact our support team using the link below:
+      </p>
+
+      <p>
+        We appreciate your understanding and will work with you to resolve this as quickly as possible.
+      </p>
+
+      <p>
+        For any inquiries, you can also reach us at 
         <a href="mailto:{{support_mail}}">{{support_mail}}</a>.
       </p>
     </div>

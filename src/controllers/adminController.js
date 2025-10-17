@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation, fetchAdminForProfile, updateAdminProfile } = require("../db/querys/admin");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
-const { generateToken, checkPassword, createUUID, sendAdminMailCredentials, sendApprovedMailToUser, sendDeclinedMailToUser } = require("../util/base");
+const { generateToken, checkPassword, createUUID, sendAdminMailCredentials, sendApprovedMailToUser, sendDeclinedMailToUser, sendBlockedMailToUser } = require("../util/base");
 const { FETCH_LIMIT, PARAMS, STATUSES } = require("../util/consts");
 const { loginValidator, createAdminSchema, adminSchema } = require("../util/validators/accountValidator");
 const { countAllproducts, getUniqueProductsWithLowUnitsAlt } = require("../db/querys/products");
@@ -59,11 +59,11 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
         return generalError(res, "User or status missing", {})
     }
 
-    
+
 
     const user = await fetchUserForMiddleware(uid)
-    
-    if(!user){
+
+    if (!user) {
         return notFound(res, "User not found")
     }
 
@@ -73,16 +73,16 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
         return generalError(res, "Unable to update user status")
     }
 
-    if (status.toLowerCase() == "approved"){
-        sendApprovedMailToUser(user.email,"Account Application Update - Rags & Soles" ,{username: user?.name || user?.business_name} )
-    }else{
-        sendDeclinedMailToUser(user.email,"Account Application Update - Rags & Soles" ,{username: user?.name || user?.business_name} )
+    if (status.toLowerCase() == "approved") {
+        sendApprovedMailToUser(user.email, "Account Application Update - Rags & Soles", { username: user?.name || user?.business_name })
+    } else if (status.toLowerCase() == "blocked") {
+        sendBlockedMailToUser(user.email, "Account Application Update - Rags & Soles", { username: user?.name || user?.business_name })
+    }
+    else {
+        sendDeclinedMailToUser(user.email, "Account Application Update - Rags & Soles", { username: user?.name || user?.business_name })
     }
 
-    data  = {
-        username: 
-        status,
-    }
+    
 
     return success(res, {}, "user updated")
 
