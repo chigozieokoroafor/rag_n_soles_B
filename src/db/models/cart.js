@@ -19,7 +19,7 @@ const cart = conn.define(MODEL_NAMES.cart,
         },
         userId: {
             type: DataTypes.STRING(40),
-            allowNull: false
+            allowNull: true
         },
         products: {
             type: DataTypes.JSON

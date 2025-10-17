@@ -42,8 +42,6 @@ async function processOrder(products) {
             };
         }
 
-        const low_count_notifications = []
-
         for (const spec of cart_item[PARAMS.specifications]) {
             const product_spec = product[PARAMS.product_specifications].find(
                 (spec_spec) => spec_spec.id == spec.id
@@ -94,8 +92,6 @@ async function processManualOrder(cartId, reference, email, name) {
 
     const item = await fetchSingleCartItem(cartId)
 
-    // console.log("item ===> ", item)
-
     const products = item.products
     const userId = item.userId
     const amount = item.total_amount
@@ -136,11 +132,7 @@ async function processManualOrder(cartId, reference, email, name) {
         }
     }))
 
-    await item.destroy()
-
-
-    const promises = await Promise.allSettled([
-        insertIntoOrdersOnly({
+    const payload = {
             userId,
             orderId,
             reference: reference,
@@ -151,21 +143,20 @@ async function processManualOrder(cartId, reference, email, name) {
             [PARAMS.dest_address]: item[PARAMS.dest_address],
             [PARAMS.discount_type]: item[PARAMS.discount_type],
             [PARAMS.discount_value]: item[PARAMS.discount_value]
-        }),
+        }
+
+    await item.destroy()
+
+
+    const promises = await Promise.allSettled([
+        insertIntoOrdersOnly(payload),
 
         createOrder(products),
 
         createNotification(NOTIFICATION_TITLES.order_new.title, `Manual order worth ${amount} for ${products.length} distict items placed. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.type)
     ])
 
-    promises.forEach((item, index) => {
-        console.log("index=======>", index)
-        console.log("index=======>", item.status)
-        console.log("index=======>", item.reason)
-        console.log("888888888888888888888888888888")
-        // console.log("index=======>", index)
-    })
-
+    console.log("promisses ==>>>> ", promises)
 
     if (email) {
         const data_ = {
@@ -259,7 +250,7 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 
         deliveryMode = DELIVERY_MODES.delivery
-        
+
     }
 
     req.body.total_amount = total_amount + deliveryFee
@@ -458,7 +449,7 @@ exports.manualOrder = catchAsync(async (req, res) => {
 
     const user_id = req.user?.id
 
-    let who_ordered = user_id
+    let who_ordered
 
     const valid_ = manualOrderSchema.validate(req.body)
 
@@ -521,15 +512,19 @@ exports.manualOrder = catchAsync(async (req, res) => {
     }
 
     if (!req.body[PARAMS.isDeliveryFree]) {
-        const locationId = req.body[PARAMS.locationId]
 
-        const loc_data = await fetchSpecLocation(locationId)
+        if (req.body[PARAMS.locationId]) {
+            const locationId = req.body[PARAMS.locationId]
 
-        if (!loc_data) {
-            return notFound(res, "Location selected Not found")
+            const loc_data = await fetchSpecLocation(locationId)
+
+            deliveryFee = loc_data.price
+            if (!loc_data) {
+                return notFound(res, "Location selected Not found")
+            }
         }
+
         deliveryMode = DELIVERY_MODES.delivery
-        deliveryFee = loc_data.price
     }
 
     req.body.total_amount = total_amount + deliveryFee

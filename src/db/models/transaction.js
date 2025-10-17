@@ -18,7 +18,7 @@ const transaction = conn.define(MODEL_NAMES.transaction, {
     },
     userId: {
         type: DataTypes.STRING(255),
-        allowNull:false
+        allowNull:true
     },
     reference: {
         type: DataTypes.STRING(255),
