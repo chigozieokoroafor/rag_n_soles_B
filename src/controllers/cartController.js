@@ -76,7 +76,7 @@ async function processOrder(products) {
             spec_list.push({
                 count: spec.count,
                 id: spec.id,
-                low_stock: product_spec.units - spec.count <= 5 ? `${product.name} is remaining ${product_spec.units - spec.count } items left for "${spec.size}"` : null
+                low_stock: product_spec.units - spec.count <= 5 ? `${product.name} is remaining ${product_spec.units - spec.count} items left for "${spec.size}"` : null
             });
         }
     }
@@ -248,13 +248,18 @@ exports.createOrder = catchAsync(async (req, res) => {
     if (!req.body[PARAMS.isDeliveryFree]) {
         const locationId = req.body[PARAMS.locationId]
 
-        const loc_data = await fetchSpecLocation(locationId)
+        if (locationId) {
+            const loc_data = await fetchSpecLocation(locationId)
 
-        if (!loc_data) {
-            return notFound(res, "Location selected Not found")
+            if (!loc_data) {
+                return notFound(res, "Location selected Not found")
+            }
+            deliveryFee = loc_data.price
         }
+
+
         deliveryMode = DELIVERY_MODES.delivery
-        deliveryFee = loc_data.price
+        
     }
 
     req.body.total_amount = total_amount + deliveryFee
@@ -272,12 +277,12 @@ exports.createOrder = catchAsync(async (req, res) => {
 
 
     spec_list.forEach(
-        (item) => { 
-            if(item?.low_stock){
-                promises.push (createNotification(NOTIFICATION_TITLES.product.title, item.low_stock, NOTIFICATION_TITLES.product.alert, NOTIFICATION_TITLES.product.type))
+        (item) => {
+            if (item?.low_stock) {
+                promises.push(createNotification(NOTIFICATION_TITLES.product.title, item.low_stock, NOTIFICATION_TITLES.product.alert, NOTIFICATION_TITLES.product.type))
             }
-            
-            promises.push(reduceProductCount(item.count, item.id)) 
+
+            promises.push(reduceProductCount(item.count, item.id))
         }
     )
     if (couponId) {
