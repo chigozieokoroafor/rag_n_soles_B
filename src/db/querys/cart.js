@@ -246,11 +246,7 @@ exports.updateOrderStatus = async (orderId, update) => {
 
 exports.getTotal = async (startDate, endDate) => {
     return await ordersOnly.findAll({
-        where: {
-            [PARAMS.createdAt]: {
-                [Op.between]: [new Date(startDate), new Date(endDate)]
-            }
-        },
+        
         attributes: [
             [Sequelize.fn("SUM", Sequelize.col(PARAMS.total_amount)), "total"]
         ],
