@@ -12,7 +12,8 @@ exports.fetchAdmninforLogin = async (username) => {
     return await admin.findOne(
         {
             where: {
-                [PARAMS.email]: username
+                [PARAMS.email]: username,
+                [PARAMS.status]: "Active"
             },
 
         }
