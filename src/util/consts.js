@@ -120,7 +120,7 @@ exports.NOTIFICATION_TITLES = {
 }
 
 
-exports.FETCH_LIMIT = 5
+exports.FETCH_LIMIT = 24
 
 exports.ALL_MIME_TYPES = {
     "123": "application/vnd.lotus-1-2-3",
