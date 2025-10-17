@@ -21,9 +21,9 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
 
     const hash = crypto.createHmac('sha512', paystackSecret).update(JSON.stringify(req.body)).digest('hex');
 
-    // if (hash != req.headers['x-paystack-signature']) {
-    //     return generalError(res, "Lmao, transaction unverified.")
-    // }
+    if (hash != req.headers['x-paystack-signature']) {
+        return generalError(res, "Lmao, transaction unverified.")
+    }
     // console.log("recieved:::webhook ===> ", req.body)
 
     success(res, {}, "Recieved")
@@ -31,13 +31,11 @@ exports.paymentWebhook = catchAsync(async (req, res) => {
     try {
         const data = req.body;
         if (data.event == "charge.success") {
-            // d = data.data
-
+    
             const cartId = data.data.metadata[PARAMS.cartId]
 
             const item = await fetchSingleCartItem(cartId)
 
-            // console.log("item ===> ", item)
 
             const products = item.products
             const userId = item.userId
