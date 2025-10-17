@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Application Update - Rags & Soles</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f8fa;
+      padding: 0;
+      margin: 0;
+      color: #333333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .header {
+      background-color: #3b82f6;
+      padding: 20px;
+      text-align: center;
+    }
+    .header img {
+      max-width: 200px;
+      height: auto;
+    }
+    .content {
+      padding: 30px;
+    }
+    h2 {
+      color: #111827;
+      margin-top: 0;
+    }
+    p {
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .status-box {
+      display: inline-block;
+      background-color: #fee2e2;
+      color: #991b1b;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      border: 1px solid #fecaca;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f3f4f6;
+      color: #888;
+      font-size: 12px;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="{{ logo }}" alt="Rags & Soles Logo" />
+    </div>
+    <div class="content">
+      <h2>Account Application Update</h2>
+      <p>Hi {{username}},</p>
+      <div style="text-align:center;">
+        <div class="status-box">Application Rejected</div>
+      </div>
+      <p>
+        After reviewing your application, we regret to inform you that it has not been approved at this time.
+      </p>
+      <p>
+        This decision may be due to incomplete information or criteria mismatch with our vendor or user requirements.
+      </p>
+      <p>
+        You can review your submission and reapply once you've updated the required details or documentation.
+      </p>
+      
+      <p>
+        If you have any questions or need further clarification, please reach out to our support team at 
+        <a href="mailto:Ragsnsoles@gmail.com">Ragsnsoles@gmail.com</a>.
+      </p>
+    </div>
+    <div class="footer">
+      &copy; {{year}} RAGS & SOLES. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

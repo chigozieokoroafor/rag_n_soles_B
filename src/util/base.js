@@ -137,6 +137,36 @@ exports.sendOrderMailToUser = (email, subject, data) => {
     this.sendEmail(subject, email, generatedTemplate)
 }
 
+exports.sendApprovedMailToUser = (email, subject, data) => {
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'approvedTemplate.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    data.logo = process.env.LOGO_URL
+    data.support_mail = process.env.MAIL_USER
+    data.dashboard_link = process.env.WEB_BASE_URL
+
+    const generatedTemplate = template(data)
+
+    this.sendEmail(subject, email, generatedTemplate)
+}
+
+exports.sendDeclinedMailToUser = (email, subject, data) => {
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'declined.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    data.logo = process.env.LOGO_URL
+    data.support_mail = process.env.MAIL_USER
+    data.dashboard_link = process.env.WEB_BASE_URL
+
+    const generatedTemplate = template(data)
+
+    this.sendEmail(subject, email, generatedTemplate)
+}
+
 exports.hashPassword = (pwd) => {
     const salt = bcrypt.genSaltSync()
     return bcrypt.hashSync(pwd, salt)

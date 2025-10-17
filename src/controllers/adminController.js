@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const { fetchAdmninforLogin, getAllUsers, updateUserStatus, countVendors, insertExtraAdmin, getadmins, updateAdminDetails, checkAdmin, createDeliveryLocations, fetchLocations, updateSpecLocation, fetchSpecLocation, deleteLocation, fetchAdminForProfile, updateAdminProfile } = require("../db/querys/admin");
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, success, notFound } = require("../errorHandler/statusCodes");
-const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = require("../util/base");
+const { generateToken, checkPassword, createUUID, sendAdminMailCredentials, sendApprovedMailToUser, sendDeclinedMailToUser } = require("../util/base");
 const { FETCH_LIMIT, PARAMS, STATUSES } = require("../util/consts");
 const { loginValidator, createAdminSchema, adminSchema } = require("../util/validators/accountValidator");
 const { countAllproducts, getUniqueProductsWithLowUnitsAlt } = require("../db/querys/products");
@@ -13,7 +13,7 @@ const { couponValidator, couponUpdateValidator } = require("../util/validators/c
 const { hashSync } = require("bcryptjs");
 const { locUpload, locUpdate } = require("../util/validators/locationValidator");
 const { countAllOrders, getTotal, getDailyTotals } = require("../db/querys/cart");
-const { fetchNotifications, countNotifications, readNotification } = require("../db/querys/users");
+const { fetchNotifications, countNotifications, readNotification, fetchUserForMiddleware } = require("../db/querys/users");
 
 
 exports.getUsers = catchAsync(async (req, res) => {
@@ -56,13 +56,32 @@ exports.updateUserStatus = catchAsync(async (req, res) => {
     const { uid, status } = req.body
 
     if (!uid || !status) {
-        return generalError(res, "USer or status missing", {})
+        return generalError(res, "User or status missing", {})
+    }
+
+    
+
+    const user = await fetchUserForMiddleware(uid)
+    
+    if(!user){
+        return notFound(res, "User not found")
     }
 
     const update = await updateUserStatus(uid, status)
 
     if (!update[0]) {
         return generalError(res, "Unable to update user status")
+    }
+
+    if (status.toLowerCase() == "approved"){
+        sendApprovedMailToUser(user.email,"Account Application Update - Rags & Soles" ,{username: user?.name || user?.business_name} )
+    }else{
+        sendDeclinedMailToUser(user.email,"Account Application Update - Rags & Soles" ,{username: user?.name || user?.business_name} )
+    }
+
+    data  = {
+        username: 
+        status,
     }
 
     return success(res, {}, "user updated")
