@@ -132,6 +132,20 @@ exports.countAllproducts = async (
     )
 }
 
+exports.getUniqueProductsWithLowUnitsAlt = async () => {
+  const count = await specifications.count({
+    distinct: true,
+    col: PARAMS.productId,
+    where: {
+      [PARAMS.units]: {
+        [Op.lt]: 5
+      }
+    }
+  });
+  
+  return count;
+};
+
 exports.reduceProductCount = async (count, id) => {
     await specifications.decrement(PARAMS.units, { by: count, where: { id } })
 }

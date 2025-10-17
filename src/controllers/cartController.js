@@ -28,7 +28,6 @@ exports.validateCoupon = catchAsync(async (req, res) => {
     return success(res, { type: coupons.type, value: coupons.value }, "Fetched.")
 })
 
-
 async function processOrder(products) {
     const spec_list = [];
     let total_amount = 0.0;
@@ -42,6 +41,8 @@ async function processOrder(products) {
                 body: { code: 404, msg: "Product not found" }
             };
         }
+
+        const low_count_notifications = []
 
         for (const spec of cart_item[PARAMS.specifications]) {
             const product_spec = product[PARAMS.product_specifications].find(
@@ -68,11 +69,14 @@ async function processOrder(products) {
                 };
             }
 
+
+
             total_amount += product.price * spec.count;
 
             spec_list.push({
                 count: spec.count,
-                id: spec.id
+                id: spec.id,
+                low_stock: product_spec.units - spec.count <= 5 ? `${product.name} is remaining 5 items left for "${spec.size}"` : null
             });
         }
     }
@@ -256,8 +260,6 @@ exports.createOrder = catchAsync(async (req, res) => {
     req.body.total_amount = total_amount + deliveryFee
     req.body[PARAMS.deliveryMode] = deliveryMode
 
-    console.log("body ====> ", req.body)
-
     const temp_order = await addToCartQuery(req.body)
 
     const response = await initializePayment(createUUID(), req.body.total_amount, req.user?.email, { cartId: temp_order.cartId })
@@ -267,7 +269,17 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     success(res, { url: response.url }, "Kindly proceed to making payment.")
 
-    spec_list.forEach((item) => promises.push(reduceProductCount(item.count, item.id)))
+
+
+    spec_list.forEach(
+        (item) => { 
+            if(item?.low_stock){
+                promises.push (createNotification(NOTIFICATION_TITLES.product.title, item.low_stock, NOTIFICATION_TITLES.product.alert, NOTIFICATION_TITLES.product.type))
+            }
+            
+            promises.push(reduceProductCount(item.count, item.id)) 
+        }
+    )
     if (couponId) {
         promises.push(
             coupon_detail.increment("usage", { by: 1, where: { id: couponId } }),
@@ -275,7 +287,7 @@ exports.createOrder = catchAsync(async (req, res) => {
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.alert))
+    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert,NOTIFICATION_TITLES.order_new.type))
     await Promise.allSettled(promises)
 
 })
@@ -390,7 +402,7 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
     success(res, order, "Order Updated")
 
     const templateItems = order[MODEL_NAMES.order].map((product, index) => {
-        
+
         return {
             name: product[MODEL_NAMES.product].name,
             specifications: product.specifications,
@@ -416,7 +428,7 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
         orderLink: process.env.WEB_BASE_URL + `/order-detail/${req.body[PARAMS.orderId]}` //'https://ragsandsoles.com/orders/RNS-294102',
     };
 
-    
+
 
     sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
 
@@ -437,8 +449,6 @@ exports.fetchSingleOrderFun = catchAsync(async (req, res) => {
 
     return success(res, order,)
 })
-
-
 
 exports.manualOrder = catchAsync(async (req, res) => {
 

@@ -115,7 +115,7 @@ exports.NOTIFICATION_TITLES = {
     order_new:{title:"New Order Recieved",alert: "high", type: "Order"},
     order_update:{title:"Order Update", alert: "low", type: "Order"},
     vendor:{title: "New Vendor Registration", alert: "medium", type: "Vendor"},
-    stock:{title:"Low Stock Alert", alert:"high",type: "Stock"},
+    product:{title:"Low Stock Alert", alert:"high",type: "Product"},
     coupon:{title:"Coupon Usage Alert", alert: "medium", type: "Coupon"}
 }
 

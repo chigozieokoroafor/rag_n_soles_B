@@ -7,7 +7,7 @@ const { generalError, success, notFound } = require("../errorHandler/statusCodes
 const { generateToken, checkPassword, createUUID, sendAdminMailCredentials } = require("../util/base");
 const { FETCH_LIMIT, PARAMS, STATUSES } = require("../util/consts");
 const { loginValidator, createAdminSchema, adminSchema } = require("../util/validators/accountValidator");
-const { countAllproducts } = require("../db/querys/products");
+const { countAllproducts, getUniqueProductsWithLowUnitsAlt } = require("../db/querys/products");
 const { insertCoupon, getCoupons, deleteCoupon, updateCoupon, countCoupons } = require("../db/querys/category");
 const { couponValidator, couponUpdateValidator } = require("../util/validators/categoryValidator");
 const { hashSync } = require("bcryptjs");
@@ -86,7 +86,7 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
             total: await countAllOrders([]),
             pending: await countAllOrders({ [PARAMS.deliv_status]: STATUSES.pending })
         },
-        lowstock: 0
+        lowstock: await getUniqueProductsWithLowUnitsAlt()
     }
 
     return success(res, data, "fetched.")
