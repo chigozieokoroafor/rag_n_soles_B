@@ -1,8 +1,6 @@
 const { Op } = require("sequelize");
 const { PARAMS } = require("../../util/consts");
-const { category } = require("../models/category");
-const { product, specifications } = require("../models/product");
-const { images } = require("../models/images")
+const { product, specifications, category, images } = require("../models/relationships");
 
 exports.uploadProduct = async (data) => {
     return await product.create(data)

@@ -2,8 +2,7 @@ const { createUUID, sendAdminMailCredentials } = require("../../util/base");
 const { PARAMS } = require("../../util/consts");
 const { admin } = require("../models/admin");
 const { hashSync } = require("bcryptjs");
-const { user } = require("../models/user");
-const { deliv_locations } = require("../models/deliv_locations");
+const { deliv_locations, user } = require("../models/relationships");
 
 exports.checkAdmin = async (uid) => {
     return await admin.findOne({ where: { uid } })

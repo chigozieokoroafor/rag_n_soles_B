@@ -1,7 +1,6 @@
 const { Op } = require("sequelize")
 const { PARAMS } = require("../../util/consts")
-const { notifications } = require("../models/notifications")
-const { user } = require("../models/user")
+const { notifications, user } = require("../models/relationships");
 
 exports.checkUserExists = async (email) => {
     return user.findOne({ where: { email }, attributes: [PARAMS.id] })

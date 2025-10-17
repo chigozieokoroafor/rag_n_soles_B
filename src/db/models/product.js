@@ -5,7 +5,6 @@ const { DataTypes } = require("sequelize");
 const { MODEL_NAMES, PARAMS } = require("../../util/consts");
 const { conn } = require("../base");
 const { createUUID } = require("../../util/base");
-const { cart } = require("./cart");
 const { order } = require("./order");
 const { images } = require("./images");
 
@@ -126,29 +125,6 @@ const coupon = conn.define(MODEL_NAMES.coupon, {
 })
 
 
-// product.hasMany(cart, {foreignKey:PARAMS.productId, sourceKey:PARAMS.uid})
-// cart.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
-
-
-product.hasMany(specifications, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
-specifications.belongsTo(product, {foreignKey:PARAMS.productId, targetKey:PARAMS.uid})
-
-product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.id})
-order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.id })
-
-product.hasMany(images, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
-product.hasOne(images, {
-    as: 'defaultImage',
-    foreignKey: PARAMS.productId,
-    sourceKey: PARAMS.uid,
-    scope: {
-        isDefault: true
-    }
-});
-images.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
-
-product.hasMany(order, {foreignKey: PARAMS.productId, sourceKey: PARAMS.uid})
-order.belongsTo(product, {foreignKey: PARAMS.productId, targetKey: PARAMS.uid})
 
 module.exports = {
     product,

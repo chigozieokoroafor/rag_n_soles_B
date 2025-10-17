@@ -82,14 +82,7 @@ const ordersOnly = conn.define(MODEL_NAMES.ordersOnly, {
     modelName: MODEL_NAMES.ordersOnly
 })
 
-ordersOnly.hasMany(order, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
-order.belongsTo(ordersOnly, { foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId })
 
-// deliv_locations.hasMany(ordersOnly, {foreignKey: PARAMS.locationId, sourceKey: PARAMS.id})
-ordersOnly.hasOne(deliv_locations, {foreignKey: PARAMS.id, sourceKey: PARAMS.locationId, as:"deliveryLocation"})
-
-user.hasMany(ordersOnly, { foreignKey: PARAMS.userId, sourceKey: PARAMS.uid })
-ordersOnly.belongsTo(user, { foreignKey: PARAMS.userId, targetKey: PARAMS.uid })
 
 module.exports = {
     ordersOnly

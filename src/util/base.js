@@ -10,18 +10,6 @@ const { Readable } = require("stream")
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars")
-// const {cre} = require("../util/mail_handlebar")
-// import fs from 'fs';
-// import path from 'path';
-// // import nodemailer from 'nodemailer';
-// import handlebars from 'handlebars';
-
-// 1. Compile the Handlebars Template
-const baseDir = path.resolve(__dirname, "../../templates")
-const templatePath = path.join(baseDir, 'order_confirmation_template.html');
-// console.log("temp==>> ",baseDir)
-const source = fs.readFileSync(templatePath, 'utf8');
-const template = handlebars.compile(source);
 
 
 
@@ -68,74 +56,86 @@ exports.sendEmail = (subject, to, html, attachments, envelope) => { //attachment
 exports.sendAccountVerificationMail = (email, verificationLink, username) => {
 
     const year = new Date().getFullYear()
-    const html = `
-    <!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f7f8fa; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .btn { display: inline-block; background-color: #4f46e5; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
-    .footer { margin-top: 30px; color: #888; font-size: 12px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>Welcome to RAGS & SOLES</h2>
-    <p>Hi ${username ?? ""},</p>
-    <p>Thank you for joining our marketplace! You're just one step away from getting started.</p>
-    <p>Please verify your email address by clicking the button below:</p>
-    <p><a class="btn" href="${verificationLink}">Verify Email</a></p>
-    <p>If you did not create an account with us, please ignore this email.</p>
-    <div class="footer">
-      &copy; ${year} RAGS & SOLES. All rights reserved.
-    </div>
-  </div>
-</body>
-</html>
-    `
 
     const subject = "Verify Your Email - RAGS & SOLES"
 
+
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'temp.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    const data = {
+        logo: process.env.LOGO_URL,
+        username: username ?? "",
+        verification_link: verificationLink,
+        year: year
+    }
+
+    const html = template(data)
+
     this.sendEmail(subject, email, html)
 }
-
 
 exports.sendPasswordResetMail = (email, reset_link, username) => {
 
     const year = new Date().getFullYear()
-    const html = `
-    <<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f7f8fa; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .btn { display: inline-block; background-color: #ef4444; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
-    .footer { margin-top: 30px; color: #888; font-size: 12px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>Password Reset Request </h2>
-    <p>Hi ${username ?? ""},</p>
-    <p>We received a request to reset your password for your RAGS & SOLES account.</p>
-    <p>If this was you, you can reset your password by clicking the button below:</p>
-    <p><a class="btn" href="${reset_link}">Reset Password</a></p>
-    <p>This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
-    <div class="footer">
-      &copy; ${year} RAGS & SOLES. All rights reserved.
-    </div>
-  </div>
-</body>
-</html>
-    `
 
-    const subject = "Verify Your Email - RAGS & SOLES"
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'pwd.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    const data = {
+        logo: process.env.LOGO_URL,
+        username: username ?? "",
+        reset_link: reset_link,
+        year: year
+    }
+
+    const html = template(data)
+
+    const subject = "Password Reset - RAGS & SOLES"
 
     this.sendEmail(subject, email, html)
 }
 
+exports.sendAdminMailCredentials = (email, password) => {
+    const year = new Date().getFullYear()
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'admin.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    const data = {
+        logo: process.env.LOGO_URL,
+        email,
+        password,
+        support_mail: process.env.MAIL_USER,
+        year
+
+    }
+
+    const html = template(data)
+
+    const subject = "Admin Credentials - Rags & Soles"
+
+    this.sendEmail(subject, email, html)
+}
+
+exports.sendOrderMailToUser = (email, subject, data) => {
+    const baseDir = path.resolve(__dirname, "../../templates")
+    const templatePath = path.join(baseDir, 'order_confirmation_template.html');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(source);
+
+    data.logo = process.env.LOGO_URL
+    data.support_mail = process.env.MAIL_USER
+
+    const generatedTemplate = template(data)
+
+    this.sendEmail(subject, email, generatedTemplate)
+}
 
 exports.hashPassword = (pwd) => {
     const salt = bcrypt.genSaltSync()
@@ -223,115 +223,8 @@ exports.initializePayment = async (ref, amount, email, meta) => {
 
 }
 
-exports.sendAdminMailCredentials = (email, password) => {
-    
 
-    const path_ = path.resolve("templates/logo.png")
-    const html = `
-   <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin credentials - Rags & Soles</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-        }
-        .header {
-            background-color: #3b82f6;
-            padding: 20px;
-            text-align: center;
-        }
-        .header img {
-            max-width: 200px; /* Adjust size */
-            height: auto;
-        }
-        .content {
-            padding: 30px;
-        }
-        .credentials {
-            background-color: #f1f1f1;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #757575;
-            font-size: 12px;
-        }
-        a {
-            color: #3b82f6;
-            text-decoration: underline;
-        }
-        @media only screen and (max-width: 600px) {
-            .content {
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <!-- Replace text logo with image -->
-            <img src="${path_}" alt="Rags & Soles Logo">
-        </div>
-        
-        <div class="content">
-            <p>Hello,</p>
-            
-            <p>Your administrator account has been successfully created. Please find your credentials below:</p>
 
-            <div class="credentials">
-                <p><strong>Username / Email:</strong> ${email}</p>
-                <p><strong>Password:</strong> ${password}</p>
-            </div>
-
-            <p>For security reasons, we recommend changing your password upon first login.</p>
-
-            <p>If you did not request this account, please contact us immediately.</p>
-            
-            <p>If you have any questions or need assistance, our customer support team is here to help. Simply reply to this email or contact us at Ragsnsoles@gmail.com.</p>
-            
-            <p>Best regards,<br>
-            The Rags & Soles Team</p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; 2025 Rags & Soles. All rights reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Unsubscribe</a></p>
-        </div>
-    </div>
-</body>
-</html>
-
-    `
-
-    const subject = "Admin Credentials - Rags & Soles"
-
-    this.sendEmail(subject, email, html)
-}
-
-exports.sendOrderMailToUser = (email, subject, data) => {
-    const generatedTemplate = template(data)
-
-    this.sendEmail(subject, email, generatedTemplate)
-}
-// exports.uploadToBunny = async(blob, )
 
 exports.processFile = async (buffer, fileName) => {
     const stream = Readable.from(buffer)
@@ -346,11 +239,6 @@ exports.processFile = async (buffer, fileName) => {
 }
 
 const uploadToBunny = async (stream, fileName) => {
-
-    // const REGION = 'YOUR_REGION'; // If German region, set this to an empty string: ''
-    // const HOSTNAME = REGION ? `${REGION}.${BASE_HOSTNAME}` : BASE_HOSTNAME;
-
-    // console.log("credentials::::",BUNNY)
 
     const url = `${BUNNY.BUNNY_BASE_HOSTNAME}/${BUNNY.BUNNY_STORAGE_ZONE_NAME}/${fileName}`
 

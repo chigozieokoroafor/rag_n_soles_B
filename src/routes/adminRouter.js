@@ -61,6 +61,9 @@ admin.post("/order", adminAuth, cartController.manualOrder)
 admin.get("/notifications", adminAuth, adminController.getNotifications)
 admin.put("/notifications", adminAuth, adminController.readNotifications)
 
+
+admin.get("/chigozie/:orderId", cartController.fetchSingleOrderFun)
+
 module.exports = {
     adminRouter: admin
 }

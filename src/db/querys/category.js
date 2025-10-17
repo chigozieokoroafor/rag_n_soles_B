@@ -1,8 +1,7 @@
 
 const { Op } = require("sequelize");
 const { PARAMS } = require("../../util/consts");
-const { category } = require("../models/category");
-const { coupon, product } = require("../models/product");
+const { coupon, product, category } = require("../models/relationships");
 
 exports.createCategoryQuery = async(data) =>{
     return await category.create(

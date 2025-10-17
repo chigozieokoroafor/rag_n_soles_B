@@ -42,9 +42,6 @@ const transaction = conn.define(MODEL_NAMES.transaction, {
 })
 
 
-transaction.hasMany(order, {foreignKey: PARAMS.orderId, sourceKey: PARAMS.orderId})
-order.belongsTo(transaction, {foreignKey: PARAMS.orderId, targetKey:PARAMS.orderId})
-
 
 module.exports = {
     transaction

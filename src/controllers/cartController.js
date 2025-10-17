@@ -4,7 +4,7 @@ const { getspecificProduct, reduceProductCount } = require("../db/querys/product
 const { catchAsync } = require("../errorHandler/allCatch");
 const { generalError, notFound, success, newError } = require("../errorHandler/statusCodes");
 const { createUUID, initializePayment, sendOrderMailToUser } = require("../util/base");
-const { PARAMS, FETCH_LIMIT, DELIVERY_MODES, NOTIFICATION_TITLES } = require("../util/consts");
+const { PARAMS, FETCH_LIMIT, DELIVERY_MODES, NOTIFICATION_TITLES, MODEL_NAMES } = require("../util/consts");
 const { checkoutSchema, orderUpdate, manualOrderSchema } = require("../util/validators/cartValidator");
 const { fetchSingleCoupon } = require("../db/querys/category");
 const { fetchSpecLocation } = require("../db/querys/admin");
@@ -85,64 +85,6 @@ async function processOrder(products) {
         }
     };
 }
-
-
-// async function processManualOrder(products, isEmail) {
-//     const spec_list = [];
-//     let total_amount = 0.0;
-
-//     for (const cart_item of products) {
-//         const product = await getspecificProduct(cart_item[PARAMS.productId]);
-
-//         if (!product) {
-//             return {
-//                 type: "error",
-//                 body: { code: 404, msg: "Product not found" }
-//             };
-//         }
-
-//         for (const spec of cart_item[PARAMS.specifications]) {
-//             const product_spec = product[PARAMS.product_specifications].find(
-//                 (spec_spec) => spec_spec.id == spec.id
-//             );
-
-//             if (!product_spec) {
-//                 return {
-//                     type: "error",
-//                     body: {
-//                         code: 404,
-//                         msg: `Specification not found for ${product.name}: Size ${spec.size}`
-//                     }
-//                 };
-//             }
-
-//             if (product_spec.units < spec.count) {
-//                 return {
-//                     type: "error",
-//                     body: {
-//                         code: 400,
-//                         msg: `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`
-//                     }
-//                 };
-//             }
-
-//             total_amount += product.price * spec.count;
-
-//             spec_list.push({
-//                 count: spec.count,
-//                 id: spec.id
-//             });
-//         }
-//     }
-
-//     return {
-//         type: "success",
-//         body: {
-//             spec_list,
-//             total_amount
-//         }
-//     };
-// }
 
 async function processManualOrder(cartId, reference, email, name) {
 
@@ -267,40 +209,6 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     let coupon_detail
     let couponId
-    // const spec_list = []
-
-    // for (cart_item of products) {
-    //     const product = await getspecificProduct(cart_item[PARAMS.productId])
-    //     if (!product) {
-    //         notFound(res, "Product not found")
-    //         return
-    //     }
-
-    //     for (spec of cart_item[PARAMS.specifications]) {
-    //         const product_spec = product[PARAMS.product_specifications].find(spec_spec => spec_spec.id == spec.id)
-
-    //         if (!product_spec) {
-    //             notFound(res, `Specification provided not found: ${spec.size}`,)
-    //             return
-    //         }
-
-    //         if (product_spec.units < spec.count) {
-    //             generalError(res, `${product.name} (Size: ${spec.size}) is currently low on stock and can't fulfill the requested quantity.`)
-    //             return
-    //         }
-
-    //         total_amount += product.price * spec.count
-
-    //         spec_list.push(
-    //             {
-    //                 count: spec.count,
-    //                 id: spec.id
-    //             }
-    //         )
-
-    //     }
-
-    // };
 
     const processedOrder = await processOrder(products)
     if (processedOrder.type == "error") {
@@ -323,7 +231,7 @@ exports.createOrder = catchAsync(async (req, res) => {
         }
 
         if (coupon_detail?.type == "percentage") {
-            total_amount = total_amount - ((Number(coupon_detail.value) / 0.01) * total_amount)
+            total_amount = total_amount - ((Number(coupon_detail.value) / 100) * total_amount)
         } else {
             total_amount = total_amount - coupon_detail.value
         }
@@ -369,8 +277,6 @@ exports.createOrder = catchAsync(async (req, res) => {
 
     promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert, NOTIFICATION_TITLES.order_new.alert))
     await Promise.allSettled(promises)
-
-
 
 })
 
@@ -464,14 +370,15 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
     }
 
     const order = await fetchSingleOrderDetail(req.body[PARAMS.orderId])
+
+    // return success(res, order,"")
+
     const statuses = order.statuses
 
     if (statuses.includes(req.body.status)) {
         return generalError(res, "Cannnot set status at current time")
     }
     statuses.push(req.body.status)
-
-    // console.log(statuses)
 
     const update = {
         [PARAMS.statuses]: statuses,
@@ -480,9 +387,40 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
 
     await updateOrderStatus(req.body[PARAMS.orderId], update)
 
+    success(res, order, "Order Updated")
 
+    const templateItems = order[MODEL_NAMES.order].map((product, index) => {
+        
+        return {
+            name: product[MODEL_NAMES.product].name,
+            specifications: product.specifications,
+            price: product[MODEL_NAMES.product].price,
+            image: product[MODEL_NAMES.product].defaultImage.url,
+        }
+    })
 
-    return success(res, order, "Order Updated")
+    const data_ = {
+        customerName: order[MODEL_NAMES.user][PARAMS.name],
+        orderId: req.body[PARAMS.orderId],
+        status: req.body.status.toLocaleUpperCase(),
+        orderDate: order[PARAMS.createdAt],
+        totalAmount: Number(order.total_amount).toLocaleString(),
+        items: templateItems,
+        delivery: {
+            recipient: order[PARAMS.dest_address][PARAMS.name],
+            address: order[PARAMS.dest_address][PARAMS.address],
+            phone: order[PARAMS.dest_address][PARAMS.phone_no],
+            zone: order["deliveryLocation"][PARAMS.location],
+            estimate: order["deliveryLocation"][PARAMS.period],
+        },
+        orderLink: process.env.WEB_BASE_URL + `/order-detail/${req.body[PARAMS.orderId]}` //'https://ragsandsoles.com/orders/RNS-294102',
+    };
+
+    
+
+    // sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
+
+    sendOrderMailToUser("okoroaforc14@gmail.com", `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
 
 })
 
@@ -493,6 +431,16 @@ exports.fetchSingleOrder = catchAsync(async (req, res) => {
 
     return success(res, order,)
 })
+
+exports.fetchSingleOrderFun = catchAsync(async (req, res) => {
+    const orderId = req.params.orderId
+
+    const order = await fetchSingleOrderDetail(orderId)
+
+    return success(res, order,)
+})
+
+
 
 exports.manualOrder = catchAsync(async (req, res) => {
 

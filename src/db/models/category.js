@@ -46,8 +46,6 @@ const category = conn.define(MODEL_NAMES.user, {
 }
 )
 
-category.hasMany(product, {foreignKey:PARAMS.categoryId, sourceKey:PARAMS.uid, as:"Product"})
-product.belongsTo(category, {foreignKey:PARAMS.categoryId, targetKey:PARAMS.uid, as:"Category"})
 
 module.exports = {
     category

@@ -1,12 +1,15 @@
 const { Sequelize, Op } = require("sequelize");
 const { PARAMS, STATUSES, MODEL_NAMES } = require("../../util/consts");
-const { cart } = require("../models/cart");
-const { deliv_locations } = require("../models/deliv_locations");
-const { images } = require("../models/images");
-const { order } = require("../models/order");
-const { ordersOnly } = require("../models/ordersOnly");
-const { product } = require("../models/product");
-const { user } = require("../models/user");
+// const { cart } = require("../models/cart");
+// const { deliv_locations } = require("../models/deliv_locations");
+// const { images } = require("../models/images");
+// const { order } = require("../models/order");
+// const { ordersOnly } = require("../models/ordersOnly");
+// const { product } = require("../models/product");
+// const { user } = require("../models/user");
+
+
+const { deliv_locations, images, order, ordersOnly, product, user, cart } = require("../models/relationships");
 
 exports.addToCartQuery = async (data) => {
     return await cart.create(data)
@@ -172,7 +175,29 @@ exports.fetchSingleOrderDetail = async (orderId) => {
         {
             where: {
                 orderId
-            }
+            },
+            include: [
+                {
+                    model: order,
+                    include: [
+                        {
+                            model: product,
+                            include: {
+                                model: images,
+                                as: "defaultImage"
+                            }
+                        }
+                    ]
+                },
+                {
+                    model: user,
+                    attributes: [PARAMS.name, PARAMS.email]
+                },
+                {
+                    model: deliv_locations,
+                    as: "deliveryLocation"
+                }
+            ]
         }
     )
 }
@@ -220,38 +245,38 @@ exports.updateOrderStatus = async (orderId, update) => {
 }
 
 exports.getTotal = async (startDate, endDate) => {
-  return await ordersOnly.findAll({
-    where: {
-      [PARAMS.createdAt]: {
-        [Op.between]: [new Date(startDate), new Date(endDate)]
-      }
-    },
-    attributes: [
-      [Sequelize.fn("SUM", Sequelize.col(PARAMS.total_amount)), "total"]
-    ],
-    raw: true
-  });
+    return await ordersOnly.findAll({
+        where: {
+            [PARAMS.createdAt]: {
+                [Op.between]: [new Date(startDate), new Date(endDate)]
+            }
+        },
+        attributes: [
+            [Sequelize.fn("SUM", Sequelize.col(PARAMS.total_amount)), "total"]
+        ],
+        raw: true
+    });
 };
 
 exports.getDailyTotals = async (startDate, endDate) => {
-  return await ordersOnly.findAll({
-    where: {
-      [PARAMS.createdAt]: {
-        [Op.between]: [new Date(startDate), new Date(endDate)]
-      }
-    },
-    attributes: [
-      [
-        Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`),
-        'date'
-      ],
-      [
-        Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
-        'total'
-      ]
-    ],
-    group: [Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`)],
-    order: [[Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`), 'ASC']],
-    raw: true
-  });
+    return await ordersOnly.findAll({
+        where: {
+            [PARAMS.createdAt]: {
+                [Op.between]: [new Date(startDate), new Date(endDate)]
+            }
+        },
+        attributes: [
+            [
+                Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`),
+                'date'
+            ],
+            [
+                Sequelize.fn('SUM', Sequelize.col(PARAMS.total_amount)),
+                'total'
+            ]
+        ],
+        group: [Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`)],
+        order: [[Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`), 'ASC']],
+        raw: true
+    });
 };
