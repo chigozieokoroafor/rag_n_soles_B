@@ -76,7 +76,7 @@ async function processOrder(products) {
             spec_list.push({
                 count: spec.count,
                 id: spec.id,
-                low_stock: product_spec.units - spec.count <= 5 ? `${product.name} is remaining 5 items left for "${spec.size}"` : null
+                low_stock: product_spec.units - spec.count <= 5 ? `${product.name} is remaining ${product_spec.units - spec.count } items left for "${spec.size}"` : null
             });
         }
     }
@@ -287,7 +287,6 @@ exports.createOrder = catchAsync(async (req, res) => {
         )
     }
 
-    promises.push(createNotification(NOTIFICATION_TITLES.order_new.title, `${req.user[PARAMS.business_name] ?? req.user[PARAMS.name]} placed a new order  worth ${req.body.total_amount} for ${products.length} distict items. Click to view items`, NOTIFICATION_TITLES.order_new.alert,NOTIFICATION_TITLES.order_new.type))
     await Promise.allSettled(promises)
 
 })
