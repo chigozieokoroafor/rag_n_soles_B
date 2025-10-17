@@ -418,9 +418,7 @@ exports.updateStatusOfOrders = catchAsync(async (req, res) => {
 
     
 
-    // sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
-
-    sendOrderMailToUser("okoroaforc14@gmail.com", `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
+    sendOrderMailToUser(order[MODEL_NAMES.user].email, `Order ${req.body[PARAMS.orderId]} — Status Update.`, data_)
 
 })
 
