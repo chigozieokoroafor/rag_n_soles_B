@@ -248,7 +248,9 @@ exports.getTotal = async (startDate, endDate) => {
     return await ordersOnly.findAll({
         where: {
             [PARAMS.createdAt]: {
-                [Op.between]: [new Date(startDate), new Date(endDate)]
+                // [Op.between]: [new Date(startDate), new Date(endDate)]
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate)
             }
         },
         attributes: [
@@ -262,7 +264,9 @@ exports.getDailyTotals = async (startDate, endDate) => {
     return await ordersOnly.findAll({
         where: {
             [PARAMS.createdAt]: {
-                [Op.between]: [new Date(startDate), new Date(endDate)]
+                // [Op.between]: [new Date(startDate), new Date(endDate)]
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate)
             }
         },
         attributes: [

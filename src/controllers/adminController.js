@@ -93,17 +93,21 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
 })
 
 
-exports.graph =  catchAsync( async (req, res) =>{
+exports.graph = catchAsync(async (req, res) => {
     let { startDate, endDate } = req.query
 
     // startDate = new Date(startDate).toUTCString()
     // endDate = new Date(endDate).toUTCString()
+
+    endDate = new Date(new Date().setDate(new Date(endDate).getDate() + 1))
+
+
     const total = await getTotal(startDate, endDate)
     const daily_totals = await getDailyTotals(startDate, endDate)
-    
+
     const data = {
         interval: daily_totals,
-        total: total[0].total || 0.0 
+        total: total[0].total || 0.0
     }
 
     return success(res, data, "Fetched.")
@@ -348,8 +352,8 @@ exports.getNotifications = catchAsync(async (req, res) => {
 })
 
 exports.readNotifications = catchAsync(async (req, res) => {
-    const notificationIds  = req.body.notifications
-    
+    const notificationIds = req.body.notifications
+
     await readNotification(notificationIds)
 
     return success(res, "Marked as read,")
