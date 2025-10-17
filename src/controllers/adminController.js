@@ -96,13 +96,10 @@ exports.dashboardMetrics = catchAsync(async (req, res) => {
 exports.graph = catchAsync(async (req, res) => {
     let { startDate, endDate } = req.query
 
-    // startDate = new Date(startDate).toUTCString()
-    // endDate = new Date(endDate).toUTCString()
-
-    endDate = new Date(new Date().setDate(new Date(endDate).getDate() + 1))
+    const endDate_ = new Date(new Date().setDate(new Date(endDate).getDate() + 1))
 
 
-    const total = await getTotal(startDate, endDate)
+    const total = await getTotal(startDate, endDate_)
     const daily_totals = await getDailyTotals(startDate, endDate)
 
     const data = {
@@ -112,7 +109,6 @@ exports.graph = catchAsync(async (req, res) => {
 
     return success(res, data, "Fetched.")
 })
-
 
 exports.createCoupon = catchAsync(async (req, res) => {
     const valid_ = couponValidator.validate(req.body)

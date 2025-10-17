@@ -10,6 +10,7 @@ const { PARAMS, STATUSES, MODEL_NAMES } = require("../../util/consts");
 
 
 const { deliv_locations, images, order, ordersOnly, product, user, cart } = require("../models/relationships");
+const { conn } = require("../base");
 
 exports.addToCartQuery = async (data) => {
     return await cart.create(data)
@@ -260,7 +261,7 @@ exports.getTotal = async (startDate, endDate) => {
     });
 };
 
-exports.getDailyTotals = async (startDate, endDate) => {
+exports.getDailyTotalsOrderedOnly = async (startDate, endDate) => {
     return await ordersOnly.findAll({
         where: {
             [PARAMS.createdAt]: {
@@ -282,5 +283,37 @@ exports.getDailyTotals = async (startDate, endDate) => {
         group: [Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`)],
         order: [[Sequelize.literal(`TO_CHAR("${MODEL_NAMES.ordersOnly}"."${PARAMS.createdAt}", 'YYYY-MM-DD')`), 'ASC']],
         raw: true
+    });
+};
+
+
+
+exports.getDailyTotals = async (startDate, endDate) => {
+    const query = `
+    WITH date_series AS (
+      SELECT 
+        generate_series(
+          DATE(:startDate),
+          DATE(:endDate),
+          '1 day'::interval
+        )::date AS date
+    )
+    SELECT 
+      TO_CHAR(ds.date, 'YYYY-MM-DD') as date,
+      COALESCE(SUM(o."${PARAMS.total_amount}"), 0) as total
+    FROM date_series ds
+    LEFT JOIN "${MODEL_NAMES.ordersOnly}" o 
+      ON DATE(o."${PARAMS.createdAt}") = ds.date
+    GROUP BY ds.date
+    ORDER BY ds.date ASC
+  `;
+//   ,COUNT(o."${PARAMS.id}") as order_count
+
+    return await conn.query(query, {
+        replacements: {
+            startDate: new Date(startDate),
+            endDate: new Date(endDate)
+        },
+        type: Sequelize.QueryTypes.SELECT
     });
 };
